@@ -119,14 +119,24 @@ export function SunriseSunset({ sun, moon }: SunriseSunsetProps) {
             <div className="font-semibold text-gray-900 mt-4 mb-2">Day Length</div>
             <div className="text-lg text-gray-700">{day_length}</div>
           </div>
-          <div>
-            <div className="font-semibold text-gray-900 mb-2">Moonrise</div>
-            <div className="text-lg text-indigo-600">{moonrise}</div>
-            <div className="font-semibold text-gray-900 mt-4 mb-2">Moonset</div>
-            <div className="text-lg text-indigo-800">{moonset}</div>
-            <div className="font-semibold text-gray-900 mt-4 mb-2">Phase</div>
-            <div className="text-lg text-gray-700">{phase}</div>
-          </div>
+          {(moonrise !== '-' || moonset !== '-') && (
+            <div>
+              {moonrise !== '-' && (
+                <>
+                  <div className="font-semibold text-gray-900 mb-2">Moonrise</div>
+                  <div className="text-lg text-indigo-600">{moonrise}</div>
+                </>
+              )}
+              {moonset !== '-' && (
+                <>
+                  <div className="font-semibold text-gray-900 mt-4 mb-2">Moonset</div>
+                  <div className="text-lg text-indigo-800">{moonset}</div>
+                </>
+              )}
+              <div className="font-semibold text-gray-900 mt-4 mb-2">Phase</div>
+              <div className="text-lg text-gray-700">{phase}</div>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>

@@ -74,7 +74,7 @@ export function AirQuality({ aqi }: AirQualityProps) {
     pollutants = [],
     forecast = []
   } = aqi
-  const valueNum = typeof value === 'number' ? value : 0
+  const valueNum = typeof value === 'number' ? Math.round(value) : 0
   const statusStr = typeof status === 'string' ? status : '-'
   const descStr = typeof description === 'string' ? description : '-'
   const StatusIcon = getStatusIcon(statusStr)
@@ -123,12 +123,12 @@ export function AirQuality({ aqi }: AirQualityProps) {
                       <span className="text-sm font-medium text-gray-900">{pollutant.name || '-'}</span>
                     </div>
                     <div className="text-sm text-gray-600">
-                      {typeof pollutant.value === 'number' ? pollutant.value : '-'} {pollutant.unit || ''}
+                      {typeof pollutant.value === 'number' ? Math.round(pollutant.value) : '-'} {pollutant.unit || ''}
                     </div>
                   </div>
                   <Progress
                     value={typeof pollutant.value === 'number' && typeof pollutant.max === 'number' ? (pollutant.value / pollutant.max) * 100 : 0}
-                    className={`h-2 ${getAQIColor(typeof pollutant.value === 'number' ? pollutant.value : 0)}`}
+                    className={`h-2 ${getAQIColor(typeof pollutant.value === 'number' ? Math.round(pollutant.value) : 0)}`}
                   />
                 </div>
               ))
@@ -145,8 +145,8 @@ export function AirQuality({ aqi }: AirQualityProps) {
                   <div key={index} className="flex items-center justify-between">
                     <span className="text-sm text-gray-600">{day.day || '-'}</span>
                     <div className="flex items-center space-x-2">
-                      <Badge className={`${getAQIColor(typeof day.aqi === 'number' ? day.aqi : 0)} text-white text-xs`}>
-                        {typeof day.aqi === 'number' ? day.aqi : '-'}
+                      <Badge className={`${getAQIColor(typeof day.aqi === 'number' ? Math.round(day.aqi) : 0)} text-white text-xs`}>
+                        {typeof day.aqi === 'number' ? Math.round(day.aqi) : '-'}
                       </Badge>
                       <span className="text-sm text-gray-900">{day.status || '-'}</span>
                     </div>

@@ -47,7 +47,27 @@ def haversine_distance(lat1, lon1, lat2, lon2):
     return c * r
 
 def fetch_astronomy(lat: float, lon: float) -> Optional[Dict[str, Any]]:
-    """Retrieve sunrise, sunset and moon data from Open-Meteo."""
+    """Retrieve sunrise, sunset and moon data using sunrise-sunset.org with
+    Open-Meteo as a fallback."""
+    try:
+        url = (
+            "https://api.sunrise-sunset.org/json?"
+            f"lat={lat}&lng={lon}&formatted=0"
+        )
+        resp = requests.get(url, timeout=10)
+        if resp.status_code == 200 and resp.json().get("status") == "OK":
+            r = resp.json().get("results", {})
+            return {
+                "sunrise": r.get("sunrise"),
+                "sunset": r.get("sunset"),
+                "day_length": r.get("day_length"),
+                "moonrise": r.get("moonrise"),
+                "moonset": r.get("moonset"),
+                "phase": None,
+            }
+    except Exception:
+        pass
+    # Fallback to Open-Meteo if sunrise-sunset.org fails
     try:
         today = timezone.now().date().isoformat()
         url = (
@@ -124,19 +144,19 @@ def fetch_air_quality(lat: float, lon: float) -> Optional[Dict[str, Any]]:
         for key, name in mapping.items():
             arr = hourly.get(key)
             if arr:
-                pollutants.append({"name": name, "value": arr[0], "unit": "µg/m³"})
+                pollutants.append({"name": name, "value": round(arr[0]), "unit": "µg/m³"})
         forecast = []
         for i in [24, 48, 72]:
             if i < len(aqi_values) and i < len(times):
                 forecast.append(
                     {
                         "day": times[i][:10],
-                        "aqi": aqi_values[i],
+                        "aqi": int(round(aqi_values[i])),
                         "status": get_aqi_category(aqi_values[i]),
                     }
                 )
         return {
-            "value": current_aqi,
+            "value": int(round(current_aqi)),
             "status": get_aqi_category(current_aqi),
             "pollutants": pollutants,
             "forecast": forecast,

@@ -81,8 +81,8 @@ export function CurrentConditions({
           <div className="flex items-center space-x-4">
             <WeatherIcon className="h-16 w-16 text-blue-500" />
             <div>
-              <div className="text-4xl font-bold">{temperature}°C</div>
-              <div className="text-gray-600">Feels like {feels_like}°C</div>
+              <div className="text-4xl font-bold">{Math.round(temperature)}°C</div>
+              <div className="text-gray-600">Feels like {Math.round(feels_like)}°C</div>
               <div className="text-lg font-medium">{description}</div>
             </div>
           </div>
@@ -95,7 +95,7 @@ export function CurrentConditions({
               </svg>
               <div>
                 <div className="text-sm text-gray-600">Humidity</div>
-                <div className="font-medium">{humidity}%</div>
+                <div className="font-medium">{Math.round(humidity)}%</div>
               </div>
             </div>
             <div className="flex items-center space-x-2">
@@ -104,7 +104,7 @@ export function CurrentConditions({
               </svg>
               <div>
                 <div className="text-sm text-gray-600">Wind</div>
-                <div className="font-medium">{wind_speed} mph {wind_direction}°</div>
+                <div className="font-medium">{Math.round(wind_speed)} mph {wind_direction}°</div>
               </div>
             </div>
             <div className="flex items-center space-x-2">
@@ -114,7 +114,7 @@ export function CurrentConditions({
               </svg>
               <div>
                 <div className="text-sm text-gray-600">Visibility</div>
-                <div className="font-medium">{visibility} km</div>
+                <div className="font-medium">{Math.round(visibility)} km</div>
               </div>
             </div>
             <div className="flex items-center space-x-2">
@@ -123,7 +123,7 @@ export function CurrentConditions({
               </svg>
               <div>
                 <div className="text-sm text-gray-600">Pressure</div>
-                <div className="font-medium">{pressure} hPa</div>
+                <div className="font-medium">{Math.round(pressure)} hPa</div>
               </div>
             </div>
             <div className="flex items-center space-x-2">
@@ -132,7 +132,7 @@ export function CurrentConditions({
               </svg>
               <div>
                 <div className="text-sm text-gray-600">UV Index</div>
-                <div className={`font-medium px-2 rounded ${getUVIndexColor(uv_index)} text-gray-900 dark:text-white`}>{uv_index} ({getUVIndexText(uv_index)})</div>
+                <div className={`font-medium px-2 rounded ${getUVIndexColor(uv_index)} text-gray-900 dark:text-white`}>{Math.round(uv_index)} ({getUVIndexText(uv_index)})</div>
               </div>
             </div>
           </div>

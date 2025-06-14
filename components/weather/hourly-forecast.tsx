@@ -31,19 +31,19 @@ export function HourlyForecast({ hourly }: HourlyForecastProps) {
                 <div key={hour.time + '-' + idx} className="flex flex-col items-center p-4 bg-white rounded-lg shadow">
                   <div className="text-sm font-medium">{formattedTime}</div>
                   <WeatherIcon className="h-8 w-8 my-2 text-blue-500" />
-                  <div className="text-lg font-bold">{hour.temperature}°C</div>
+                  <div className="text-lg font-bold">{Math.round(hour.temperature)}°C</div>
                   <div className="text-sm text-gray-600">{hour.condition}</div>
                   <div className="flex items-center mt-2">
                     <svg className="h-4 w-4 text-gray-500 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
                     </svg>
-                    <span className="text-sm">{hour.precipitation_probability}%</span>
+                    <span className="text-sm">{Math.round(hour.precipitation_probability)}%</span>
                   </div>
                   <div className="flex items-center mt-1">
                     <svg className="h-4 w-4 text-gray-500 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                     </svg>
-                    <span className="text-sm">{hour.wind_speed} mph</span>
+                    <span className="text-sm">{Math.round(hour.wind_speed)} mph</span>
                   </div>
                 </div>
               )
