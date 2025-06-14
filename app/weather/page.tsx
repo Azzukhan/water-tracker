@@ -213,7 +213,7 @@ export default function WeatherPage() {
         temperature: data.current.temperature,
         feels_like: data.current.feels_like,
         condition: data.current.condition,
-        description: data.current.description,
+        description: data.current.condition,
         humidity: data.current.humidity,
         wind_speed: data.current.wind_speed,
         wind_direction: data.current.wind_direction,

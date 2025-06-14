@@ -67,7 +67,13 @@ export function CurrentConditions({
         {station && (
           <p className="text-gray-600">{station.name}, {station.region}</p>
         )}
-        <p className="text-sm text-gray-500">Last updated: {new Date(last_updated).toLocaleString()}</p>
+        <p className="text-sm text-gray-500">
+          Last updated:{" "}
+          {(() => {
+            const d = new Date(last_updated)
+            return isNaN(d.getTime()) ? "N/A" : d.toLocaleString()
+          })()}
+        </p>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -6,6 +6,7 @@ export function getWeatherIcon(icon: string) {
       return Sun
     case "partly_cloudy":
     case "mostly_cloudy":
+    case "cloudy":
       return Cloud
     case "rain":
       return CloudRain
