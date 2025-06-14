@@ -145,6 +145,16 @@ class UnifiedWeatherAPIView(APIView):
         longitude = request.query_params.get("longitude")
         query = request.query_params.get("query")
 
+        if (not latitude or not longitude) and query:
+            geocode_url = f'https://nominatim.openstreetmap.org/search?q={query}&format=json&limit=1'
+            resp = requests.get(geocode_url, headers={'User-Agent': 'uk-water-tracker'})
+            if resp.status_code == 200 and resp.json():
+                data = resp.json()[0]
+                latitude = data['lat']
+                longitude = data['lon']
+            else:
+                return Response({'error': 'Location not found'}, status=404)
+
         if not latitude or not longitude:
             return Response(
                 {"error": "Latitude and longitude are required"}, status=400
