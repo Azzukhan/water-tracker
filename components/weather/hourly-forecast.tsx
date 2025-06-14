@@ -29,14 +29,15 @@ export function HourlyForecast({ hourly }: HourlyForecastProps) {
               const formattedTime = String(time.getHours())
 
               return (
-                <div key={hour.time + '-' + idx} className="flex-none w-28 flex flex-col items-center p-4 bg-white rounded-lg shadow">
+                <div
+                  key={hour.time + '-' + idx}
+                  className="flex-none w-24 flex flex-col items-center p-3 bg-white rounded-lg shadow"
+                >
                   <div className="text-sm font-medium">{formattedTime}</div>
                   <WeatherIcon className="h-8 w-8 my-2 text-blue-500" />
-                  <div className="text-lg font-bold">{Math.round(hour.temperature)}°C</div>
-                  <div className="text-sm text-gray-600">{hour.condition === 'Unknown' ? 'Sunny' : hour.condition}</div>
-                  <div className="flex items-center mt-2">
+                  <div className="flex items-center mt-1">
                     <Droplet className="h-4 w-4 text-gray-500 mr-1" />
-                    <span className="text-sm">
+                    <span className="text-sm font-medium">
                       {hour.precipitation_probability != null
                         ? `${Math.round(hour.precipitation_probability)}%`
                         : "-"}

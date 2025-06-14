@@ -104,7 +104,9 @@ def get_aqi_category(aqi: float) -> str:
         return "Very Unhealthy"
     return "Hazardous"
 
-WAQI_TOKEN = os.getenv("WAQI_TOKEN", "")
+WAQI_TOKEN = os.getenv(
+    "WAQI_TOKEN", "aec42c8095c1320774446550b357ba9edb44ad97"
+)
 
 def fetch_air_quality(lat: float, lon: float) -> Optional[Dict[str, Any]]:
     """Retrieve air quality data from the World Air Quality Index service."""
