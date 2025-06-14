@@ -37,7 +37,7 @@ const DEFAULT_RADAR = {
 export function RainRadar() {
   return (
     <Card className="shadow-lg border-0">
-      <CardHeader className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white">
+      <CardHeader className="bg-gradient-to-r from-blue-500 to-indigo-600 text-gray-900 dark:text-white">
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="text-2xl font-bold">Rain Radar</CardTitle>
