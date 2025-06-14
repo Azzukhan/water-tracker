@@ -152,6 +152,14 @@ export default function WeatherPage() {
   }, [location])
 
   useEffect(() => {
+    if (!location) return
+    const id = setInterval(() => {
+      fetchWeather(location)
+    }, 10 * 60 * 1000)
+    return () => clearInterval(id)
+  }, [location])
+
+  useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setShowDropdown(false)
@@ -174,7 +182,7 @@ export default function WeatherPage() {
     setSearchError(null)
     searchTimeout.current = setTimeout(async () => {
       try {
-        const response = await fetch(`/api/weather/geocode?query=${encodeURIComponent(searchQuery)}`)
+        const response = await fetch(`/api/weather/geocode?q=${encodeURIComponent(searchQuery)}`)
         const data = await response.json()
         setSearchResults(data.locations || [])
         setShowDropdown(true)
@@ -191,14 +199,6 @@ export default function WeatherPage() {
     setError(null)
     try {
       const response = await fetch(`/api/weather/unified/?latitude=${loc.lat}&longitude=${loc.lon}`)
-      if (response.status === 202) {
-        // Backend is fetching data, retry after a short delay
-        const data = await response.json()
-        setError(data.message || "Fetching weather data for this location. Please wait...")
-        setTimeout(() => fetchWeather(loc, retry + 1), 3000)
-        setLoading(false)
-        return
-      }
       if (!response.ok) throw new Error("Failed to fetch weather data")
       const data = await response.json()
       const transformed: WeatherData = {
@@ -278,7 +278,7 @@ export default function WeatherPage() {
   if (!weatherData) return <div className="text-center py-20 text-xl">No weather data available.</div>
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-100">
       <Header />
       <main className="pt-20">
         <div className="container mx-auto px-4 py-8">
@@ -300,14 +300,14 @@ export default function WeatherPage() {
                     placeholder="Search for a location..."
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
-                    className="w-full"
+                    className="w-full border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
                     onFocus={() => searchResults.length > 0 && setShowDropdown(true)}
                     onKeyDown={async (e) => {
                       if (e.key === 'Enter' && searchQuery.trim().length > 0) {
                         setSearchLoading(true);
                         setSearchError(null);
                         try {
-                          const response = await fetch(`/api/weather/geocode?query=${encodeURIComponent(searchQuery)}`);
+                          const response = await fetch(`/api/weather/geocode?q=${encodeURIComponent(searchQuery)}`);
                           const data = await response.json();
                           if (data.locations && data.locations.length > 0) {
                             setLocation(data.locations[0]);
@@ -325,12 +325,13 @@ export default function WeatherPage() {
                     }}
                   />
                   <Button
+                    className="bg-blue-600 hover:bg-blue-700 text-white"
                     onClick={async () => {
                       if (searchQuery.trim().length > 0) {
                         setSearchLoading(true);
                         setSearchError(null);
                         try {
-                          const response = await fetch(`/api/weather/geocode?query=${encodeURIComponent(searchQuery)}`);
+                          const response = await fetch(`/api/weather/geocode?q=${encodeURIComponent(searchQuery)}`);
                           const data = await response.json();
                           if (data.locations && data.locations.length > 0) {
                             setLocation(data.locations[0]);
@@ -377,6 +378,7 @@ export default function WeatherPage() {
               </div>
               <Button
                 variant="outline"
+                className="border-blue-300"
                 onClick={() => {
                   if ("geolocation" in navigator) {
                     navigator.geolocation.getCurrentPosition(
@@ -405,6 +407,7 @@ export default function WeatherPage() {
               </Button>
               <Button
                 variant="ghost"
+                className="text-blue-600 hover:bg-blue-50"
                 onClick={() => {
                   setLocation(DEFAULT_LOCATION)
                   setSearchQuery("")
