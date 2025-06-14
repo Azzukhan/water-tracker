@@ -1,9 +1,8 @@
-import { Cloud, CloudDrizzle, CloudFog, CloudLightning, CloudRain, CloudSnow, Sun } from "lucide-react"
-
-export function getWeatherIcon(icon: string) {
+import { Cloud, CloudDrizzle, CloudFog, CloudLightning, CloudRain, CloudSnow, Sun, Moon } from "lucide-react"
+export function getWeatherIcon(icon: string, isNight: boolean = false) {
   switch (icon) {
     case "clear":
-      return Sun
+      return isNight ? Moon : Sun
     case "partly_cloudy":
     case "mostly_cloudy":
     case "cloudy":

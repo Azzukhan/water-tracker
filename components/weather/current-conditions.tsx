@@ -58,7 +58,9 @@ export function CurrentConditions({
   icon,
   last_updated
 }: CurrentConditionsProps) {
-  const WeatherIcon = getWeatherIcon(icon)
+  const d = new Date(last_updated)
+  const isNight = d.getHours() < 6 || d.getHours() >= 18
+  const WeatherIcon = getWeatherIcon(icon, isNight)
 
   return (
     <Card className="shadow-lg border-0">

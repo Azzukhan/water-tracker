@@ -1,5 +1,5 @@
 "use client"
-import { MapContainer, TileLayer } from "react-leaflet"
+import { MapContainer, TileLayer, ZoomControl } from "react-leaflet"
 import type { MapContainerProps, TileLayerProps } from "react-leaflet"
 import { useEffect, useState } from "react"
 import "leaflet/dist/leaflet.css"
@@ -21,6 +21,8 @@ export default function RainRadarMap() {
       }
     }
     fetchTime()
+    const interval = setInterval(fetchTime, 5 * 60 * 1000)
+    return () => clearInterval(interval)
   }, [])
 
   const tile = timestamp
@@ -28,13 +30,21 @@ export default function RainRadarMap() {
     : "https://tilecache.rainviewer.com/v2/radar/nowcast/6/256/{z}/{x}/{y}/2/1_1.png"
 
   return (
-    <MapContainer center={center} zoom={zoom} style={{ height: "100%", width: "100%" }} className="w-full h-72 rounded-lg" as={undefined as unknown as React.ElementType<MapContainerProps>}>
+    <MapContainer
+      center={center}
+      zoom={zoom}
+      zoomControl={false}
+      style={{ height: "100%", width: "100%" }}
+      className="w-full h-80 rounded-lg"
+      as={undefined as unknown as React.ElementType<MapContainerProps>}
+    >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors & RainViewer'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         as={undefined as unknown as React.ElementType<TileLayerProps>}
       />
       <TileLayer url={tile} opacity={0.7} as={undefined as unknown as React.ElementType<TileLayerProps>} />
+      <ZoomControl position="bottomright" />
     </MapContainer>
   )
-} 
+}
