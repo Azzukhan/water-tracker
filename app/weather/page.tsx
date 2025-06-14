@@ -250,7 +250,8 @@ export default function WeatherPage() {
           temperature: hour.temperature,
           condition: hour.condition,
           icon: hour.icon,
-          precipitation_probability: hour.precipitation_probability,
+          precipitation_probability:
+            hour.precipitation ?? hour.precipitation_probability,
           wind_speed: hour.wind_speed,
           wind_direction: hour.wind_direction,
         })),
