@@ -63,13 +63,46 @@ export function SunriseSunset({ sun, moon }: SunriseSunsetProps) {
     )
   }
 
-  // Use real data only, show '-' if missing
-  const sunrise = sun?.sunrise || "-"
-  const sunset = sun?.sunset || "-"
-  const day_length = sun?.day_length || "-"
-  const moonrise = moon?.rise || "-"
-  const moonset = moon?.set || "-"
-  const phase = moon?.phase || "-"
+  const formatTime = (t?: string) => {
+    if (!t) return "-"
+    const d = new Date(t)
+    return isNaN(d.getTime())
+      ? t
+      : d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+  }
+
+  const formatLength = (len?: string) => {
+    const sec = Number(len)
+    if (isNaN(sec)) return len || "-"
+    const h = Math.floor(sec / 3600)
+    const m = Math.floor((sec % 3600) / 60)
+    return `${h}h ${m}m`
+  }
+
+  const phaseName = (val?: string) => {
+    const num = Number(val)
+    if (isNaN(num)) return val || "-"
+    const phases = [
+      "New Moon",
+      "Waxing Crescent",
+      "First Quarter",
+      "Waxing Gibbous",
+      "Full Moon",
+      "Waning Gibbous",
+      "Last Quarter",
+      "Waning Crescent",
+    ]
+    const idx = Math.round((num % 1) * 8)
+    return phases[idx % 8]
+  }
+
+  // Use real data only, show '-' if missing and format nicely
+  const sunrise = formatTime(sun?.sunrise)
+  const sunset = formatTime(sun?.sunset)
+  const day_length = formatLength(sun?.day_length)
+  const moonrise = formatTime(moon?.rise)
+  const moonset = formatTime(moon?.set)
+  const phase = phaseName(moon?.phase)
 
   return (
     <Card className="shadow-lg border-0">

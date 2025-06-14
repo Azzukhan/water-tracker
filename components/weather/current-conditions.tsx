@@ -126,6 +126,15 @@ export function CurrentConditions({
                 <div className="font-medium">{pressure} hPa</div>
               </div>
             </div>
+            <div className="flex items-center space-x-2">
+              <svg className="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.364-6.364l-1.414 1.414M7.05 16.95l-1.414 1.414m0-12.728l1.414 1.414m10.314 10.314l1.414 1.414" />
+              </svg>
+              <div>
+                <div className="text-sm text-gray-600">UV Index</div>
+                <div className={`font-medium text-white px-2 rounded ${getUVIndexColor(uv_index)}`}>{uv_index} ({getUVIndexText(uv_index)})</div>
+              </div>
+            </div>
           </div>
         </div>
       </CardContent>

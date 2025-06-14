@@ -64,6 +64,15 @@ export function ForecastSection({ daily }: ForecastSectionProps) {
                   <span className="text-lg font-bold">{(day.low ?? day.temperature_min) !== undefined ? `${day.low ?? day.temperature_min}°C` : 'N/A'}</span>
                   <span className="text-gray-500">{day.condition}</span>
                   <span className="text-gray-500">{day.wind_speed ? `${day.wind_speed} mph` : ''}</span>
+                  {day.precipitation !== undefined && (
+                    <div className="flex items-center text-sm text-blue-600 gap-1">
+                      <Droplets className="h-4 w-4" />
+                      <span>{day.precipitation}%</span>
+                    </div>
+                  )}
+                  {day.uv_index !== undefined && (
+                    <div className={`text-xs text-white px-1 rounded ${getUVIndexColor(day.uv_index)}`}>{getUVIndexText(day.uv_index)}</div>
+                  )}
                 </div>
               </div>
             )
