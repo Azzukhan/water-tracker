@@ -506,6 +506,10 @@ export default function WeatherPage() {
               last_updated={weatherData.last_updated}
             />
           </div>
+          {/* Hourly Forecast */}
+          <div className="mb-12">
+            <HourlyForecast hourly={weatherData.hourly} />
+          </div>
           {/* Forecast Section */}
           <div className="mb-12">
             <ForecastSection daily={weatherData.daily} />
@@ -515,9 +519,6 @@ export default function WeatherPage() {
             <RainRadar />
             <SunriseSunset sun={weatherData.sun} moon={weatherData.moon} />
             <AirQuality aqi={weatherData.aqi} />
-          </div>
-          <div className="mt-8">
-            <HourlyForecast hourly={weatherData.hourly} />
           </div>
         </div>
       </main>

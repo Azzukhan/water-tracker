@@ -104,62 +104,44 @@ def get_aqi_category(aqi: float) -> str:
         return "Very Unhealthy"
     return "Hazardous"
 
+WAQI_TOKEN = os.getenv("WAQI_TOKEN", "")
+
 def fetch_air_quality(lat: float, lon: float) -> Optional[Dict[str, Any]]:
-    """Retrieve air quality data from Open-Meteo."""
+    """Retrieve air quality data from the World Air Quality Index service."""
+    if not WAQI_TOKEN:
+        return None
     try:
-        url = (
-            "https://air-quality-api.open-meteo.com/v1/air-quality?"
-            f"latitude={lat}&longitude={lon}&hourly=european_aqi,pm10,pm2_5,ozone,nitrogen_dioxide,sulphur_dioxide,carbon_monoxide"
-            "&forecast_days=3&timezone=UTC"
-        )
+        url = f"https://api.waqi.info/feed/geo:{lat};{lon}/?token={WAQI_TOKEN}"
         resp = requests.get(url, timeout=10)
         if resp.status_code != 200:
             return None
-        hourly = resp.json().get("hourly")
-        if not hourly:
+        data = resp.json()
+        if data.get("status") != "ok":
             return None
-        aqi_values = hourly.get("european_aqi", [])
-        times = hourly.get("time", [])
-        if not aqi_values or not times:
+        aqi = data.get("data", {}).get("aqi")
+        if aqi is None:
             return None
-        current_aqi = aqi_values[0]
-        try:
-            now = timezone.now()
-            idx = min(
-                range(len(times)),
-                key=lambda i: abs(datetime.fromisoformat(times[i]) - now),
-            )
-            current_aqi = aqi_values[idx]
-        except Exception:
-            pass
-        pollutants = []
-        mapping = {
-            "pm2_5": "PM2.5",
+
+        iaqi = data.get("data", {}).get("iaqi", {})
+        pollutant_map = {
+            "pm25": "PM2.5",
             "pm10": "PM10",
-            "ozone": "O3",
-            "nitrogen_dioxide": "NO2",
-            "sulphur_dioxide": "SO2",
-            "carbon_monoxide": "CO",
+            "o3": "O3",
+            "no2": "NO2",
+            "so2": "SO2",
+            "co": "CO",
         }
-        for key, name in mapping.items():
-            arr = hourly.get(key)
-            if arr:
-                pollutants.append({"name": name, "value": round(arr[0]), "unit": "µg/m³"})
-        forecast = []
-        for i in [24, 48, 72]:
-            if i < len(aqi_values) and i < len(times):
-                forecast.append(
-                    {
-                        "day": times[i][:10],
-                        "aqi": int(round(aqi_values[i])),
-                        "status": get_aqi_category(aqi_values[i]),
-                    }
-                )
+        pollutants = []
+        for key, name in pollutant_map.items():
+            val = iaqi.get(key, {}).get("v")
+            if val is not None:
+                pollutants.append({"name": name, "value": round(val), "unit": "µg/m³"})
+
         return {
-            "value": int(round(current_aqi)),
-            "status": get_aqi_category(current_aqi),
+            "value": int(round(aqi)),
+            "status": get_aqi_category(aqi),
             "pollutants": pollutants,
-            "forecast": forecast,
+            "forecast": [],
         }
     except Exception:
         return None

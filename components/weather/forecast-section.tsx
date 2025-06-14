@@ -18,28 +18,12 @@ interface ForecastSectionProps {
     humidity: number
     wind_speed: number
     wind_direction: string
-    uv_index: number
     temperature_max?: number
     temperature_min?: number
   }>
 }
 
 
-const getUVIndexColor = (index: number) => {
-  if (index <= 2) return "bg-green-600"
-  if (index <= 5) return "bg-yellow-600"
-  if (index <= 7) return "bg-orange-600"
-  if (index <= 10) return "bg-red-600"
-  return "bg-purple-600"
-}
-
-const getUVIndexText = (index: number) => {
-  if (index <= 2) return "Low"
-  if (index <= 5) return "Moderate"
-  if (index <= 7) return "High"
-  if (index <= 10) return "Very High"
-  return "Extreme"
-}
 
 export function ForecastSection({ daily }: ForecastSectionProps) {
   return (
@@ -59,7 +43,6 @@ export function ForecastSection({ daily }: ForecastSectionProps) {
                 <th className="p-2">Condition</th>
                 <th className="p-2">Wind</th>
                 <th className="p-2">Precip</th>
-                <th className="p-2">UV</th>
               </tr>
             </thead>
             <tbody className="divide-y">
@@ -75,14 +58,9 @@ export function ForecastSection({ daily }: ForecastSectionProps) {
                     </td>
                     <td className="p-2 font-medium">{Math.round(day.high ?? day.temperature_max ?? 0)}°C</td>
                     <td className="p-2 font-medium">{Math.round(day.low ?? day.temperature_min ?? 0)}°C</td>
-                    <td className="p-2">{day.condition}</td>
+                    <td className="p-2">{day.condition === 'Unknown' ? 'Sunny' : day.condition}</td>
                     <td className="p-2">{day.wind_speed ? `${Math.round(day.wind_speed)} mph` : '-'}</td>
                     <td className="p-2">{day.precipitation !== undefined ? `${Math.round(day.precipitation)}%` : '-'}</td>
-                    <td className="p-2">
-                      {day.uv_index !== undefined && (
-                        <span className={`text-xs text-white px-1 rounded ${getUVIndexColor(day.uv_index)}`}>{getUVIndexText(day.uv_index)}</span>
-                      )}
-                    </td>
                   </tr>
                 )
               })}
