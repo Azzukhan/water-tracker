@@ -1,8 +1,6 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Wind, Droplets, Calendar } from "lucide-react"
 import { getWeatherIcon } from "@/lib/weather-icons"
 
 interface ForecastSectionProps {
@@ -41,8 +39,7 @@ export function ForecastSection({ daily }: ForecastSectionProps) {
                 <th className="p-2">High</th>
                 <th className="p-2">Low</th>
                 <th className="p-2">Condition</th>
-                <th className="p-2">Wind</th>
-                <th className="p-2">Precip</th>
+                <th className="p-2">Rain</th>
               </tr>
             </thead>
             <tbody className="divide-y">
@@ -58,8 +55,12 @@ export function ForecastSection({ daily }: ForecastSectionProps) {
                     </td>
                     <td className="p-2 font-medium">{Math.round(day.high ?? day.temperature_max ?? 0)}°C</td>
                     <td className="p-2 font-medium">{Math.round(day.low ?? day.temperature_min ?? 0)}°C</td>
-                    <td className="p-2">{day.condition === 'Unknown' ? 'Sunny' : day.condition}</td>
-                    <td className="p-2">{day.wind_speed ? `${Math.round(day.wind_speed)} mph` : '-'}</td>
+                    <td className="p-2">
+                      <div className="flex items-center justify-center space-x-1">
+                        <Icon className="h-4 w-4 text-blue-500" />
+                        <span>{day.condition === 'Unknown' ? 'Sunny' : day.condition}</span>
+                      </div>
+                    </td>
                     <td className="p-2">{day.precipitation !== undefined ? `${Math.round(day.precipitation)}%` : '-'}</td>
                   </tr>
                 )
