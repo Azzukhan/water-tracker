@@ -74,7 +74,7 @@ export function AirQuality({ aqi }: AirQualityProps) {
     pollutants = [],
     forecast = []
   } = aqi
-  const valueNum = typeof value === 'number' ? Math.round(value) : 0
+  const valueNum = typeof value === 'number' ? Math.round(value) : undefined
   const statusStr = typeof status === 'string' ? status : '-'
   const descStr = typeof description === 'string' ? description : '-'
   const StatusIcon = getStatusIcon(statusStr)
@@ -101,10 +101,10 @@ export function AirQuality({ aqi }: AirQualityProps) {
         <div className="space-y-6">
           {/* Main AQI Display */}
           <div className="text-center">
-            <div className="text-4xl font-bold text-gray-900 mb-2">{valueNum}</div>
+            <div className="text-4xl font-bold text-gray-900 mb-2">{valueNum ?? '-'}</div>
             <div className="flex items-center justify-center space-x-2">
-              <Badge className={`${getAQIColor(valueNum)} text-white`}>
-                {getAQIText(valueNum)}
+              <Badge className={`${getAQIColor(valueNum ?? 0)} text-white`}>
+                {getAQIText(valueNum ?? 0)}
               </Badge>
             </div>
             <p className="text-sm text-gray-600 mt-2">{descStr}</p>
