@@ -101,22 +101,6 @@ interface WeatherData {
   };
 }
 
-// Optionally, list your station IDs/names for dropdown
-const STATION_OPTIONS = [
-  { id: 1, name: "London, UK" },
-  { id: 2, name: "Manchester, UK" },
-  // ...
-];
-
-const DUMMY_POLLUTANTS = [
-  { name: "PM2.5", value: 12, unit: "µg/m³", label: "Good" },
-  { name: "PM10", value: 18, unit: "µg/m³", label: "Good" },
-  { name: "NO2", value: 28, unit: "µg/m³", label: "Moderate" },
-  { name: "O3", value: 65, unit: "µg/m³", label: "Good" },
-  { name: "SO2", value: 8, unit: "µg/m³", label: "Good" },
-  { name: "CO", value: 0.6, unit: "mg/m³", label: "Good" },
-];
-
 const DEFAULT_LOCATION: Location = {
   name: "London, England",
   lat: 51.5074,
@@ -133,9 +117,7 @@ export default function WeatherPage() {
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [lastGoodWeather, setLastGoodWeather] = useState<WeatherData | null>(
-    null,
-  );
+  const [lastGoodWeather, setLastGoodWeather] = useState<WeatherData | null>(null);
   const searchTimeout = useRef<NodeJS.Timeout | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -148,7 +130,7 @@ export default function WeatherPage() {
           const { latitude, longitude } = position.coords;
           try {
             const response = await fetch(
-              `/api/weather/geocode?latitude=${latitude}&longitude=${longitude}`,
+              `/api/weather/geocode?latitude=${latitude}&longitude=${longitude}`
             );
             const data = await response.json();
             if (data.locations && data.locations.length > 0) {
@@ -170,7 +152,7 @@ export default function WeatherPage() {
         },
         () => {
           if (!didCancel) setLocation(DEFAULT_LOCATION);
-        },
+        }
       );
     } else {
       setLocation(DEFAULT_LOCATION);
@@ -187,12 +169,9 @@ export default function WeatherPage() {
 
   useEffect(() => {
     if (!location) return;
-    const id = setInterval(
-      () => {
-        fetchWeather(location);
-      },
-      10 * 60 * 1000,
-    );
+    const id = setInterval(() => {
+      fetchWeather(location);
+    }, 10 * 60 * 1000);
     return () => clearInterval(id);
   }, [location]);
 
@@ -223,7 +202,7 @@ export default function WeatherPage() {
     searchTimeout.current = setTimeout(async () => {
       try {
         const response = await fetch(
-          `/api/weather/geocode?q=${encodeURIComponent(searchQuery)}`,
+          `/api/weather/geocode?q=${encodeURIComponent(searchQuery)}`
         );
         const data = await response.json();
         setSearchResults(data.locations || []);
@@ -241,7 +220,7 @@ export default function WeatherPage() {
     setError(null);
     try {
       const response = await fetch(
-        `/api/weather/unified/?latitude=${loc.lat}&longitude=${loc.lon}`,
+        `/api/weather/unified/?latitude=${loc.lat}&longitude=${loc.lon}`
       );
       if (!response.ok) throw new Error("Failed to fetch weather data");
       const data = await response.json();
@@ -373,7 +352,7 @@ export default function WeatherPage() {
                         setSearchError(null);
                         try {
                           const response = await fetch(
-                            `/api/weather/geocode?q=${encodeURIComponent(searchQuery)}`,
+                            `/api/weather/geocode?q=${encodeURIComponent(searchQuery)}`
                           );
                           const data = await response.json();
                           if (data.locations && data.locations.length > 0) {
@@ -399,7 +378,7 @@ export default function WeatherPage() {
                         setSearchError(null);
                         try {
                           const response = await fetch(
-                            `/api/weather/geocode?q=${encodeURIComponent(searchQuery)}`,
+                            `/api/weather/geocode?q=${encodeURIComponent(searchQuery)}`
                           );
                           const data = await response.json();
                           if (data.locations && data.locations.length > 0) {
@@ -460,7 +439,7 @@ export default function WeatherPage() {
                         const { latitude, longitude } = position.coords;
                         try {
                           const response = await fetch(
-                            `/api/weather/geocode?latitude=${latitude}&longitude=${longitude}`,
+                            `/api/weather/geocode?latitude=${latitude}&longitude=${longitude}`
                           );
                           const data = await response.json();
                           if (data.locations && data.locations.length > 0) {
@@ -480,7 +459,7 @@ export default function WeatherPage() {
                           });
                         }
                       },
-                      () => setLocation(DEFAULT_LOCATION),
+                      () => setLocation(DEFAULT_LOCATION)
                     );
                   } else {
                     setLocation(DEFAULT_LOCATION);
