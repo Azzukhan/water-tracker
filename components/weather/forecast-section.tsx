@@ -34,35 +34,28 @@ export function ForecastSection({ daily }: ForecastSectionProps) {
         <div className="overflow-x-auto">
           <table className="w-full text-center">
             <thead>
-              <tr className="border-b text-sm">
-                <th className="p-2 text-left">Day</th>
-                <th className="p-2">High</th>
-                <th className="p-2">Low</th>
-                <th className="p-2">Condition</th>
-                <th className="p-2">Rain</th>
-              </tr>
+                <tr className="border-b text-sm">
+                  <th className="p-2 text-left">Day</th>
+                  <th className="p-2">High</th>
+                  <th className="p-2">Low</th>
+                  <th className="p-2">Rain</th>
+                </tr>
             </thead>
             <tbody className="divide-y">
               {daily.map((day, idx) => {
                 const Icon = getWeatherIcon(day.icon)
                 return (
-                  <tr key={day.date + '-' + idx} className="text-sm">
-                    <td className="p-2 text-left">
-                      <div className="flex items-center space-x-2">
-                        <Icon className="h-4 w-4 text-blue-500" />
-                        <span className="font-medium">{day.day}</span>
-                      </div>
-                    </td>
-                    <td className="p-2 font-medium">{Math.round(day.high ?? day.temperature_max ?? 0)}°C</td>
-                    <td className="p-2 font-medium">{Math.round(day.low ?? day.temperature_min ?? 0)}°C</td>
-                    <td className="p-2">
-                      <div className="flex items-center justify-center space-x-1">
-                        <Icon className="h-4 w-4 text-blue-500" />
-                        <span>{day.condition === 'Unknown' ? 'Sunny' : day.condition}</span>
-                      </div>
-                    </td>
-                    <td className="p-2">{day.precipitation !== undefined ? `${Math.round(day.precipitation)}%` : '-'}</td>
-                  </tr>
+                    <tr key={day.date + '-' + idx} className="text-sm">
+                      <td className="p-2 text-left">
+                        <div className="flex items-center space-x-2">
+                          <Icon className="h-4 w-4 text-blue-500" />
+                          <span className="font-medium">{day.day}</span>
+                        </div>
+                      </td>
+                      <td className="p-2 font-medium">{Math.round(day.high ?? day.temperature_max ?? 0)}°C</td>
+                      <td className="p-2 font-medium">{Math.round(day.low ?? day.temperature_min ?? 0)}°C</td>
+                      <td className="p-2">{day.precipitation !== undefined ? `${Math.round(day.precipitation)}%` : '-'}</td>
+                    </tr>
                 )
               })}
             </tbody>

@@ -36,7 +36,11 @@ export function HourlyForecast({ hourly }: HourlyForecastProps) {
                   <div className="text-sm text-gray-600">{hour.condition === 'Unknown' ? 'Sunny' : hour.condition}</div>
                   <div className="flex items-center mt-2">
                     <Droplet className="h-4 w-4 text-gray-500 mr-1" />
-                    <span className="text-sm">{Math.round(hour.precipitation_probability)}%</span>
+                    <span className="text-sm">
+                      {hour.precipitation_probability != null
+                        ? `${Math.round(hour.precipitation_probability)}%`
+                        : "-"}
+                    </span>
                   </div>
                 </div>
               )
@@ -46,4 +50,4 @@ export function HourlyForecast({ hourly }: HourlyForecastProps) {
       </CardContent>
     </Card>
   )
-} 
+}
