@@ -56,6 +56,7 @@ export function RainRadar() {
           <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-100">
             <RainRadarMap />
           </div>
+          <p className="text-xs text-gray-500 text-center">Use scroll or the +/- controls to zoom</p>
           {/* Legend */}
           <div className="p-4 bg-gray-50 rounded-lg">
             <div className="text-sm text-gray-600">

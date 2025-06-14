@@ -24,8 +24,9 @@ export function HourlyForecast({ hourly }: HourlyForecastProps) {
         <div className="overflow-x-auto">
           <div className="flex space-x-4 min-w-max">
             {hourly.map((hour, idx) => {
-              const WeatherIcon = getWeatherIcon(hour.icon)
               const time = new Date(hour.time)
+              const isNight = time.getHours() < 6 || time.getHours() >= 18
+              const WeatherIcon = getWeatherIcon(hour.icon, isNight)
               const formattedTime = String(time.getHours())
 
               return (
