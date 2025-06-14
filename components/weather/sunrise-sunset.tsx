@@ -1,7 +1,6 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { Sun, Moon, Sunrise, Sunset, Clock } from "lucide-react"
 
 interface SunriseSunsetProps {
@@ -27,27 +26,6 @@ interface SunriseSunsetProps {
   }
 }
 
-const DEFAULT_SUN = {
-  sunrise: "06:00",
-  sunset: "18:00",
-  day_length: "12h 00m",
-  solar_noon: "12:00",
-  civil_twilight_begin: "05:30",
-  civil_twilight_end: "18:30",
-  nautical_twilight_begin: "04:45",
-  nautical_twilight_end: "19:15",
-  astronomical_twilight_begin: "04:00",
-  astronomical_twilight_end: "20:00"
-}
-
-const DEFAULT_MOON = {
-  phase: "Waxing Crescent",
-  illumination: 45,
-  rise: "10:00",
-  set: "22:00",
-  next_phase: "First Quarter",
-  next_phase_date: "Tomorrow"
-}
 
 export function SunriseSunset({ sun, moon }: SunriseSunsetProps) {
   if (!sun && !moon) {
@@ -107,34 +85,51 @@ export function SunriseSunset({ sun, moon }: SunriseSunsetProps) {
   return (
     <Card className="shadow-lg border-0">
       <CardHeader className="bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 dark:text-white">
-        <CardTitle className="text-2xl font-bold">Sun & Moon</CardTitle>
+        <CardTitle className="text-2xl font-bold flex items-center space-x-2">
+          <Sun className="h-6 w-6" />
+          <span>Sun & Moon</span>
+        </CardTitle>
       </CardHeader>
       <CardContent className="p-6">
         <div className="grid grid-cols-2 gap-6">
-          <div>
-            <div className="font-semibold text-gray-900 mb-2">Sunrise</div>
-            <div className="text-lg text-yellow-600">{sunrise}</div>
-            <div className="font-semibold text-gray-900 mt-4 mb-2">Sunset</div>
-            <div className="text-lg text-orange-600">{sunset}</div>
-            <div className="font-semibold text-gray-900 mt-4 mb-2">Day Length</div>
-            <div className="text-lg text-gray-700">{day_length}</div>
+          <div className="space-y-3">
+            <div className="flex items-center space-x-2">
+              <Sunrise className="h-5 w-5 text-yellow-600" />
+              <span className="font-medium text-gray-900">Sunrise:</span>
+              <span className="text-gray-700">{sunrise}</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Sunset className="h-5 w-5 text-orange-600" />
+              <span className="font-medium text-gray-900">Sunset:</span>
+              <span className="text-gray-700">{sunset}</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Clock className="h-5 w-5 text-gray-600" />
+              <span className="font-medium text-gray-900">Day Length:</span>
+              <span className="text-gray-700">{day_length}</span>
+            </div>
           </div>
-          {(moonrise !== '-' || moonset !== '-') && (
-            <div>
+          {(moonrise !== '-' || moonset !== '-' || phase !== '-') && (
+            <div className="space-y-3">
               {moonrise !== '-' && (
-                <>
-                  <div className="font-semibold text-gray-900 mb-2">Moonrise</div>
-                  <div className="text-lg text-indigo-600">{moonrise}</div>
-                </>
+                <div className="flex items-center space-x-2">
+                  <Moon className="h-5 w-5 text-indigo-600" />
+                  <span className="font-medium text-gray-900">Moonrise:</span>
+                  <span className="text-gray-700">{moonrise}</span>
+                </div>
               )}
               {moonset !== '-' && (
-                <>
-                  <div className="font-semibold text-gray-900 mt-4 mb-2">Moonset</div>
-                  <div className="text-lg text-indigo-800">{moonset}</div>
-                </>
+                <div className="flex items-center space-x-2">
+                  <Moon className="h-5 w-5 text-indigo-800" />
+                  <span className="font-medium text-gray-900">Moonset:</span>
+                  <span className="text-gray-700">{moonset}</span>
+                </div>
               )}
-              <div className="font-semibold text-gray-900 mt-4 mb-2">Phase</div>
-              <div className="text-lg text-gray-700">{phase}</div>
+              <div className="flex items-center space-x-2">
+                <Moon className="h-5 w-5 text-gray-600" />
+                <span className="font-medium text-gray-900">Phase:</span>
+                <span className="text-gray-700">{phase}</span>
+              </div>
             </div>
           )}
         </div>

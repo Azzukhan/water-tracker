@@ -83,7 +83,7 @@ export function CurrentConditions({
             <div>
               <div className="text-4xl font-bold">{Math.round(temperature)}°C</div>
               <div className="text-gray-600">Feels like {Math.round(feels_like)}°C</div>
-              <div className="text-lg font-medium">{description}</div>
+              <div className="text-lg font-medium">{description === 'Unknown' ? 'Sunny' : description}</div>
             </div>
           </div>
 
