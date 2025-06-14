@@ -23,7 +23,6 @@ import traceback
 
 TOMORROW_API_KEY = os.getenv("TOMORROW_API_KEY", "0pf6M1hLTRzQHdAY0dQuAcl5R1YP5G5X")
 
-# Example mapping for weather codes (expand as needed)
 WEATHER_CODE_MAP = {
     1000: {"description": "Clear", "icon": "☀️"},
     1100: {"description": "Mostly Clear", "icon": "🌤️"},
@@ -40,14 +39,7 @@ def get_weather_info(code):
 
 
 def haversine_distance(lat1, lon1, lat2, lon2):
-    """
-    Calculate the great circle distance between two points
-    on the earth (specified in decimal degrees)
-    """
-    # Convert decimal degrees to radians
     lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
-
-    # Haversine formula
     dlon = lon2 - lon1
     dlat = lat2 - lat1
     a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
@@ -94,7 +86,6 @@ class GeocodeAPIView(APIView):
 
 class PopularLocationsAPIView(APIView):
     def get(self, request):
-        # List of popular UK cities
         cities = [
             {"name": "London", "query": "London, England"},
             {"name": "Manchester", "query": "Manchester, England"},
@@ -109,7 +100,6 @@ class PopularLocationsAPIView(APIView):
             if resp.status_code == 200 and resp.json():
                 data = resp.json()[0]
                 lat, lon = float(data["lat"]), float(data["lon"])
-                # Find nearest station
                 stations = WeatherStation.objects.filter(is_active=True)
                 if stations.exists():
                     nearest_station = min(
@@ -162,7 +152,6 @@ class UnifiedWeatherAPIView(APIView):
 
         try:
             lat, lon = float(latitude), float(longitude)
-            # Find the nearest active weather station within 10km
             stations = WeatherStation.objects.filter(is_active=True)
             nearest_station = None
             min_dist = float("inf")
@@ -172,7 +161,6 @@ class UnifiedWeatherAPIView(APIView):
                     min_dist = dist
                     nearest_station = s
             if nearest_station is None or min_dist > 10:
-                # Create a new station if none within 10km
                 display_name = None
                 try:
                     resp = requests.get(
@@ -220,11 +208,9 @@ class UnifiedWeatherAPIView(APIView):
                     return Response(
                         {"error": "Failed to retrieve weather data"}, status=500
                     )
-            # Get hourly forecast
             hourly = HourlyForecast.objects.filter(
                 station=nearest_station, time__gt=timezone.now()
             ).order_by("time")[:24]
-            # Get daily forecast
             daily = DailyForecast.objects.filter(
                 station=nearest_station, date__gte=timezone.now().date()
             ).order_by("date")[:7]
@@ -275,7 +261,9 @@ class UnifiedWeatherAPIView(APIView):
                         "sunrise": (
                             d.sunrise_time.isoformat() if d.sunrise_time else None
                         ),
-                        "sunset": d.sunset_time.isoformat() if d.sunset_time else None,
+                        "sunset": (
+                            d.sunset_time.isoformat() if d.sunset_time else None
+                        ),
                     }
                     for d in daily
                 ],
