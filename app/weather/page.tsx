@@ -152,6 +152,14 @@ export default function WeatherPage() {
   }, [location])
 
   useEffect(() => {
+    if (!location) return
+    const id = setInterval(() => {
+      fetchWeather(location)
+    }, 10 * 60 * 1000)
+    return () => clearInterval(id)
+  }, [location])
+
+  useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setShowDropdown(false)
@@ -191,14 +199,6 @@ export default function WeatherPage() {
     setError(null)
     try {
       const response = await fetch(`/api/weather/unified/?latitude=${loc.lat}&longitude=${loc.lon}`)
-      if (response.status === 202) {
-        // Backend is fetching data, retry after a short delay
-        const data = await response.json()
-        setError(data.message || "Fetching weather data for this location. Please wait...")
-        setTimeout(() => fetchWeather(loc, retry + 1), 3000)
-        setLoading(false)
-        return
-      }
       if (!response.ok) throw new Error("Failed to fetch weather data")
       const data = await response.json()
       const transformed: WeatherData = {

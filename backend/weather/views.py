@@ -12,7 +12,7 @@ from .serializers import (
 from rest_framework.views import APIView
 from django.db.models import F
 from math import radians, cos, sin, asin, sqrt
-from .tasks import update_weather_for_location
+from .tasks import update_weather_for_location, fetch_and_update_weather
 from django.utils import timezone
 import requests
 import os
@@ -157,15 +157,14 @@ class UnifiedWeatherAPIView(APIView):
                     longitude=lon,
                     is_active=True
                 )
-                # Trigger Celery task to fetch weather
-                update_weather_for_location.delay(nearest_station.id)
-                return Response({'status': 'fetching', 'message': 'Weather data is being fetched for this location. Please retry in a few seconds.'}, status=202)
+                fetch_and_update_weather(nearest_station.id)
             # Get current weather
             current = CurrentWeather.objects.filter(station=nearest_station).order_by('-timestamp').first()
-            if not current:
-                # Trigger Celery task if not already fetched
-                update_weather_for_location.delay(nearest_station.id)
-                return Response({'status': 'fetching', 'message': 'Weather data is being fetched for this location. Please retry in a few seconds.'}, status=202)
+            if not current or (timezone.now() - current.timestamp) > timedelta(minutes=30):
+                fetch_and_update_weather(nearest_station.id)
+                current = CurrentWeather.objects.filter(station=nearest_station).order_by('-timestamp').first()
+                if not current:
+                    return Response({'error': 'Failed to retrieve weather data'}, status=500)
             # Get hourly forecast
             hourly = HourlyForecast.objects.filter(
                 station=nearest_station,
@@ -272,60 +271,3 @@ class DailyForecastViewSet(viewsets.ModelViewSet):
     serializer_class = DailyForecastSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['station']
-
-def update_weather_for_location(self, station_id):
-    # ... (fetch station and Tomorrow.io data as before)
-    station = WeatherStation.objects.get(id=station_id)
-    # Assume weather_data is the parsed JSON from Tomorrow.io
-
-    # Save HourlyForecast
-    for hour in weather_data['timelines']['hourly']:
-        values = hour['values']
-        HourlyForecast.objects.create(
-            station=station,
-            time=hour['time'],
-            temperature=values.get('temperature'),
-            temperature_apparent=values.get('temperatureApparent'),
-            humidity=values.get('humidity'),
-            wind_speed=values.get('windSpeed'),
-            wind_gust=values.get('windGust'),
-            wind_direction=values.get('windDirection'),
-            cloud_cover=values.get('cloudCover'),
-            precipitation_probability=values.get('precipitationProbability'),
-            rain_intensity=values.get('rainIntensity'),
-            snow_intensity=values.get('snowIntensity'),
-            sleet_intensity=values.get('sleetIntensity'),
-            freezing_rain_intensity=values.get('freezingRainIntensity'),
-            dew_point=values.get('dewPoint'),
-            pressure_sea_level=values.get('pressureSeaLevel'),
-            visibility=values.get('visibility'),
-            uv_index=values.get('uvIndex'),
-            weather_code=values.get('weatherCode'),
-        )
-
-    # Save DailyForecast
-    for day in weather_data['timelines']['daily']:
-        values = day['values']
-        DailyForecast.objects.create(
-            station=station,
-            date=day['time'][:10],  # YYYY-MM-DD
-            temperature_max=values.get('temperatureMax'),
-            temperature_min=values.get('temperatureMin'),
-            temperature_avg=values.get('temperatureAvg'),
-            humidity_max=values.get('humidityMax'),
-            humidity_min=values.get('humidityMin'),
-            humidity_avg=values.get('humidityAvg'),
-            wind_speed_max=values.get('windSpeedMax'),
-            wind_speed_min=values.get('windSpeedMin'),
-            wind_speed_avg=values.get('windSpeedAvg'),
-            cloud_cover_max=values.get('cloudCoverMax'),
-            cloud_cover_min=values.get('cloudCoverMin'),
-            cloud_cover_avg=values.get('cloudCoverAvg'),
-            precipitation_probability_max=values.get('precipitationProbabilityMax'),
-            precipitation_probability_min=values.get('precipitationProbabilityMin'),
-            precipitation_probability_avg=values.get('precipitationProbabilityAvg'),
-            sunrise_time=values.get('sunriseTime'),
-            sunset_time=values.get('sunsetTime'),
-            weather_code_max=values.get('weatherCodeMax'),
-            weather_code_min=values.get('weatherCodeMin'),
-        )
