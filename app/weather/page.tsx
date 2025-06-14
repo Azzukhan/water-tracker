@@ -171,7 +171,7 @@ export default function WeatherPage() {
     if (!location) return;
     const id = setInterval(() => {
       fetchWeather(location);
-    }, 10 * 60 * 1000);
+    }, 5 * 60 * 1000); // refresh every 5 minutes
     return () => clearInterval(id);
   }, [location]);
 

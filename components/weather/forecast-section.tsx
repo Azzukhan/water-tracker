@@ -49,34 +49,45 @@ export function ForecastSection({ daily }: ForecastSectionProps) {
         <p className="text-gray-600">Extended weather forecast</p>
       </CardHeader>
       <CardContent className="p-8">
-        <div className="space-y-6">
-          {daily.map((day, idx) => {
-            const Icon = getWeatherIcon(day.icon)
-            return (
-              <div key={day.date + '-' + idx} className="flex items-center justify-between py-2 border-b">
-                <div className="flex items-center gap-2">
-                  <span className="font-medium w-24">{day.day}</span>
-                  <span className="text-gray-500 text-xs">{day.date}</span>
-                </div>
-                <div className="flex items-center gap-4">
-                  <Icon className="h-5 w-5 text-blue-500" />
-                  <span className="text-lg font-bold">{(day.high ?? day.temperature_max) !== undefined ? `${day.high ?? day.temperature_max}°C` : 'N/A'}</span>
-                  <span className="text-lg font-bold">{(day.low ?? day.temperature_min) !== undefined ? `${day.low ?? day.temperature_min}°C` : 'N/A'}</span>
-                  <span className="text-gray-500">{day.condition}</span>
-                  <span className="text-gray-500">{day.wind_speed ? `${day.wind_speed} mph` : ''}</span>
-                  {day.precipitation !== undefined && (
-                    <div className="flex items-center text-sm text-blue-600 gap-1">
-                      <Droplets className="h-4 w-4" />
-                      <span>{day.precipitation}%</span>
-                    </div>
-                  )}
-                  {day.uv_index !== undefined && (
-                    <div className={`text-xs text-white px-1 rounded ${getUVIndexColor(day.uv_index)}`}>{getUVIndexText(day.uv_index)}</div>
-                  )}
-                </div>
-              </div>
-            )
-          })}
+        <div className="overflow-x-auto">
+          <table className="w-full text-center">
+            <thead>
+              <tr className="border-b text-sm">
+                <th className="p-2 text-left">Day</th>
+                <th className="p-2">High</th>
+                <th className="p-2">Low</th>
+                <th className="p-2">Condition</th>
+                <th className="p-2">Wind</th>
+                <th className="p-2">Precip</th>
+                <th className="p-2">UV</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y">
+              {daily.map((day, idx) => {
+                const Icon = getWeatherIcon(day.icon)
+                return (
+                  <tr key={day.date + '-' + idx} className="text-sm">
+                    <td className="p-2 text-left">
+                      <div className="flex items-center space-x-2">
+                        <Icon className="h-4 w-4 text-blue-500" />
+                        <span className="font-medium">{day.day}</span>
+                      </div>
+                    </td>
+                    <td className="p-2 font-medium">{Math.round(day.high ?? day.temperature_max ?? 0)}°C</td>
+                    <td className="p-2 font-medium">{Math.round(day.low ?? day.temperature_min ?? 0)}°C</td>
+                    <td className="p-2">{day.condition}</td>
+                    <td className="p-2">{day.wind_speed ? `${Math.round(day.wind_speed)} mph` : '-'}</td>
+                    <td className="p-2">{day.precipitation !== undefined ? `${Math.round(day.precipitation)}%` : '-'}</td>
+                    <td className="p-2">
+                      {day.uv_index !== undefined && (
+                        <span className={`text-xs text-white px-1 rounded ${getUVIndexColor(day.uv_index)}`}>{getUVIndexText(day.uv_index)}</span>
+                      )}
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
         </div>
       </CardContent>
     </Card>
