@@ -1,0 +1,217 @@
+"use client"
+
+import type React from "react"
+
+import { useState } from "react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { AlertTriangle, Camera, Send, CheckCircle } from "lucide-react"
+
+export function ReportIssueForm() {
+  const [issueData, setIssueData] = useState({
+    issueType: "",
+    location: "",
+    postcode: "",
+    description: "",
+    severity: "",
+    contactName: "",
+    contactPhone: "",
+  })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle")
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+
+    // Simulate form submission
+    setTimeout(() => {
+      setIsSubmitting(false)
+      setSubmitStatus("success")
+      // Reset form after success
+      setTimeout(() => {
+        setIssueData({
+          issueType: "",
+          location: "",
+          postcode: "",
+          description: "",
+          severity: "",
+          contactName: "",
+          contactPhone: "",
+        })
+        setSubmitStatus("idle")
+      }, 3000)
+    }, 2000)
+  }
+
+  if (submitStatus === "success") {
+    return (
+      <Card className="shadow-lg border-0 bg-green-50 border-green-200">
+        <CardContent className="p-6 text-center">
+          <CheckCircle className="h-12 w-12 text-green-600 mx-auto mb-4" />
+          <h3 className="text-lg font-bold text-green-900 mb-2">Issue Reported Successfully!</h3>
+          <p className="text-green-800 text-sm mb-3">Your report has been submitted to the relevant water authority.</p>
+          <div className="text-xs text-green-700">
+            Report ID: <span className="font-mono">WQR-{Date.now().toString().slice(-6)}</span>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  return (
+    <Card className="shadow-lg border-0 sticky top-24">
+      <CardHeader className="bg-gradient-to-r from-red-600 to-orange-600 text-white">
+        <CardTitle className="text-xl font-bold flex items-center">
+          <AlertTriangle className="h-5 w-5 mr-2" />
+          Report Water Issue
+        </CardTitle>
+        <p className="text-red-100 text-sm">Report water quality or service problems</p>
+      </CardHeader>
+
+      <CardContent className="p-6">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Issue Type */}
+          <div>
+            <label className="block text-sm font-medium text-gray-900 mb-2">Issue Type *</label>
+            <Select
+              value={issueData.issueType}
+              onValueChange={(value) => setIssueData((prev) => ({ ...prev, issueType: value }))}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select issue type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="water-quality">Water Quality</SelectItem>
+                <SelectItem value="no-water">No Water Supply</SelectItem>
+                <SelectItem value="low-pressure">Low Water Pressure</SelectItem>
+                <SelectItem value="burst-pipe">Burst Pipe/Leak</SelectItem>
+                <SelectItem value="sewage">Sewage Problem</SelectItem>
+                <SelectItem value="flooding">Flooding</SelectItem>
+                <SelectItem value="billing">Billing Issue</SelectItem>
+                <SelectItem value="other">Other</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Severity */}
+          <div>
+            <label className="block text-sm font-medium text-gray-900 mb-2">Severity *</label>
+            <Select
+              value={issueData.severity}
+              onValueChange={(value) => setIssueData((prev) => ({ ...prev, severity: value }))}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select severity" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="emergency">Emergency</SelectItem>
+                <SelectItem value="urgent">Urgent</SelectItem>
+                <SelectItem value="normal">Normal</SelectItem>
+                <SelectItem value="low">Low Priority</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Location */}
+          <div>
+            <label className="block text-sm font-medium text-gray-900 mb-2">Location *</label>
+            <Input
+              placeholder="Street address or landmark"
+              value={issueData.location}
+              onChange={(e) => setIssueData((prev) => ({ ...prev, location: e.target.value }))}
+              required
+            />
+          </div>
+
+          {/* Postcode */}
+          <div>
+            <label className="block text-sm font-medium text-gray-900 mb-2">Postcode *</label>
+            <Input
+              placeholder="e.g., SW1A 1AA"
+              value={issueData.postcode}
+              onChange={(e) => setIssueData((prev) => ({ ...prev, postcode: e.target.value }))}
+              required
+            />
+          </div>
+
+          {/* Description */}
+          <div>
+            <label className="block text-sm font-medium text-gray-900 mb-2">Description *</label>
+            <Textarea
+              placeholder="Describe the issue in detail..."
+              rows={3}
+              value={issueData.description}
+              onChange={(e) => setIssueData((prev) => ({ ...prev, description: e.target.value }))}
+              required
+            />
+          </div>
+
+          {/* Contact Information */}
+          <div>
+            <label className="block text-sm font-medium text-gray-900 mb-2">Your Name</label>
+            <Input
+              placeholder="Contact name"
+              value={issueData.contactName}
+              onChange={(e) => setIssueData((prev) => ({ ...prev, contactName: e.target.value }))}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-900 mb-2">Phone Number</label>
+            <Input
+              type="tel"
+              placeholder="Contact phone"
+              value={issueData.contactPhone}
+              onChange={(e) => setIssueData((prev) => ({ ...prev, contactPhone: e.target.value }))}
+            />
+          </div>
+
+          {/* Photo Upload */}
+          <div>
+            <label className="block text-sm font-medium text-gray-900 mb-2">Photos (Optional)</label>
+            <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+              <Camera className="h-6 w-6 text-gray-400 mx-auto mb-2" />
+              <div className="text-xs text-gray-600 mb-2">Upload photos of the issue</div>
+              <input type="file" multiple accept="image/*" className="hidden" id="issue-photo-upload" />
+              <Button variant="outline" size="sm" asChild>
+                <label htmlFor="issue-photo-upload" className="cursor-pointer">
+                  Add Photos
+                </label>
+              </Button>
+            </div>
+          </div>
+
+          {/* Submit Button */}
+          <Button type="submit" className="w-full bg-red-600 hover:bg-red-700" disabled={isSubmitting}>
+            {isSubmitting ? (
+              <>
+                <div className="animate-spin h-4 w-4 mr-2 border-2 border-white border-t-transparent rounded-full"></div>
+                Submitting Report...
+              </>
+            ) : (
+              <>
+                <Send className="h-4 w-4 mr-2" />
+                Submit Report
+              </>
+            )}
+          </Button>
+
+          {/* Emergency Notice */}
+          <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+            <div className="flex items-start space-x-2">
+              <AlertTriangle className="h-4 w-4 text-red-600 mt-0.5" />
+              <div className="text-xs text-red-800">
+                <strong>Emergency?</strong> For immediate assistance with water emergencies, call 999 or your local
+                water authority directly.
+              </div>
+            </div>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
+  )
+}
