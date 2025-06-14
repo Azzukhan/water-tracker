@@ -92,17 +92,21 @@ def fetch_astronomy(lat: float, lon: float) -> Optional[Dict[str, Any]]:
         return None
 
 def get_aqi_category(aqi: float) -> str:
-    if aqi <= 50:
-        return "Good"
-    if aqi <= 100:
+    """Return UK DAQI category for the given AQI value."""
+    if aqi <= 3:
+        return "Low"
+    if aqi <= 6:
         return "Moderate"
-    if aqi <= 150:
-        return "Unhealthy for Sensitive Groups"
-    if aqi <= 200:
-        return "Unhealthy"
-    if aqi <= 300:
-        return "Very Unhealthy"
-    return "Hazardous"
+    if aqi <= 9:
+        return "High"
+    return "Very High"
+
+
+def convert_to_uk_daqi(aqi: float) -> int:
+    """Convert WAQI (0-500) value to UK DAQI 1-10 scale."""
+    if aqi is None:
+        return 1
+    return max(1, min(10, round(aqi / 10)))
 
 WAQI_TOKEN = os.getenv(
     "WAQI_TOKEN", "aec42c8095c1320774446550b357ba9edb44ad97"
@@ -120,9 +124,10 @@ def fetch_air_quality(lat: float, lon: float) -> Optional[Dict[str, Any]]:
         data = resp.json()
         if data.get("status") != "ok":
             return None
-        aqi = data.get("data", {}).get("aqi")
-        if aqi is None:
+        aqi_raw = data.get("data", {}).get("aqi")
+        if aqi_raw is None:
             return None
+        aqi = convert_to_uk_daqi(aqi_raw)
 
         iaqi = data.get("data", {}).get("iaqi", {})
         pollutant_map = {
@@ -140,7 +145,7 @@ def fetch_air_quality(lat: float, lon: float) -> Optional[Dict[str, Any]]:
                 pollutants.append({"name": name, "value": round(val), "unit": "µg/m³"})
 
         return {
-            "value": int(round(aqi)),
+            "value": aqi,
             "status": get_aqi_category(aqi),
             "pollutants": pollutants,
             "forecast": [],
