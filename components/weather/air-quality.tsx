@@ -26,29 +26,28 @@ interface AirQualityProps {
 }
 
 const getAQIColor = (aqi: number) => {
-  if (aqi <= 50) return "bg-green-600"
-  if (aqi <= 100) return "bg-yellow-600"
-  if (aqi <= 150) return "bg-orange-600"
-  if (aqi <= 200) return "bg-red-600"
-  if (aqi <= 300) return "bg-purple-600"
-  return "bg-red-800"
+  if (aqi <= 3) return "bg-green-600"
+  if (aqi <= 6) return "bg-yellow-600"
+  if (aqi <= 9) return "bg-orange-600"
+  return "bg-red-600"
 }
 
 const getAQIText = (aqi: number) => {
-  if (aqi <= 50) return "Good"
-  if (aqi <= 100) return "Moderate"
-  if (aqi <= 150) return "Unhealthy for Sensitive Groups"
-  if (aqi <= 200) return "Unhealthy"
-  if (aqi <= 300) return "Very Unhealthy"
-  return "Hazardous"
+  if (aqi <= 3) return "Low"
+  if (aqi <= 6) return "Moderate"
+  if (aqi <= 9) return "High"
+  return "Very High"
 }
 
 const getStatusIcon = (status: string) => {
   switch (status.toLowerCase()) {
-    case "good":
+    case "low":
       return CheckCircle
     case "moderate":
       return Leaf
+    case "high":
+    case "very high":
+      return AlertTriangle
     default:
       return AlertTriangle
   }
