@@ -127,8 +127,8 @@ export default function WeatherPage() {
           try {
             const response = await fetch(`/api/weather/geocode?latitude=${latitude}&longitude=${longitude}`)
             const data = await response.json()
-            if (data.location) {
-              setLocation(data.location)
+            if (data.locations && data.locations.length > 0) {
+              setLocation(data.locations[0])
             } else {
               setLocation({ name: "Current Location", lat: latitude, lon: longitude })
             }
@@ -221,7 +221,7 @@ export default function WeatherPage() {
         pressure: data.current.pressure,
         uv_index: data.current.uv_index,
         icon: data.current.icon,
-        last_updated: data.current.last_updated,
+        last_updated: data.current.timestamp,
         hourly: (data.hourly || []).map((hour: any) => ({
           time: hour.time,
           temperature: hour.temperature,
@@ -387,8 +387,8 @@ export default function WeatherPage() {
                         try {
                           const response = await fetch(`/api/weather/geocode?latitude=${latitude}&longitude=${longitude}`)
                           const data = await response.json()
-                          if (data.location) {
-                            setLocation(data.location)
+                          if (data.locations && data.locations.length > 0) {
+                            setLocation(data.locations[0])
                           } else {
                             setLocation({ name: "Current Location", lat: latitude, lon: longitude })
                           }
