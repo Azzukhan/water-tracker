@@ -20,6 +20,7 @@ from django.conf import settings
 from django.db import models
 from datetime import timedelta
 import traceback
+from typing import Dict, Any, Optional
 
 TOMORROW_API_KEY = os.getenv("TOMORROW_API_KEY", "0pf6M1hLTRzQHdAY0dQuAcl5R1YP5G5X")
 
@@ -33,10 +34,8 @@ WEATHER_CODE_MAP = {
     # ... add more codes as needed
 }
 
-
 def get_weather_info(code):
     return WEATHER_CODE_MAP.get(code, {"description": "Unknown", "icon": "❓"})
-
 
 def haversine_distance(lat1, lon1, lat2, lon2):
     lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
@@ -47,6 +46,94 @@ def haversine_distance(lat1, lon1, lat2, lon2):
     r = 6371  # Radius of earth in kilometers
     return c * r
 
+def fetch_astronomy(lat: float, lon: float) -> Optional[Dict[str, Any]]:
+    """Retrieve sunrise, sunset and moon data from Open-Meteo."""
+    try:
+        today = timezone.now().date().isoformat()
+        url = (
+            "https://api.open-meteo.com/v1/astronomy?"
+            f"latitude={lat}&longitude={lon}&date={today}&timezone=UTC"
+        )
+        resp = requests.get(url, timeout=10)
+        if resp.status_code != 200:
+            return None
+        data = resp.json().get("daily")
+        if not data:
+            return None
+        return {
+            "sunrise": data.get("sunrise", [None])[0],
+            "sunset": data.get("sunset", [None])[0],
+            "day_length": data.get("day_length", [None])[0],
+            "moonrise": data.get("moonrise", [None])[0],
+            "moonset": data.get("moonset", [None])[0],
+            "phase": data.get("moon_phase", [None])[0],
+        }
+    except Exception:
+        return None
+
+def get_aqi_category(aqi: float) -> str:
+    if aqi <= 50:
+        return "Good"
+    if aqi <= 100:
+        return "Moderate"
+    if aqi <= 150:
+        return "Unhealthy for Sensitive Groups"
+    if aqi <= 200:
+        return "Unhealthy"
+    if aqi <= 300:
+        return "Very Unhealthy"
+    return "Hazardous"
+
+def fetch_air_quality(lat: float, lon: float) -> Optional[Dict[str, Any]]:
+    """Retrieve air quality data from Open-Meteo."""
+    try:
+        url = (
+            "https://air-quality-api.open-meteo.com/v1/air-quality?"
+            f"latitude={lat}&longitude={lon}&hourly=european_aqi,pm10,pm2_5,ozone,nitrogen_dioxide,sulphur_dioxide,carbon_monoxide"
+            "&forecast_days=3&timezone=UTC"
+        )
+        resp = requests.get(url, timeout=10)
+        if resp.status_code != 200:
+            return None
+        hourly = resp.json().get("hourly")
+        if not hourly:
+            return None
+        aqi_values = hourly.get("european_aqi", [])
+        times = hourly.get("time", [])
+        if not aqi_values:
+            return None
+        current_aqi = aqi_values[0]
+        pollutants = []
+        mapping = {
+            "pm2_5": "PM2.5",
+            "pm10": "PM10",
+            "ozone": "O3",
+            "nitrogen_dioxide": "NO2",
+            "sulphur_dioxide": "SO2",
+            "carbon_monoxide": "CO",
+        }
+        for key, name in mapping.items():
+            arr = hourly.get(key)
+            if arr:
+                pollutants.append({"name": name, "value": arr[0], "unit": "µg/m³"})
+        forecast = []
+        for i in [24, 48, 72]:
+            if i < len(aqi_values) and i < len(times):
+                forecast.append(
+                    {
+                        "day": times[i][:10],
+                        "aqi": aqi_values[i],
+                        "status": get_aqi_category(aqi_values[i]),
+                    }
+                )
+        return {
+            "value": current_aqi,
+            "status": get_aqi_category(current_aqi),
+            "pollutants": pollutants,
+            "forecast": forecast,
+        }
+    except Exception:
+        return None
 
 class GeocodeAPIView(APIView):
     def get(self, request):
@@ -82,7 +169,6 @@ class GeocodeAPIView(APIView):
             return Response({"locations": results}, status=200)
         else:
             return Response({"locations": []}, status=200)
-
 
 class PopularLocationsAPIView(APIView):
     def get(self, request):
@@ -128,13 +214,11 @@ class PopularLocationsAPIView(APIView):
                     )
         return Response(results)
 
-
 class UnifiedWeatherAPIView(APIView):
     def get(self, request):
         latitude = request.query_params.get("latitude")
         longitude = request.query_params.get("longitude")
         query = request.query_params.get("query")
-
         if (not latitude or not longitude) and query:
             geocode_url = f'https://nominatim.openstreetmap.org/search?q={query}&format=json&limit=1'
             resp = requests.get(geocode_url, headers={'User-Agent': 'uk-water-tracker'})
@@ -144,12 +228,10 @@ class UnifiedWeatherAPIView(APIView):
                 longitude = data['lon']
             else:
                 return Response({'error': 'Location not found'}, status=404)
-
         if not latitude or not longitude:
             return Response(
                 {"error": "Latitude and longitude are required"}, status=400
             )
-
         try:
             lat, lon = float(latitude), float(longitude)
             stations = WeatherStation.objects.filter(is_active=True)
@@ -172,7 +254,6 @@ class UnifiedWeatherAPIView(APIView):
                         display_name = resp.json().get("display_name")
                 except Exception:
                     display_name = None
-
                 if display_name:
                     parts = [p.strip() for p in display_name.split(",")]
                     name = parts[0]
@@ -180,7 +261,6 @@ class UnifiedWeatherAPIView(APIView):
                 else:
                     name = f"Custom Location ({lat:.4f}, {lon:.4f})"
                     location = f"Lat {lat:.4f}, Lon {lon:.4f}"
-
                 nearest_station = WeatherStation.objects.create(
                     name=name,
                     location=location,
@@ -189,7 +269,6 @@ class UnifiedWeatherAPIView(APIView):
                     is_active=True,
                 )
                 fetch_and_update_weather(nearest_station.id)
-            # Get current weather
             current = (
                 CurrentWeather.objects.filter(station=nearest_station)
                 .order_by("-timestamp")
@@ -214,6 +293,8 @@ class UnifiedWeatherAPIView(APIView):
             daily = DailyForecast.objects.filter(
                 station=nearest_station, date__gte=timezone.now().date()
             ).order_by("date")[:7]
+            astronomy = fetch_astronomy(lat, lon) or {}
+            air_quality = fetch_air_quality(lat, lon) or {}
             response = {
                 "location": {
                     "name": nearest_station.name,
@@ -267,6 +348,17 @@ class UnifiedWeatherAPIView(APIView):
                     }
                     for d in daily
                 ],
+                "sun": {
+                    "sunrise": astronomy.get("sunrise"),
+                    "sunset": astronomy.get("sunset"),
+                    "day_length": astronomy.get("day_length"),
+                },
+                "moon": {
+                    "rise": astronomy.get("moonrise"),
+                    "set": astronomy.get("moonset"),
+                    "phase": astronomy.get("phase"),
+                },
+                "aqi": air_quality,
             }
             return Response(response, status=200)
         except Exception as e:
@@ -275,7 +367,6 @@ class UnifiedWeatherAPIView(APIView):
             return Response(
                 {"error": "Internal server error", "details": str(e)}, status=500
             )
-
 
 class WeatherStationViewSet(viewsets.ModelViewSet):
     queryset = WeatherStation.objects.all()
@@ -314,20 +405,17 @@ class WeatherStationViewSet(viewsets.ModelViewSet):
         serializer = DailyForecastSerializer(forecasts, many=True)
         return Response(serializer.data)
 
-
 class CurrentWeatherViewSet(viewsets.ModelViewSet):
     queryset = CurrentWeather.objects.all().order_by("-timestamp")
     serializer_class = CurrentWeatherSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["station"]
 
-
 class HourlyForecastViewSet(viewsets.ModelViewSet):
     queryset = HourlyForecast.objects.all().order_by("time")
     serializer_class = HourlyForecastSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["station"]
-
 
 class DailyForecastViewSet(viewsets.ModelViewSet):
     queryset = DailyForecast.objects.all().order_by("date")
