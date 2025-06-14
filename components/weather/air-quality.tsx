@@ -58,7 +58,7 @@ export function AirQuality({ aqi }: AirQualityProps) {
   if (!aqi) {
     return (
       <Card className="shadow-lg border-0">
-        <CardHeader className="bg-gradient-to-r from-green-500 to-emerald-600 text-white">
+        <CardHeader className="bg-gradient-to-r from-green-500 to-emerald-600 text-gray-900 dark:text-white">
           <CardTitle className="text-2xl font-bold">Air Quality</CardTitle>
         </CardHeader>
         <CardContent className="p-6">
@@ -80,7 +80,7 @@ export function AirQuality({ aqi }: AirQualityProps) {
   const StatusIcon = getStatusIcon(statusStr)
   return (
     <Card className="shadow-lg border-0">
-      <CardHeader className="bg-gradient-to-r from-green-500 to-emerald-600 text-white">
+      <CardHeader className="bg-gradient-to-r from-green-500 to-emerald-600 text-gray-900 dark:text-white">
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="text-2xl font-bold">Air Quality</CardTitle>

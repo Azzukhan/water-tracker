@@ -132,7 +132,7 @@ export function CurrentConditions({
               </svg>
               <div>
                 <div className="text-sm text-gray-600">UV Index</div>
-                <div className={`font-medium text-white px-2 rounded ${getUVIndexColor(uv_index)}`}>{uv_index} ({getUVIndexText(uv_index)})</div>
+                <div className={`font-medium px-2 rounded ${getUVIndexColor(uv_index)} text-gray-900 dark:text-white`}>{uv_index} ({getUVIndexText(uv_index)})</div>
               </div>
             </div>
           </div>

@@ -67,7 +67,7 @@ export function LocationInput({ weather, onLocationSelect }: LocationInputProps)
 
   return (
     <Card className="shadow-lg border-0">
-      <CardHeader className="bg-gradient-to-r from-sky-500 to-blue-600 text-white">
+      <CardHeader className="bg-gradient-to-r from-sky-500 to-blue-600 text-gray-900 dark:text-white">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
           <div>
             <CardTitle className="text-2xl font-bold">Weather Location</CardTitle>

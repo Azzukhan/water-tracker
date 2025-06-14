@@ -53,7 +53,7 @@ export function SunriseSunset({ sun, moon }: SunriseSunsetProps) {
   if (!sun && !moon) {
     return (
       <Card className="shadow-lg border-0">
-        <CardHeader className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white">
+        <CardHeader className="bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 dark:text-white">
           <CardTitle className="text-2xl font-bold">Sun & Moon</CardTitle>
         </CardHeader>
         <CardContent className="p-6">
@@ -106,7 +106,7 @@ export function SunriseSunset({ sun, moon }: SunriseSunsetProps) {
 
   return (
     <Card className="shadow-lg border-0">
-      <CardHeader className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white">
+      <CardHeader className="bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 dark:text-white">
         <CardTitle className="text-2xl font-bold">Sun & Moon</CardTitle>
       </CardHeader>
       <CardContent className="p-6">

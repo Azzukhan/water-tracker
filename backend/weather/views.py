@@ -18,7 +18,7 @@ import requests
 import os
 from django.conf import settings
 from django.db import models
-from datetime import timedelta
+from datetime import datetime, timedelta
 import traceback
 from typing import Dict, Any, Optional
 
@@ -100,9 +100,18 @@ def fetch_air_quality(lat: float, lon: float) -> Optional[Dict[str, Any]]:
             return None
         aqi_values = hourly.get("european_aqi", [])
         times = hourly.get("time", [])
-        if not aqi_values:
+        if not aqi_values or not times:
             return None
         current_aqi = aqi_values[0]
+        try:
+            now = timezone.now()
+            idx = min(
+                range(len(times)),
+                key=lambda i: abs(datetime.fromisoformat(times[i]) - now),
+            )
+            current_aqi = aqi_values[idx]
+        except Exception:
+            pass
         pollutants = []
         mapping = {
             "pm2_5": "PM2.5",
@@ -295,6 +304,23 @@ class UnifiedWeatherAPIView(APIView):
             ).order_by("date")[:7]
             astronomy = fetch_astronomy(lat, lon) or {}
             air_quality = fetch_air_quality(lat, lon) or {}
+
+            sunrise_val = astronomy.get("sunrise")
+            sunset_val = astronomy.get("sunset")
+            day_len = astronomy.get("day_length")
+            if (not sunrise_val or not sunset_val) and daily:
+                first = daily[0]
+                if not sunrise_val and first.sunrise_time:
+                    sunrise_val = first.sunrise_time.isoformat()
+                if not sunset_val and first.sunset_time:
+                    sunset_val = first.sunset_time.isoformat()
+            if not day_len and sunrise_val and sunset_val:
+                try:
+                    sr = datetime.fromisoformat(sunrise_val)
+                    ss = datetime.fromisoformat(sunset_val)
+                    day_len = str(int((ss - sr).total_seconds()))
+                except Exception:
+                    pass
             response = {
                 "location": {
                     "name": nearest_station.name,
@@ -349,9 +375,9 @@ class UnifiedWeatherAPIView(APIView):
                     for d in daily
                 ],
                 "sun": {
-                    "sunrise": astronomy.get("sunrise"),
-                    "sunset": astronomy.get("sunset"),
-                    "day_length": astronomy.get("day_length"),
+                    "sunrise": sunrise_val,
+                    "sunset": sunset_val,
+                    "day_length": day_len,
                 },
                 "moon": {
                     "rise": astronomy.get("moonrise"),
