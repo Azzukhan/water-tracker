@@ -13,6 +13,8 @@ export function getWeatherIcon(icon: string) {
       return CloudDrizzle
     case "snow":
       return CloudSnow
+    case "sleet":
+      return CloudSnow
     case "thunderstorm":
       return CloudLightning
     case "fog":

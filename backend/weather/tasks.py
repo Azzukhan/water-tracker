@@ -9,25 +9,56 @@ import time
 from celery.signals import task_failure
 from django.core.cache import cache
 
-TOMORROW_API_KEY = os.getenv('TOMORROW_API_KEY', '0pf6M1hLTRzQHdAY0dQuAcl5R1YP5G5X')
-RATE_LIMIT_KEY = 'tomorrow_io_rate_limit'
+TOMORROW_API_KEY = os.getenv("TOMORROW_API_KEY", "0pf6M1hLTRzQHdAY0dQuAcl5R1YP5G5X")
+RATE_LIMIT_KEY = "tomorrow_io_rate_limit"
 RATE_LIMIT_WINDOW = 60  # 1 minute window
 MAX_REQUESTS_PER_WINDOW = 100  # Tomorrow.io free tier limit
+
+# Basic mapping of Tomorrow.io weather codes to simple icon names and
+# descriptive text used by the frontend. This is not exhaustive but
+# covers the common codes we expect to see.
+WEATHER_CODE_MAP = {
+    1000: ("Clear", "clear"),
+    1100: ("Mostly Clear", "clear"),
+    1101: ("Partly Cloudy", "partly_cloudy"),
+    1102: ("Mostly Cloudy", "mostly_cloudy"),
+    1001: ("Cloudy", "cloudy"),
+    2000: ("Fog", "fog"),
+    4000: ("Drizzle", "drizzle"),
+    4001: ("Rain", "rain"),
+    4200: ("Light Rain", "rain"),
+    4201: ("Heavy Rain", "rain"),
+    5000: ("Snow", "snow"),
+    5100: ("Light Snow", "snow"),
+    5101: ("Heavy Snow", "snow"),
+    6000: ("Freezing Drizzle", "sleet"),
+    6001: ("Freezing Rain", "sleet"),
+    6200: ("Light Freezing Rain", "sleet"),
+    6201: ("Heavy Freezing Rain", "sleet"),
+    7000: ("Ice Pellets", "sleet"),
+    7101: ("Heavy Ice Pellets", "sleet"),
+    8000: ("Thunderstorm", "thunderstorm"),
+}
+
+
+def code_to_desc_icon(code: int):
+    return WEATHER_CODE_MAP.get(code, ("Unknown", "clear"))
+
 
 def check_rate_limit():
     """Check if we're within rate limits for Tomorrow.io API"""
     current_time = time.time()
     window_start = current_time - RATE_LIMIT_WINDOW
-    
+
     # Get existing requests in the window
     requests_in_window = cache.get(RATE_LIMIT_KEY, [])
-    
+
     # Remove old requests outside the window
     requests_in_window = [t for t in requests_in_window if t > window_start]
-    
+
     if len(requests_in_window) >= MAX_REQUESTS_PER_WINDOW:
         return False
-    
+
     # Add current request
     requests_in_window.append(current_time)
     cache.set(RATE_LIMIT_KEY, requests_in_window, RATE_LIMIT_WINDOW)
@@ -52,19 +83,24 @@ def fetch_and_update_weather(station_id: int) -> bool:
         if r.status_code != 200:
             return False
         data = r.json()
-        if "timelines" not in data or "hourly" not in data["timelines"] or "daily" not in data["timelines"]:
+        if (
+            "timelines" not in data
+            or "hourly" not in data["timelines"]
+            or "daily" not in data["timelines"]
+        ):
             return False
 
         HourlyForecast.objects.filter(station=station).delete()
         DailyForecast.objects.filter(station=station).delete()
 
         current = data["timelines"]["hourly"][0]["values"]
+        desc, icon = code_to_desc_icon(int(current.get("weatherCode", 1000)))
         CurrentWeather.objects.create(
             station=station,
             temperature=current.get("temperature"),
             feels_like=current.get("temperatureApparent", current.get("temperature")),
-            condition=str(current.get("weatherCode")),
-            icon="",
+            condition=desc,
+            icon=icon,
             humidity=current.get("humidity"),
             wind_speed=current.get("windSpeed"),
             wind_direction=str(current.get("windDirection")),
@@ -80,6 +116,7 @@ def fetch_and_update_weather(station_id: int) -> bool:
             if timezone.is_naive(time_dt):
                 time_dt = timezone.make_aware(time_dt)
             values = hour["values"]
+            desc, icon = code_to_desc_icon(int(values.get("weatherCode", 1000)))
             HourlyForecast.objects.create(
                 station=station,
                 time=time_dt,
@@ -100,8 +137,8 @@ def fetch_and_update_weather(station_id: int) -> bool:
                 visibility=values.get("visibility"),
                 uv_index=values.get("uvIndex"),
                 weather_code=values.get("weatherCode"),
-                condition=str(values.get("weatherCode")),
-                icon="",
+                condition=desc,
+                icon=icon,
                 precipitation=values.get("precipitationIntensity"),
             )
 
@@ -111,6 +148,7 @@ def fetch_and_update_weather(station_id: int) -> bool:
             if timezone.is_naive(date_dt):
                 date_dt = timezone.make_aware(date_dt)
             values = day["values"]
+            desc, icon = code_to_desc_icon(int(values.get("weatherCodeMax", 1000)))
             DailyForecast.objects.create(
                 station=station,
                 date=date_dt,
@@ -133,13 +171,14 @@ def fetch_and_update_weather(station_id: int) -> bool:
                 sunset_time=values.get("sunsetTime"),
                 weather_code_max=values.get("weatherCodeMax"),
                 weather_code_min=values.get("weatherCodeMin"),
-                condition=str(values.get("weatherCodeMax")),
-                icon="",
+                condition=desc,
+                icon=icon,
                 precipitation=values.get("precipitationIntensity"),
             )
         return True
     except Exception:
         return False
+
 
 @shared_task
 def update_all_weather():
@@ -149,12 +188,14 @@ def update_all_weather():
         fetch_and_update_weather(station.id)
     return None
 
+
 @shared_task(bind=True, max_retries=3)
 def update_weather_for_location(self, station_id):
     """Celery wrapper to fetch weather for a station."""
     if not fetch_and_update_weather(station_id):
         raise self.retry(exc=Exception("fetch failed"), countdown=60)
     return True
+
 
 @task_failure.connect
 def handle_task_failure(task_id, exception, args, kwargs, traceback, einfo, **kw):
