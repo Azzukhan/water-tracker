@@ -32,10 +32,20 @@ export function BlogSidebar({ posts, onSearch }: BlogSidebarProps) {
     onSearch(query)
   }
 
-  const handleSubscribe = () => {
+  const handleSubscribe = async () => {
     if (!email) return
-    toast({ title: "Subscribed to weekly tips" })
-    setEmail("")
+    try {
+      const res = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
+      if (!res.ok) throw new Error('Failed')
+      toast({ title: 'Subscribed to weekly tips' })
+      setEmail('')
+    } catch {
+      toast({ title: 'Subscription failed', variant: 'destructive' })
+    }
   }
 
   const handleStorySubmit = () => {
