@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Calendar, ArrowRight, Share2, Bookmark, Tag } from "lucide-react"
+import { getCategoryIcon } from "@/lib/blog-category-icons"
 import { toast } from "@/hooks/use-toast"
 import Link from "next/link"
 import type { BlogItem } from "@/hooks/use-blogs"
@@ -21,6 +22,8 @@ export function BlogCard({ post, isBookmarked = false, onBookmark }: BlogCardPro
       month: "long",
       day: "numeric",
     })
+
+  const CategoryIcon = getCategoryIcon(post.category)
 
   const share = async () => {
     try {
@@ -49,7 +52,8 @@ export function BlogCard({ post, isBookmarked = false, onBookmark }: BlogCardPro
             className="w-full h-full object-cover"
           />
         </div>
-        <Badge variant="secondary" className="w-fit mb-2">
+        <Badge variant="secondary" className="w-fit mb-2 flex items-center gap-1">
+          <CategoryIcon className="h-3 w-3" />
           {post.category}
         </Badge>
         <div className="flex items-center flex-wrap gap-2 mb-2">
