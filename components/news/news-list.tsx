@@ -4,6 +4,13 @@ import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import {
   Clock,
   ExternalLink,
   Bookmark,
@@ -120,14 +127,33 @@ export function NewsList({ items }: NewsListProps) {
                   <div className="flex items-center justify-between">
                     <div />
 
-                    <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2">
+                    {news.url.includes("environment.data.gov.uk") ? (
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+                            <ExternalLink className="h-4 w-4 mr-2" />
+                            Read More
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>{news.title}</DialogTitle>
+                          </DialogHeader>
+                          <p className="whitespace-pre-line text-sm text-gray-700">
+                            {news.description}
+                          </p>
+                        </DialogContent>
+                      </Dialog>
+                    ) : (
                       <Button size="sm" className="bg-blue-600 hover:bg-blue-700" asChild>
                         <a href={news.url} target="_blank" rel="noreferrer">
                           <ExternalLink className="h-4 w-4 mr-2" />
                           Read More
                         </a>
                       </Button>
-                    </div>
+                    )}
+                  </div>
                   </div>
                 </div>
               </CardContent>
