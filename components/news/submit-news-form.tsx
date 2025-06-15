@@ -19,6 +19,7 @@ export function SubmitNewsForm() {
     region: "",
     eventType: "",
     source: "",
+    contactName: "",
     contactEmail: "",
     attachments: [] as File[],
   })
@@ -42,6 +43,7 @@ export function SubmitNewsForm() {
           region: "",
           eventType: "",
           source: "",
+          contactName: "",
           contactEmail: "",
           attachments: [],
         })
@@ -195,16 +197,27 @@ export function SubmitNewsForm() {
           {/* Source */}
           <div>
             <label className="block text-sm font-medium text-gray-900 mb-2">News Source</label>
-            <Input
-              placeholder="e.g., Company Press Release, BBC News..."
-              value={formData.source}
-              onChange={(e) => setFormData((prev) => ({ ...prev, source: e.target.value }))}
-            />
-          </div>
+          <Input
+            placeholder="e.g., Company Press Release, BBC News..."
+            value={formData.source}
+            onChange={(e) => setFormData((prev) => ({ ...prev, source: e.target.value }))}
+          />
+        </div>
 
-          {/* Contact Email */}
-          <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">Contact Email *</label>
+        {/* Contact Name */}
+        <div>
+          <label className="block text-sm font-medium text-gray-900 mb-2">Contact Name *</label>
+          <Input
+            placeholder="Your name"
+            value={formData.contactName}
+            onChange={(e) => setFormData((prev) => ({ ...prev, contactName: e.target.value }))}
+            required
+          />
+        </div>
+
+        {/* Contact Email */}
+        <div>
+          <label className="block text-sm font-medium text-gray-900 mb-2">Contact Email *</label>
             <Input
               type="email"
               placeholder="your.email@example.com"

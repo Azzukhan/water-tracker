@@ -48,10 +48,20 @@ export function BlogSidebar({ posts, onSearch }: BlogSidebarProps) {
     }
   }
 
-  const handleStorySubmit = () => {
-    toast({ title: "Story submitted!" })
-    setStory({ name: "", email: "", text: "" })
-    setStoryOpen(false)
+  const handleStorySubmit = async () => {
+    try {
+      const res = await fetch('/api/stories', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(story),
+      })
+      if (!res.ok) throw new Error('Failed')
+      toast({ title: 'Story submitted!' })
+      setStory({ name: '', email: '', text: '' })
+      setStoryOpen(false)
+    } catch {
+      toast({ title: 'Submission failed', variant: 'destructive' })
+    }
   }
 
   const popularPosts = posts.slice(0, 4)

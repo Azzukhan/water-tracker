@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'users',
     'dashboard',
     'newsletter',
+    'stories',
 ]
 
 MIDDLEWARE = [
