@@ -61,9 +61,14 @@ export function EmergencyContacts() {
 
                 <div className="space-y-3">
                   <div className="text-2xl font-bold text-gray-900">{contact.number}</div>
-                  <Button className={`w-full ${contact.color} hover:opacity-90 text-white`}>
-                    <Phone className="h-4 w-4 mr-2" />
-                    Call Now
+                  <Button
+                    className={`w-full ${contact.color} hover:opacity-90 text-white`}
+                    asChild
+                  >
+                    <a href={`tel:${contact.number}`}> 
+                      <Phone className="h-4 w-4 mr-2" />
+                      Call Now
+                    </a>
                   </Button>
                 </div>
               </div>
