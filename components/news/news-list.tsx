@@ -3,7 +3,14 @@
 import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Clock, ExternalLink, Bookmark } from "lucide-react"
+import {
+  Clock,
+  ExternalLink,
+  Bookmark,
+  AlertTriangle,
+  Info,
+  Bell,
+} from "lucide-react"
 import type { NewsItem } from "@/hooks/use-news"
 
 export interface NewsListProps {
@@ -18,6 +25,24 @@ export function NewsList({ items }: NewsListProps) {
   const totalPages = Math.ceil(items.length / itemsPerPage)
   const startIndex = (currentPage - 1) * itemsPerPage
   const currentNews = items.slice(startIndex, startIndex + itemsPerPage)
+
+  const severityMap = {
+    high: {
+      icon: <AlertTriangle className="h-4 w-4 text-red-600" />,
+      label: "High",
+      className: "text-red-600",
+    },
+    medium: {
+      icon: <Bell className="h-4 w-4 text-orange-600" />,
+      label: "Medium",
+      className: "text-orange-600",
+    },
+    low: {
+      icon: <Info className="h-4 w-4 text-green-600" />,
+      label: "Low",
+      className: "text-green-600",
+    },
+  } as const
 
   const toggleBookmark = (idx: number) => {
     setBookmarkedItems((prev) =>
@@ -60,6 +85,14 @@ export function NewsList({ items }: NewsListProps) {
                           <Clock className="h-4 w-4" />
                           <span>{new Date(news.publishedAt).toLocaleDateString("en-GB")}</span>
                         </div>
+                        {news.severity && (
+                          <div className="flex items-center space-x-1">
+                            {severityMap[news.severity].icon}
+                            <span className={severityMap[news.severity].className}>
+                              {severityMap[news.severity].label}
+                            </span>
+                          </div>
+                        )}
                       </div>
                     </div>
 

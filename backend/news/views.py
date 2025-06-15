@@ -22,17 +22,17 @@ class WaterNewsAPIView(APIView):
 
         keywords = [
             "water quality",
-            "storm alert",
-            "air quality",
-            "bad weather",
-            "heavy rain",
+            "water leakage",
+            "water leak",
+            "water level increase",
+            "water level decrease",
+            "thunderstorm",
             "flood alert",
             "flooding",
-            "drought",
-            "water level",
-            "water bill",
-            "water price",
-            "water pricing",
+            "temperature increase",
+            "temperature decrease",
+            "investment in water",
+            "water investment",
         ]
         query = " OR ".join(f'"{k}"' for k in keywords)
         region = (
@@ -50,13 +50,36 @@ class WaterNewsAPIView(APIView):
         except Exception:
             return Response({"news": []}, status=500)
 
-        articles = [
-            {
-                "title": article.get("title"),
-                "description": article.get("description"),
-                "url": article.get("url"),
-                "publishedAt": article.get("publishedAt"),
-            }
-            for article in data.get("articles", [])
-        ]
+        def classify(title: str, desc: str) -> str:
+            text = f"{title} {desc}".lower()
+            if any(k in text for k in ["flood", "thunderstorm", "storm"]):
+                return "high"
+            if any(
+                k in text
+                for k in [
+                    "leak",
+                    "water level",
+                    "temperature increase",
+                    "temperature decrease",
+                    "drought",
+                    "water quality",
+                ]
+            ):
+                return "medium"
+            return "low"
+
+        articles = []
+        for article in data.get("articles", []):
+            title = article.get("title", "")
+            description = article.get("description", "")
+            articles.append(
+                {
+                    "title": title,
+                    "description": description,
+                    "url": article.get("url"),
+                    "publishedAt": article.get("publishedAt"),
+                    "severity": classify(title, description),
+                }
+            )
+
         return Response({"news": articles})
