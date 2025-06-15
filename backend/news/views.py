@@ -5,6 +5,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from .models import NewsArticle
 from .serializers import NewsArticleSerializer
 import requests
+import feedparser
 
 class NewsArticleViewSet(viewsets.ModelViewSet):
     queryset = NewsArticle.objects.all()
@@ -83,3 +84,53 @@ class WaterNewsAPIView(APIView):
             )
 
         return Response({"news": articles})
+
+
+class AlertScraperAPIView(APIView):
+    """Scrape RSS feeds for flood and storm related news"""
+
+    FEEDS = [
+        "http://feeds.bbci.co.uk/news/rss.xml",
+        "https://www.theguardian.com/environment/rss",
+    ]
+
+    KEYWORDS = [
+        "flood",
+        "water level",
+        "water quality",
+        "storm",
+    ]
+
+    def get(self, request):
+        articles = []
+        for feed_url in self.FEEDS:
+            try:
+                feed = feedparser.parse(feed_url)
+            except Exception:
+                continue
+
+            for entry in feed.entries:
+                title = entry.get("title", "")
+                summary = entry.get("summary", "")
+                text = f"{title} {summary}".lower()
+                if not any(k in text for k in self.KEYWORDS):
+                    continue
+                articles.append(
+                    {
+                        "title": title,
+                        "description": summary,
+                        "url": entry.get("link"),
+                        "publishedAt": entry.get("published", entry.get("updated")),
+                    }
+                )
+
+        # Remove duplicates by URL
+        seen = set()
+        unique = []
+        for art in articles:
+            if art["url"] not in seen:
+                seen.add(art["url"])
+                unique.append(art)
+
+        unique.sort(key=lambda x: x.get("publishedAt", ""), reverse=True)
+        return Response({"news": unique})

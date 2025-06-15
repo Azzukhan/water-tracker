@@ -18,7 +18,7 @@ export function useNews(refreshIntervalMs: number = 5 * 60 * 1000) {
     async function load() {
       setLoading(true)
       try {
-        const res = await fetch("/api/news/water")
+        const res = await fetch("/api/news/alerts")
         const data = await res.json()
         if (active) {
           setNews(Array.isArray(data.news) ? data.news : [])
