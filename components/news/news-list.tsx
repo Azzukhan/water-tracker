@@ -97,6 +97,11 @@ export function NewsList({ items }: NewsListProps) {
                             )
                           )
                         })()}
+                        {news.category && (
+                          <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
+                            {news.category}
+                          </span>
+                        )}
                       </div>
                     </div>
 
