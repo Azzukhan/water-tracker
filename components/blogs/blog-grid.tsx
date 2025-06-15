@@ -133,15 +133,15 @@ export interface BlogGridProps {
 
 export function BlogGrid({ posts = fallbackPosts }: BlogGridProps) {
   const [currentPage, setCurrentPage] = useState(1)
-  const [bookmarkedPosts, setBookmarkedPosts] = useState<number[]>([])
+  const [bookmarkedPosts, setBookmarkedPosts] = useState<string[]>([])
   const postsPerPage = 6
 
   const totalPages = Math.ceil(posts.length / postsPerPage)
   const startIndex = (currentPage - 1) * postsPerPage
   const currentPosts = posts.slice(startIndex, startIndex + postsPerPage)
 
-  const toggleBookmark = (id: number) => {
-    setBookmarkedPosts((prev) => (prev.includes(id) ? prev.filter((post) => post !== id) : [...prev, id]))
+  const toggleBookmark = (key: string) => {
+    setBookmarkedPosts((prev) => (prev.includes(key) ? prev.filter((p) => p !== key) : [...prev, key]))
   }
 
   return (
@@ -163,10 +163,11 @@ export function BlogGrid({ posts = fallbackPosts }: BlogGridProps) {
       {/* Blog Grid */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {currentPosts.map((post) => {
-          const isBookmarked = bookmarkedPosts.includes(post.id)
+          const key = String((post as any).id ?? post.link)
+          const isBookmarked = bookmarkedPosts.includes(key)
           return (
-            <div key={post.id} className="relative">
-              <BlogCard post={post} />
+            <div key={key} className="relative">
+              <BlogCard post={post} isBookmarked={isBookmarked} onBookmark={() => toggleBookmark(key)} />
               <Button
                 variant="ghost"
                 size="sm"
@@ -175,7 +176,7 @@ export function BlogGrid({ posts = fallbackPosts }: BlogGridProps) {
                 } hover:bg-white`}
                 onClick={(e) => {
                   e.stopPropagation()
-                  toggleBookmark(post.id)
+                  toggleBookmark(key)
                 }}
               >
                 <BookmarkPlus className={`h-4 w-4 ${isBookmarked ? "fill-current" : ""}`} />
