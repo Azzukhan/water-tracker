@@ -56,6 +56,7 @@ const categories = [
   "Water Level",
   "Water Quality",
   "Storm",
+  "Investment",
 ]
 
 export interface NewsFilterValues {
@@ -231,16 +232,16 @@ export function NewsFilters({ values, onValuesChange }: NewsFiltersProps) {
         {/* Quick Filters */}
         <div className="flex flex-wrap gap-2">
           <span className="text-sm text-gray-600 mr-2">Quick filters:</span>
-          <Button variant="outline" size="sm" onClick={() => setSelectedEventType("Emergency")} className="text-xs">
+          <Button variant="outline" size="sm" onClick={() => setSelectedCategory("Storm")} className="text-xs">
             Emergency Alerts
           </Button>
-          <Button variant="outline" size="sm" onClick={() => setSelectedEventType("Investment")} className="text-xs">
+          <Button variant="outline" size="sm" onClick={() => setSelectedCategory("Investment")} className="text-xs">
             Investments
           </Button>
           <Button variant="outline" size="sm" onClick={() => setDateRange("This Week")} className="text-xs">
             This Week
           </Button>
-          <Button variant="outline" size="sm" onClick={() => setSelectedEventType("Water Quality")} className="text-xs">
+          <Button variant="outline" size="sm" onClick={() => setSelectedCategory("Water Quality")} className="text-xs">
             Water Quality
           </Button>
           <Button variant="outline" size="sm" onClick={() => setSelectedCategory("Storm")} className="text-xs">

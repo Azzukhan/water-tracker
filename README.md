@@ -33,3 +33,4 @@ npm run dev
 ```
 
 The frontend will be available at `http://localhost:3000`.
+For more details, visit [ukwatertracker.co.uk](https://ukwatertracker.co.uk).

@@ -24,9 +24,39 @@ export default function NewsPage() {
     if (filters.category !== "All Categories" && item.category !== filters.category) {
       return false
     }
-    if (!filters.searchTerm) return true
-    const text = `${item.title} ${item.description}`.toLowerCase()
-    return text.includes(filters.searchTerm.toLowerCase())
+
+    if (filters.dateRange !== "All Time") {
+      const date = new Date(item.publishedAt)
+      const now = new Date()
+      const ms = now.getTime() - date.getTime()
+
+      switch (filters.dateRange) {
+        case "Today":
+          if (now.toDateString() !== date.toDateString()) return false
+          break
+        case "This Week":
+          if (ms > 7 * 24 * 60 * 60 * 1000) return false
+          break
+        case "This Month":
+          if (now.getFullYear() !== date.getFullYear() || now.getMonth() !== date.getMonth()) return false
+          break
+        case "Last 3 Months": {
+          const diffMonths =
+            (now.getFullYear() - date.getFullYear()) * 12 + now.getMonth() - date.getMonth()
+          if (diffMonths > 3) return false
+          break
+        }
+        case "This Year":
+          if (now.getFullYear() !== date.getFullYear()) return false
+          break
+      }
+    }
+
+    if (filters.searchTerm) {
+      const text = `${item.title} ${item.description}`.toLowerCase()
+      if (!text.includes(filters.searchTerm.toLowerCase())) return false
+    }
+    return true
   })
 
   return (

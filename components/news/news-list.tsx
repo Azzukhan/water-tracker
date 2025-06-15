@@ -4,6 +4,13 @@ import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import {
   Dialog,
   DialogTrigger,
   DialogContent,
@@ -27,11 +34,18 @@ export interface NewsListProps {
 export function NewsList({ items }: NewsListProps) {
   const [currentPage, setCurrentPage] = useState(1)
   const [bookmarkedItems, setBookmarkedItems] = useState<number[]>([])
+  const [sortBy, setSortBy] = useState<"recent" | "oldest">("recent")
   const itemsPerPage = 5
 
-  const totalPages = Math.ceil(items.length / itemsPerPage)
+  const sortedItems = [...items].sort((a, b) =>
+    sortBy === "recent"
+      ? new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+      : new Date(a.publishedAt).getTime() - new Date(b.publishedAt).getTime()
+  )
+
+  const totalPages = Math.ceil(sortedItems.length / itemsPerPage)
   const startIndex = (currentPage - 1) * itemsPerPage
-  const currentNews = items.slice(startIndex, startIndex + itemsPerPage)
+  const currentNews = sortedItems.slice(startIndex, startIndex + itemsPerPage)
 
   const severityMap = {
     high: {
@@ -67,9 +81,15 @@ export function NewsList({ items }: NewsListProps) {
         </div>
         <div className="flex items-center space-x-2">
           <span className="text-sm text-gray-600">Sort by:</span>
-          <Button variant="outline" size="sm">
-            Most Recent
-          </Button>
+          <Select value={sortBy} onValueChange={(v) => setSortBy(v as "recent" | "oldest")}>
+            <SelectTrigger className="w-32 h-8">
+              <SelectValue placeholder="Sort" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="recent">Most Recent</SelectItem>
+              <SelectItem value="oldest">Oldest First</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
