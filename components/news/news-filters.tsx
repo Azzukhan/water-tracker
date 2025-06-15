@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useMemo } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -51,26 +51,46 @@ const eventTypes = [
   "Flooding",
 ]
 
-export function NewsFilters() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedCompany, setSelectedCompany] = useState("All Companies")
-  const [selectedRegion, setSelectedRegion] = useState("All Regions")
-  const [selectedEventType, setSelectedEventType] = useState("All Types")
-  const [dateRange, setDateRange] = useState("All Time")
+export interface NewsFilterValues {
+  searchTerm: string
+  company: string
+  region: string
+  eventType: string
+  dateRange: string
+}
 
-  const activeFilters = [
-    selectedCompany !== "All Companies" && selectedCompany,
-    selectedRegion !== "All Regions" && selectedRegion,
-    selectedEventType !== "All Types" && selectedEventType,
-    dateRange !== "All Time" && dateRange,
-  ].filter(Boolean)
+interface NewsFiltersProps {
+  values: NewsFilterValues
+  onValuesChange: (values: NewsFilterValues) => void
+}
+
+export function NewsFilters({ values, onValuesChange }: NewsFiltersProps) {
+  const { searchTerm, company, region, eventType, dateRange } = values
+
+  const setSearchTerm = (val: string) => onValuesChange({ ...values, searchTerm: val })
+  const setSelectedCompany = (val: string) => onValuesChange({ ...values, company: val })
+  const setSelectedRegion = (val: string) => onValuesChange({ ...values, region: val })
+  const setSelectedEventType = (val: string) => onValuesChange({ ...values, eventType: val })
+  const setDateRange = (val: string) => onValuesChange({ ...values, dateRange: val })
+
+  const activeFilters = useMemo(
+    () => [
+      company !== "All Companies" && company,
+      region !== "All Regions" && region,
+      eventType !== "All Types" && eventType,
+      dateRange !== "All Time" && dateRange,
+    ].filter(Boolean),
+    [company, region, eventType, dateRange]
+  )
 
   const clearAllFilters = () => {
-    setSearchTerm("")
-    setSelectedCompany("All Companies")
-    setSelectedRegion("All Regions")
-    setSelectedEventType("All Types")
-    setDateRange("All Time")
+    onValuesChange({
+      searchTerm: "",
+      company: "All Companies",
+      region: "All Regions",
+      eventType: "All Types",
+      dateRange: "All Time",
+    })
   }
 
   const removeFilter = (filter: string) => {
@@ -106,7 +126,7 @@ export function NewsFilters() {
 
         {/* Filter Controls */}
         <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-          <Select value={selectedCompany} onValueChange={setSelectedCompany}>
+          <Select value={company} onValueChange={setSelectedCompany}>
             <SelectTrigger>
               <SelectValue placeholder="Company" />
             </SelectTrigger>
@@ -119,7 +139,7 @@ export function NewsFilters() {
             </SelectContent>
           </Select>
 
-          <Select value={selectedRegion} onValueChange={setSelectedRegion}>
+          <Select value={region} onValueChange={setSelectedRegion}>
             <SelectTrigger>
               <SelectValue placeholder="Region" />
             </SelectTrigger>
@@ -132,7 +152,7 @@ export function NewsFilters() {
             </SelectContent>
           </Select>
 
-          <Select value={selectedEventType} onValueChange={setSelectedEventType}>
+          <Select value={eventType} onValueChange={setSelectedEventType}>
             <SelectTrigger>
               <SelectValue placeholder="Event Type" />
             </SelectTrigger>
