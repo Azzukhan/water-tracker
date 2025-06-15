@@ -1,6 +1,8 @@
 from rest_framework import viewsets, filters, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.views import APIView
+import feedparser
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import BlogCategory, BlogPost, Comment
 from .serializers import BlogCategorySerializer, BlogPostSerializer, BlogPostDetailSerializer, CommentSerializer
@@ -54,6 +56,42 @@ class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['post', 'author']
-    
+
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+
+
+class ExternalBlogAPIView(APIView):
+    """Aggregate external blog posts from public RSS feeds"""
+
+    FEEDS = {
+        "water-conservation": "https://www.wateraid.org/uk/blog/rss.xml",
+        "industry-insights": "https://www.circleofblue.org/feed/",
+        "innovation-tech": "https://iwa-network.org/news/feed/",
+        "global-water-awareness": "https://water.org/news-press/blogs/feed/",
+        "ea-announcements": "https://www.gov.uk/government/announcements.atom?departments%5B%5D=environment-agency",
+        "drought-tips": "https://www.americanrivers.org/blog/feed/",
+        "sustainability": "https://www.unwater.org/rss.xml",
+    }
+
+    def get(self, request):
+        posts = []
+        for category, url in self.FEEDS.items():
+            try:
+                feed = feedparser.parse(url)
+            except Exception:
+                continue
+
+            for entry in getattr(feed, "entries", []):
+                posts.append(
+                    {
+                        "title": entry.get("title", ""),
+                        "summary": entry.get("summary", ""),
+                        "link": entry.get("link"),
+                        "published": entry.get("published", entry.get("updated")),
+                        "category": category,
+                    }
+                )
+
+        posts.sort(key=lambda x: x.get("published", ""), reverse=True)
+        return Response({"posts": posts})
