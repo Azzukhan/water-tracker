@@ -6,6 +6,15 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { ChevronDown, ChevronUp, Search, HelpCircle, Star } from "lucide-react"
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { ContactForm } from "@/components/contact/contact-form"
+import { QuestionForm } from "@/components/contact/question-form"
 
 const faqCategories = [
   { id: "all", name: "All Questions", count: 24 },
@@ -225,8 +234,28 @@ export function FAQ() {
               Can't find the answer you're looking for? Our support team is here to help.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Button className="bg-blue-600 hover:bg-blue-700">Contact Support</Button>
-              <Button variant="outline">Submit a Question</Button>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button className="bg-blue-600 hover:bg-blue-700">Contact Support</Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Contact Support</DialogTitle>
+                  </DialogHeader>
+                  <ContactForm />
+                </DialogContent>
+              </Dialog>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="outline">Submit a Question</Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Submit a Question</DialogTitle>
+                  </DialogHeader>
+                  <QuestionForm />
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
         </div>

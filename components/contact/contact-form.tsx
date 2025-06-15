@@ -29,25 +29,35 @@ export function ContactForm() {
     e.preventDefault()
     setIsSubmitting(true)
 
-    // Simulate form submission
-    setTimeout(() => {
-      setIsSubmitting(false)
+    try {
+      const res = await fetch("/api/support/request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      })
+
+      if (!res.ok) {
+        throw new Error("Failed to submit")
+      }
+
       setSubmitStatus("success")
-      // Reset form after success
-      setTimeout(() => {
-        setFormData({
-          name: "",
-          email: "",
-          phone: "",
-          subject: "",
-          category: "",
-          message: "",
-          urgent: false,
-          newsletter: false,
-        })
-        setSubmitStatus("idle")
-      }, 3000)
-    }, 2000)
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        subject: "",
+        category: "",
+        message: "",
+        urgent: false,
+        newsletter: false,
+      })
+      setTimeout(() => setSubmitStatus("idle"), 3000)
+    } catch (err) {
+      setSubmitStatus("error")
+      setTimeout(() => setSubmitStatus("idle"), 3000)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   if (submitStatus === "success") {
