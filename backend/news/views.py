@@ -19,9 +19,25 @@ class WaterNewsAPIView(APIView):
 
     def get(self, request):
         api_key = "f89107ecafb44975be3b720dd2dfa023"
-        query = "water OR flood OR weather OR 'water company'"
+
+        keywords = [
+            "water quality",
+            "storm alert",
+            "air quality",
+            "bad weather",
+            "heavy rain",
+            "flood alert",
+            "water level",
+            "water bill",
+        ]
+        query = " OR ".join(f'"{k}"' for k in keywords)
+        region = (
+            "UK OR 'United Kingdom' OR Britain OR England OR Scotland OR Wales OR 'Northern Ireland'"
+        )
+        full_query = f"({query}) AND ({region})"
+        encoded_query = requests.utils.quote(full_query)
         url = (
-            f"https://newsapi.org/v2/everything?q={query}&language=en&apiKey={api_key}"
+            f"https://newsapi.org/v2/everything?q={encoded_query}&language=en&sortBy=publishedAt&pageSize=40&apiKey={api_key}"
         )
 
         try:
