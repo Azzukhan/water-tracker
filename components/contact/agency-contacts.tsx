@@ -1,5 +1,15 @@
+"use client"
+
+import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Phone, Mail, ExternalLink, MapPin, Clock } from "lucide-react"
 
 const agencies = [
@@ -11,9 +21,57 @@ const agencies = [
     emergency: "0800 714 614",
     email: "customer.services@thameswater.co.uk",
     website: "thameswater.co.uk",
-    region: "London & Thames Valley",
+    region: "England",
     color: "bg-blue-600",
     hours: "24/7 Emergency, 8AM-8PM General",
+  },
+  {
+    name: "Anglian Water",
+    logo: "AW",
+    description: "East of England water services",
+    phone: "03457 145 145",
+    emergency: "03457 145 145",
+    email: "customer.services@anglianwater.co.uk",
+    website: "anglianwater.co.uk",
+    region: "England",
+    color: "bg-cyan-600",
+    hours: "24/7 Emergency, 8AM-6PM General",
+  },
+  {
+    name: "Severn Trent",
+    logo: "ST",
+    description: "Midlands water and sewerage services",
+    phone: "0345 750 0500",
+    emergency: "0800 783 4444",
+    email: "customer.relations@severntrent.co.uk",
+    website: "stwater.co.uk",
+    region: "England",
+    color: "bg-purple-600",
+    hours: "24/7 Emergency, 8AM-8PM General",
+  },
+  {
+    name: "United Utilities",
+    logo: "UU",
+    description: "North West England water services",
+    phone: "0345 672 3723",
+    emergency: "0345 672 3723",
+    email: "customer.services@uuplc.co.uk",
+    website: "unitedutilities.com",
+    region: "England",
+    color: "bg-green-600",
+    hours: "24/7 Emergency, 8AM-8PM General",
+  },
+  {
+    name: "Yorkshire Water",
+    logo: "YW",
+    description: "Yorkshire and Humber water services",
+    phone: "0345 124 2424",
+    emergency: "0345 124 2424",
+    email: "customer.services@yorkshirewater.co.uk",
+    website: "yorkshirewater.com",
+    region: "England",
+    color: "bg-orange-600",
+    hours: "24/7 Emergency, 8AM-6PM General",
   },
   {
     name: "Scottish Water",
@@ -28,56 +86,111 @@ const agencies = [
     hours: "24/7 Emergency, 8AM-6PM General",
   },
   {
-    name: "United Utilities",
-    logo: "UU",
-    description: "North West England water services",
-    phone: "0345 672 3723",
-    emergency: "0345 672 3723",
-    email: "customer.services@uuplc.co.uk",
-    website: "unitedutilities.com",
-    region: "North West England",
-    color: "bg-green-600",
-    hours: "24/7 Emergency, 8AM-8PM General",
-  },
-  {
-    name: "Anglian Water",
-    logo: "AW",
-    description: "East of England water services",
-    phone: "03457 145 145",
-    emergency: "03457 145 145",
-    email: "customer.services@anglianwater.co.uk",
-    website: "anglianwater.co.uk",
-    region: "East England",
-    color: "bg-cyan-600",
+    name: "Dŵr Cymru Welsh Water",
+    logo: "WW",
+    description: "Water services across Wales",
+    phone: "0800 052 0145",
+    emergency: "0800 052 0130",
+    email: "customercare@dwrcymru.com",
+    website: "dwrcymru.com",
+    region: "Wales",
+    color: "bg-teal-600",
     hours: "24/7 Emergency, 8AM-6PM General",
   },
   {
-    name: "Severn Trent",
-    logo: "ST",
-    description: "Midlands water and sewerage services",
-    phone: "0345 750 0500",
-    emergency: "0800 783 4444",
-    email: "customer.relations@severntrent.co.uk",
-    website: "stwater.co.uk",
-    region: "Midlands",
-    color: "bg-purple-600",
-    hours: "24/7 Emergency, 8AM-8PM General",
+    name: "Hafren Dyfrdwy",
+    logo: "HD",
+    description: "North-East Wales water services",
+    phone: "0330 678 0679",
+    emergency: "0800 085 8033",
+    email: "customercare@hdcymru.co.uk",
+    website: "hdcymru.co.uk",
+    region: "Wales",
+    color: "bg-teal-700",
+    hours: "24/7 Emergency, 8AM-6PM General",
   },
   {
-    name: "Yorkshire Water",
-    logo: "YW",
-    description: "Yorkshire and Humber water services",
-    phone: "0345 124 2424",
-    emergency: "0345 124 2424",
-    email: "customer.services@yorkshirewater.co.uk",
-    website: "yorkshirewater.com",
-    region: "Yorkshire",
-    color: "bg-orange-600",
+    name: "Northern Ireland Water",
+    logo: "NI",
+    description: "Water and sewerage services in Northern Ireland",
+    phone: "03457 440 088",
+    emergency: "03457 440 088",
+    email: "waterline@niwater.com",
+    website: "niwater.com",
+    region: "Northern Ireland",
+    color: "bg-pink-600",
     hours: "24/7 Emergency, 8AM-6PM General",
+  },
+  {
+    name: "Uisce Éireann",
+    logo: "IW",
+    description: "National water utility for Ireland",
+    phone: "1800 278 278",
+    emergency: "1800 278 278",
+    email: "business@water.ie",
+    website: "water.ie",
+    region: "Ireland",
+    color: "bg-green-700",
+    hours: "24/7 Emergency, 8AM-6PM General",
+  },
+  {
+    name: "Environment Agency",
+    logo: "EA",
+    description: "Environmental regulator for England",
+    phone: "03708 506 506",
+    emergency: "0800 80 70 60",
+    email: "enquiries@environment-agency.gov.uk",
+    website: "gov.uk/environment-agency",
+    region: "England",
+    color: "bg-lime-700",
+    hours: "24/7 Incident Line, office hours general",
+  },
+  {
+    name: "Natural Resources Wales",
+    logo: "NRW",
+    description: "Environmental regulator for Wales",
+    phone: "0300 065 3000",
+    emergency: "0300 065 3000",
+    email: "enquiries@naturalresourceswales.gov.uk",
+    website: "naturalresources.wales",
+    region: "Wales",
+    color: "bg-green-800",
+    hours: "Mon–Fri office hours, 24/7 incidents",
+  },
+  {
+    name: "Scottish Environment Protection Agency",
+    logo: "SEPA",
+    description: "Environmental regulator for Scotland",
+    phone: "0300 099 6699",
+    emergency: "0800 807 060",
+    email: "flooding@sepa.org.uk",
+    website: "sepa.org.uk",
+    region: "Scotland",
+    color: "bg-indigo-700",
+    hours: "24/7 Incident Line, office hours general",
+  },
+  {
+    name: "Northern Ireland Environment Agency",
+    logo: "NIEA",
+    description: "Environmental regulator for Northern Ireland",
+    phone: "0300 200 7856",
+    emergency: "0800 80 70 60",
+    email: "nieainfo@daera-ni.gov.uk",
+    website: "daera-ni.gov.uk",
+    region: "Northern Ireland",
+    color: "bg-pink-700",
+    hours: "24/7 Incident Line, office hours general",
   },
 ]
 
 export function AgencyContacts() {
+  const [selectedRegion, setSelectedRegion] = useState("All")
+  const regions = Array.from(new Set(agencies.map((a) => a.region)))
+  const filteredAgencies =
+    selectedRegion === "All"
+      ? agencies
+      : agencies.filter((a) => a.region === selectedRegion)
+
   return (
     <Card className="shadow-lg border-0">
       <CardHeader className="bg-gradient-to-r from-gray-800 to-gray-900 text-white">
@@ -86,8 +199,23 @@ export function AgencyContacts() {
       </CardHeader>
 
       <CardContent className="p-6">
+        <div className="mb-6 flex justify-end">
+          <Select value={selectedRegion} onValueChange={setSelectedRegion}>
+            <SelectTrigger className="w-48">
+              <SelectValue placeholder="Filter by region" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="All">All Regions</SelectItem>
+              {regions.map((region) => (
+                <SelectItem key={region} value={region}>
+                  {region}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {agencies.map((agency, index) => (
+          {filteredAgencies.map((agency, index) => (
             <div
               key={index}
               className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow duration-200"
