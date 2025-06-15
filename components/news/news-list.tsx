@@ -85,14 +85,18 @@ export function NewsList({ items }: NewsListProps) {
                           <Clock className="h-4 w-4" />
                           <span>{new Date(news.publishedAt).toLocaleDateString("en-GB")}</span>
                         </div>
-                        {news.severity && (
-                          <div className="flex items-center space-x-1">
-                            {severityMap[news.severity].icon}
-                            <span className={severityMap[news.severity].className}>
-                              {severityMap[news.severity].label}
-                            </span>
-                          </div>
-                        )}
+                        {(() => {
+                          const sev =
+                            news.severity && severityMap[news.severity as keyof typeof severityMap]
+                          return (
+                            sev && (
+                              <div className="flex items-center space-x-1">
+                                {sev.icon}
+                                <span className={sev.className}>{sev.label}</span>
+                              </div>
+                            )
+                          )
+                        })()}
                       </div>
                     </div>
 
