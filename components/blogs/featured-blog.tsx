@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Clock, User, Eye, Share2, BookmarkPlus, ArrowRight } from "lucide-react"
+import { Clock, User, Eye, Share2, BookmarkPlus, ArrowRight, Tag } from "lucide-react"
 
 const featuredBlog = {
   id: 1,
@@ -39,7 +39,8 @@ export function FeaturedBlog() {
             <div>
               <div className="flex items-center space-x-3 mb-4">
                 <Badge className="bg-blue-600 text-white">{featuredBlog.category}</Badge>
-                {featuredBlog.tags.slice(0, 2).map((tag) => (
+                <Tag className="h-4 w-4 text-gray-500" />
+                {Array.from(new Set(featuredBlog.tags)).slice(0, 2).map((tag) => (
                   <Badge key={tag} variant="outline" className="text-xs">
                     {tag}
                   </Badge>

@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Clock, User, Eye, Share2, BookmarkPlus, ArrowRight } from "lucide-react"
+import { Clock, User, Eye, Share2, BookmarkPlus, ArrowRight, Tag } from "lucide-react"
 
 // Dummy blog data
 const blogPosts = [
@@ -164,7 +164,7 @@ export function BlogGrid() {
           return (
             <Card
               key={post.id}
-              className="shadow-lg border-0 hover:shadow-xl transition-all duration-300 group cursor-pointer"
+              className="shadow-lg border-0 hover:shadow-xl transition-all duration-300 group cursor-pointer flex flex-col h-full"
             >
               <div className="relative">
                 <img
@@ -190,8 +190,8 @@ export function BlogGrid() {
                 </Button>
               </div>
 
-              <CardContent className="p-6">
-                <div className="space-y-4">
+              <CardContent className="p-6 flex flex-col h-full">
+                <div className="space-y-4 flex-1 flex flex-col">
                   {/* Title and Excerpt */}
                   <div>
                     <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors leading-tight mb-2">
@@ -201,8 +201,9 @@ export function BlogGrid() {
                   </div>
 
                   {/* Tags */}
-                  <div className="flex flex-wrap gap-2">
-                    {post.tags.slice(0, 2).map((tag) => (
+                  <div className="flex items-center flex-wrap gap-2">
+                    <Tag className="h-3 w-3 text-gray-500" />
+                    {Array.from(new Set(post.tags)).slice(0, 2).map((tag) => (
                       <Badge key={tag} variant="outline" className="text-xs">
                         {tag}
                       </Badge>
@@ -228,7 +229,7 @@ export function BlogGrid() {
                   </div>
 
                   {/* Actions */}
-                  <div className="flex items-center justify-between pt-2">
+                  <div className="flex items-center justify-between pt-2 mt-auto">
                     <div className="text-xs text-gray-500">
                       {new Date(post.publishDate).toLocaleDateString("en-GB")}
                     </div>

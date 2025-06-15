@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Calendar, ArrowRight, Share2, Bookmark } from "lucide-react";
+import { Search, Calendar, ArrowRight, Share2, Bookmark, Tag } from "lucide-react";
 import Link from "next/link";
 import { useBlogs } from "@/hooks/use-blogs";
 import { useState } from "react";
@@ -64,7 +64,7 @@ export default function BlogPage() {
         <div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             {paginatedPosts.map((post, idx) => (
-              <Card key={idx} className="hover:shadow-lg transition-shadow">
+              <Card key={idx} className="hover:shadow-lg transition-shadow flex flex-col h-full">
                 <CardHeader className="pb-3">
                   <div className="aspect-video bg-muted rounded mb-4 overflow-hidden">
                     <img
@@ -81,8 +81,9 @@ export default function BlogPage() {
                   <Badge variant="secondary" className="w-fit mb-2">
                     {post.category}
                   </Badge>
-                  <div className="flex flex-wrap gap-2 mb-2">
-                    {post.tags?.map((tag) => (
+                  <div className="flex items-center flex-wrap gap-2 mb-2">
+                    <Tag className="h-3 w-3 text-muted-foreground" />
+                    {Array.from(new Set(post.tags ?? [])).map((tag) => (
                       <Badge key={tag} variant="outline">
                         {tag}
                       </Badge>
@@ -98,7 +99,7 @@ export default function BlogPage() {
                     </Link>
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="flex flex-col flex-1">
                   <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
                     {post.summary}
                   </p>
@@ -116,7 +117,7 @@ export default function BlogPage() {
                       </Button>
                     </div>
                   </div>
-                  <Button variant="gradient" size="sm" asChild>
+                  <Button variant="gradient" size="sm" className="mt-auto" asChild>
                     <a href={post.link} target="_blank" rel="noreferrer">
                       Read More <ArrowRight className="h-3 w-3 ml-1" />
                     </a>
