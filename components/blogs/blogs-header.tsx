@@ -23,7 +23,7 @@ export function BlogsHeader() {
         <div className="text-center">
           <div className="flex items-center justify-center mb-2">
             <BookOpen className="h-5 w-5 text-green-600 mr-2" />
-            <span className="text-2xl font-bold text-gray-900">45</span>
+            <span className="text-2xl font-bold text-gray-900">27</span>
           </div>
           <div className="text-sm text-gray-600">Educational Articles</div>
         </div>
