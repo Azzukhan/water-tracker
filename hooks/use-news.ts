@@ -5,6 +5,7 @@ export interface NewsItem {
   description: string
   url: string
   publishedAt: string
+  severity?: "low" | "medium" | "high"
 }
 
 export function useNews(refreshIntervalMs: number = 5 * 60 * 1000) {
