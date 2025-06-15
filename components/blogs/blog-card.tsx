@@ -41,16 +41,8 @@ export function BlogCard({ post, isBookmarked = false, onBookmark }: BlogCardPro
   return (
     <Card className="hover:shadow-lg transition-shadow flex flex-col h-full">
       <CardHeader className="pb-3">
-        <div className="aspect-video bg-muted rounded mb-4 overflow-hidden">
-          <img
-            src={post.image}
-            alt={post.title}
-            onError={(e) => {
-              const target = e.currentTarget
-              if (target.src !== "/placeholder.jpg") target.src = "/placeholder.jpg"
-            }}
-            className="w-full h-full object-cover"
-          />
+        <div className="aspect-video bg-muted rounded mb-4 flex items-center justify-center">
+          <CategoryIcon className="h-20 w-20 text-muted-foreground" />
         </div>
         <Badge variant="secondary" className="w-fit mb-2 flex items-center gap-1">
           <CategoryIcon className="h-3 w-3" />

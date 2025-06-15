@@ -24,13 +24,9 @@ export function FeaturedBlog() {
   const CategoryIcon = getCategoryIcon(featuredBlog.category)
   return (
     <Card className="shadow-xl border-0 overflow-hidden">
-      <div className="relative">
+      <div className="relative h-64 lg:h-80 flex items-center justify-center bg-muted">
         <Badge className="absolute top-4 left-4 bg-yellow-600 text-white z-10">Featured Article</Badge>
-        <img
-          src={featuredBlog.image || "/placeholder.svg"}
-          alt={featuredBlog.title}
-          className="w-full h-64 lg:h-80 object-cover"
-        />
+        <CategoryIcon className="h-24 w-24 text-muted-foreground" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
       </div>
 
