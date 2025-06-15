@@ -2,13 +2,12 @@
 
 import React from "react"
 
-import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Droplets, Leaf, Lightbulb, AlertTriangle, TrendingUp, Home, Building, Globe } from "lucide-react"
 import html2canvas from "html2canvas"
 
-const categories = [
+export const categories = [
   {
     id: "all",
     name: "All Articles",
@@ -75,8 +74,12 @@ const categories = [
   },
 ]
 
-export function BlogCategories() {
-  const [selectedCategory, setSelectedCategory] = useState("all")
+export interface BlogCategoriesProps {
+  selected: string
+  onSelect: (category: string) => void
+}
+
+export function BlogCategories({ selected, onSelect }: BlogCategoriesProps) {
 
   return (
     <Card className="shadow-lg border-0">
@@ -107,7 +110,7 @@ export function BlogCategories() {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
           {categories.map((category) => {
             const CategoryIcon = category.icon
-            const isSelected = selectedCategory === category.id
+            const isSelected = selected === category.name
 
             return (
               <div
@@ -117,7 +120,7 @@ export function BlogCategories() {
                     ? "border-blue-500 bg-blue-50 shadow-md"
                     : "border-gray-200 hover:border-blue-300 hover:bg-gray-50"
                 }`}
-                onClick={() => setSelectedCategory(category.id)}
+                onClick={() => onSelect(category.name)}
               >
                 <div className="text-center space-y-3">
                   <div className={`w-12 h-12 ${category.color} rounded-lg flex items-center justify-center mx-auto`}>
@@ -138,20 +141,20 @@ export function BlogCategories() {
         </div>
 
         {/* Selected Category Info */}
-        {selectedCategory !== "all" && (
+        {selected !== "All Articles" && (
           <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
             <div className="flex items-center space-x-3">
               <div className="text-blue-600">
-                {React.createElement(categories.find((c) => c.id === selectedCategory)?.icon || Globe, {
+                {React.createElement(categories.find((c) => c.name === selected)?.icon || Globe, {
                   className: "h-5 w-5",
                 })}
               </div>
               <div>
                 <div className="font-medium text-blue-900">
-                  Viewing: {categories.find((c) => c.id === selectedCategory)?.name}
+                  Viewing: {categories.find((c) => c.name === selected)?.name}
                 </div>
                 <div className="text-sm text-blue-700">
-                  {categories.find((c) => c.id === selectedCategory)?.description}
+                  {categories.find((c) => c.name === selected)?.description}
                 </div>
               </div>
             </div>

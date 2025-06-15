@@ -1,45 +1,61 @@
+import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { toast } from "@/hooks/use-toast"
 import { TrendingUp, Search, Mail, Star, Users, BookOpen, Share2 } from "lucide-react"
 import html2canvas from "html2canvas"
+import type { BlogItem } from "@/hooks/use-blogs"
 
-const popularPosts = [
-  {
-    title: "10 Quick Water-Saving Tips for Busy Families",
-    readCount: 3421,
-    category: "Water Conservation",
-  },
-  {
-    title: "Understanding UK Water Quality Standards",
-    readCount: 2876,
-    category: "Industry Insights",
-  },
-  {
-    title: "Rainwater Harvesting: A Complete Guide",
-    readCount: 2654,
-    category: "Innovation & Tech",
-  },
-  {
-    title: "Preparing for Summer Water Restrictions",
-    readCount: 2341,
-    category: "Emergency Preparedness",
-  },
-]
+export interface BlogSidebarProps {
+  posts: BlogItem[]
+  onSearch: (query: string) => void
+}
 
-const topTags = [
-  { name: "Water Conservation", count: 15 },
-  { name: "Sustainability", count: 12 },
-  { name: "Home Tips", count: 10 },
-  { name: "Technology", count: 8 },
-  { name: "Environment", count: 7 },
-  { name: "Money Saving", count: 6 },
-  { name: "Climate", count: 5 },
-  { name: "Innovation", count: 4 },
-]
+export function BlogSidebar({ posts, onSearch }: BlogSidebarProps) {
+  const [query, setQuery] = useState("")
+  const [email, setEmail] = useState("")
+  const [storyOpen, setStoryOpen] = useState(false)
+  const [story, setStory] = useState({ name: "", email: "", text: "" })
 
-export function BlogSidebar() {
+  const handleSearch = () => {
+    onSearch(query)
+  }
+
+  const handleSubscribe = () => {
+    if (!email) return
+    toast({ title: "Subscribed to weekly tips" })
+    setEmail("")
+  }
+
+  const handleStorySubmit = () => {
+    toast({ title: "Story submitted!" })
+    setStory({ name: "", email: "", text: "" })
+    setStoryOpen(false)
+  }
+
+  const popularPosts = posts.slice(0, 4)
+  const tagCounts: Record<string, number> = {}
+  posts.forEach((p) => {
+    ;(p.tags || []).forEach((t) => {
+      tagCounts[t] = (tagCounts[t] || 0) + 1
+    })
+  })
+  const topTags = Object.entries(tagCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8)
+    .map(([name, count]) => ({ name, count }))
+
   return (
     <div className="space-y-6">
       {/* Search */}
@@ -51,13 +67,23 @@ export function BlogSidebar() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
-            <Input placeholder="Search for topics, tips, guides..." />
-            <Button className="w-full bg-blue-600 hover:bg-blue-700">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault()
+              handleSearch()
+            }}
+            className="space-y-3"
+          >
+            <Input
+              placeholder="Search for topics, tips, guides..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
+            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">
               <Search className="h-4 w-4 mr-2" />
               Search
             </Button>
-          </div>
+          </form>
         </CardContent>
       </Card>
 
@@ -72,8 +98,18 @@ export function BlogSidebar() {
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            <Input placeholder="Enter your email address" type="email" />
-            <Button className="w-full bg-green-600 hover:bg-green-700">Subscribe Free</Button>
+            <Input
+              placeholder="Enter your email address"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <Button
+              className="w-full bg-green-600 hover:bg-green-700"
+              onClick={handleSubscribe}
+            >
+              Subscribe Free
+            </Button>
             <div className="text-xs text-gray-500 text-center">Join 12,000+ subscribers. Unsubscribe anytime.</div>
           </div>
         </CardContent>
@@ -90,20 +126,22 @@ export function BlogSidebar() {
         <CardContent>
           <div className="space-y-4">
             {popularPosts.map((post, index) => (
-              <div key={index} className="p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
+              <a
+                key={index}
+                href={post.link}
+                target="_blank"
+                rel="noreferrer"
+                className="block p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+              >
                 <div className="space-y-2">
                   <h4 className="font-medium text-gray-900 text-sm leading-tight">{post.title}</h4>
                   <div className="flex items-center justify-between">
                     <Badge variant="outline" className="text-xs">
                       {post.category}
                     </Badge>
-                    <div className="flex items-center space-x-1 text-xs text-gray-500">
-                      <BookOpen className="h-3 w-3" />
-                      <span>{post.readCount.toLocaleString()}</span>
-                    </div>
                   </div>
                 </div>
-              </div>
+              </a>
             ))}
           </div>
         </CardContent>
@@ -120,6 +158,7 @@ export function BlogSidebar() {
               <Badge
                 key={tag.name}
                 variant="outline"
+                onClick={() => onSearch(tag.name)}
                 className="cursor-pointer hover:bg-blue-50 hover:border-blue-300 transition-colors"
               >
                 {tag.name} ({tag.count})
@@ -160,18 +199,48 @@ export function BlogSidebar() {
       </Card>
 
       {/* Call to Action */}
-      <Card className="shadow-lg border-0 bg-gradient-to-br from-green-600 to-blue-600 text-white">
-        <CardContent className="p-6 text-center">
-          <BookOpen className="h-12 w-12 mx-auto mb-4 text-white" />
-          <h3 className="font-bold text-lg mb-2">Share Your Story</h3>
-          <p className="text-sm text-green-100 mb-4">
-            Have a water conservation success story? Share it with our community!
-          </p>
-          <Button variant="secondary" className="w-full">
-            Submit Your Story
-          </Button>
-        </CardContent>
-      </Card>
+      <Dialog open={storyOpen} onOpenChange={setStoryOpen}>
+        <Card className="shadow-lg border-0 bg-gradient-to-br from-green-600 to-blue-600 text-white">
+          <CardContent className="p-6 text-center">
+            <BookOpen className="h-12 w-12 mx-auto mb-4 text-white" />
+            <h3 className="font-bold text-lg mb-2">Share Your Story</h3>
+            <p className="text-sm text-green-100 mb-4">
+              Have a water conservation success story? Share it with our community!
+            </p>
+            <DialogTrigger asChild>
+              <Button variant="secondary" className="w-full">
+                Submit Your Story
+              </Button>
+            </DialogTrigger>
+          </CardContent>
+        </Card>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Share Your Story</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <Input
+              placeholder="Your name"
+              value={story.name}
+              onChange={(e) => setStory({ ...story, name: e.target.value })}
+            />
+            <Input
+              placeholder="Your email"
+              type="email"
+              value={story.email}
+              onChange={(e) => setStory({ ...story, email: e.target.value })}
+            />
+            <Textarea
+              placeholder="Your story"
+              value={story.text}
+              onChange={(e) => setStory({ ...story, text: e.target.value })}
+            />
+          </div>
+          <DialogFooter>
+            <Button onClick={handleStorySubmit}>Submit</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <div className="mb-6 flex justify-end">
         <Button className="bg-blue-600 text-white" onClick={async () => {
