@@ -214,9 +214,9 @@ export function NewsFilters({ values, onValuesChange }: NewsFiltersProps) {
         {activeFilters.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-4">
             <span className="text-sm text-gray-600 mr-2">Active filters:</span>
-            {activeFilters.map((filter) => (
+            {activeFilters.map((filter, index) => (
               <Badge
-                key={filter}
+                key={`${filter}-${index}`}
                 variant="secondary"
                 className="cursor-pointer hover:bg-red-100 hover:text-red-800 transition-colors"
                 onClick={() => removeFilter(filter as string)}
