@@ -1,10 +1,10 @@
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Separator } from "@/components/ui/separator"
-import { Calendar, Clock, ArrowLeft, Share2, Bookmark } from "lucide-react"
-import Link from "next/link"
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
+import { Calendar, Clock, ArrowLeft, Share2, Bookmark } from "lucide-react";
+import Link from "next/link";
 
 // This would typically fetch data based on the ID
 const blogPost = {
@@ -54,7 +54,7 @@ const blogPost = {
   category: "Education",
   tags: ["flood-risk", "assessment", "uk", "water-management"],
   image: "/placeholder.svg?height=400&width=800",
-}
+};
 
 export default function BlogPostPage({ params }: { params: { id: string } }) {
   const formatDate = (dateString: string) => {
@@ -62,8 +62,8 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
       year: "numeric",
       month: "long",
       day: "numeric",
-    })
-  }
+    });
+  };
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
@@ -85,7 +85,15 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
             <Avatar className="h-12 w-12">
-              <AvatarImage src={blogPost.author.avatar || "/placeholder.svg"} alt={blogPost.author.name} />
+              <AvatarImage
+                src={blogPost.author.avatar || "/placeholder.svg"}
+                alt={blogPost.author.name}
+                onError={(e) => {
+                  const target = e.currentTarget;
+                  if (target.src !== "/placeholder.svg")
+                    target.src = "/placeholder.svg";
+                }}
+              />
               <AvatarFallback>
                 {blogPost.author.name
                   .split(" ")
@@ -122,7 +130,16 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
 
         {/* Featured Image */}
         <div className="aspect-video bg-muted rounded-lg overflow-hidden mb-8">
-          <img src={blogPost.image || "/placeholder.svg"} alt={blogPost.title} className="w-full h-full object-cover" />
+          <img
+            src={blogPost.image || "/placeholder.svg"}
+            alt={blogPost.title}
+            onError={(e) => {
+              const target = e.currentTarget;
+              if (target.src !== "/placeholder.svg")
+                target.src = "/placeholder.svg";
+            }}
+            className="w-full h-full object-cover"
+          />
         </div>
       </div>
 
@@ -151,7 +168,15 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
           <h3 className="text-lg font-semibold mb-4">About the Author</h3>
           <div className="flex gap-4">
             <Avatar className="h-16 w-16">
-              <AvatarImage src={blogPost.author.avatar || "/placeholder.svg"} alt={blogPost.author.name} />
+              <AvatarImage
+                src={blogPost.author.avatar || "/placeholder.svg"}
+                alt={blogPost.author.name}
+                onError={(e) => {
+                  const target = e.currentTarget;
+                  if (target.src !== "/placeholder.svg")
+                    target.src = "/placeholder.svg";
+                }}
+              />
               <AvatarFallback>
                 {blogPost.author.name
                   .split(" ")
@@ -167,5 +192,5 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
