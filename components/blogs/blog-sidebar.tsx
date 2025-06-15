@@ -2,7 +2,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import { TrendingUp, Search, Mail, Star, Users, BookOpen } from "lucide-react"
+import { TrendingUp, Search, Mail, Star, Users, BookOpen, Share2 } from "lucide-react"
+import html2canvas from "html2canvas"
 
 const popularPosts = [
   {
@@ -171,6 +172,22 @@ export function BlogSidebar() {
           </Button>
         </CardContent>
       </Card>
+
+      <div className="mb-6 flex justify-end">
+        <Button className="bg-blue-600 text-white" onClick={async () => {
+          const sidebar = document.querySelector('.space-y-6');
+          if (sidebar) {
+            const canvas = await html2canvas(sidebar as HTMLElement);
+            const image = canvas.toDataURL("image/png");
+            const link = document.createElement('a');
+            link.href = image;
+            link.download = `blog-sidebar-screenshot.png`;
+            link.click();
+          }
+        }}>
+          <Share2 className="h-4 w-4 mr-2" />Share Screenshot
+        </Button>
+      </div>
     </div>
   )
 }

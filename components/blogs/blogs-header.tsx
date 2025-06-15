@@ -1,4 +1,5 @@
 import { BookOpen, Users, TrendingUp, Award } from "lucide-react"
+import html2canvas from "html2canvas"
 
 export function BlogsHeader() {
   return (
@@ -64,6 +65,25 @@ export function BlogsHeader() {
             </p>
           </div>
         </div>
+      </div>
+
+      <div className="flex justify-end mb-4">
+        <button
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+          onClick={async () => {
+            const header = document.querySelector('.text-center.mb-12');
+            if (header) {
+              const canvas = await html2canvas(header as HTMLElement);
+              const image = canvas.toDataURL("image/png");
+              const link = document.createElement('a');
+              link.href = image;
+              link.download = `blog-header-screenshot.png`;
+              link.click();
+            }
+          }}
+        >
+          Share Screenshot
+        </button>
       </div>
     </div>
   )
