@@ -28,7 +28,7 @@ export function HourlyForecast({ hourly }: HourlyForecastProps) {
               const isNight = time.getHours() < 6 || time.getHours() >= 18
               const WeatherIcon = getWeatherIcon(hour.icon, isNight)
               const formattedTime = String(time.getHours())
-
+              
               return (
                 <div
                   key={hour.time + '-' + idx}
@@ -36,6 +36,9 @@ export function HourlyForecast({ hourly }: HourlyForecastProps) {
                 >
                   <div className="text-sm font-medium">{formattedTime}</div>
                   <WeatherIcon className="h-8 w-8 my-2 text-blue-500" />
+                  <div className="text-sm font-medium">
+                    {hour.temperature != null ? `${Math.round(hour.temperature)}°C` : "-"}
+                  </div>
                   <div className="flex items-center mt-1">
                     <Droplet className="h-4 w-4 text-gray-500 mr-1" />
                     <span className="text-sm font-medium">
