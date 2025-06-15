@@ -220,6 +220,23 @@ export function AgencyContacts() {
     return mapping[prefix] || "Unknown Water Company";
   };
 
+  const getCompanyFromAddress = (address: any) => {
+    const state = address?.state || "";
+    if (state.includes("Scotland")) {
+      return "Scottish Water";
+    }
+    if (state.includes("Wales")) {
+      return "D\u0175r Cymru Welsh Water";
+    }
+    if (state.includes("Northern Ireland")) {
+      return "Northern Ireland Water";
+    }
+    if (state.includes("Ireland")) {
+      return "Uisce \u00c9ireann";
+    }
+    return getCompanyFromPostcode(address?.postcode || "");
+  };
+
   const handleFindMyCompany = () => {
     setLocating(true);
     if (navigator.geolocation) {
@@ -229,9 +246,8 @@ export function AgencyContacts() {
             const res = await fetch(
               `https://nominatim.openstreetmap.org/reverse?format=json&lat=${position.coords.latitude}&lon=${position.coords.longitude}`,
             );
-            const data = await res.json();
-            const postcode = data.address?.postcode || "";
-            setLocalCompany(getCompanyFromPostcode(postcode));
+          const data = await res.json();
+          setLocalCompany(getCompanyFromAddress(data.address));
           } catch (e) {
             console.error(e);
             setLocalCompany(null);
