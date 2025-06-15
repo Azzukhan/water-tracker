@@ -230,3 +230,40 @@ class FloodMonitoringAPIView(APIView):
 
         unique.sort(key=lambda x: x.get("publishedAt", ""), reverse=True)
         return Response({"news": unique})
+
+
+class GDELTNewsAPIView(APIView):
+    """Fetch global water related news using the GDELT Project"""
+
+    DEFAULT_QUERY = (
+        "water OR flood OR drought OR \"water quality\""
+    )
+
+    def get(self, request):
+        query = request.query_params.get("q", self.DEFAULT_QUERY)
+        encoded_query = requests.utils.quote(query)
+        url = (
+            "https://api.gdeltproject.org/api/v2/doc/doc"
+            f"?query={encoded_query}&format=json&maxrecords=50&mode=ArtList&sort=HybridRel"
+        )
+
+        try:
+            resp = requests.get(url, timeout=10)
+            data = resp.json()
+        except Exception:
+            return Response({"news": []}, status=500)
+
+        articles = []
+        for item in data.get("articles", []):
+            title = item.get("title", "")
+            desc = item.get("seendate", "")
+            articles.append(
+                {
+                    "title": title,
+                    "description": item.get("trans", desc) or desc,
+                    "url": item.get("url"),
+                    "publishedAt": item.get("seendate"),
+                }
+            )
+
+        return Response({"news": articles})
