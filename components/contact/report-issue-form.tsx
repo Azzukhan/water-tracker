@@ -63,7 +63,7 @@ export function ReportIssueForm() {
   }
 
   return (
-    <Card className="shadow-lg border-0">
+    <Card className="shadow-lg border-0 flex flex-col h-full">
       <CardHeader className="bg-gradient-to-r from-red-600 to-orange-600 text-white">
         <CardTitle className="text-2xl font-bold flex items-center">
           <AlertTriangle className="h-5 w-5 mr-2" />
@@ -72,8 +72,8 @@ export function ReportIssueForm() {
         <p className="text-red-100 text-sm">Report water quality or service problems</p>
       </CardHeader>
 
-      <CardContent className="p-8">
-        <form onSubmit={handleSubmit} className="space-y-4">
+      <CardContent className="p-8 flex flex-col flex-1">
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 space-y-4">
           {/* Issue Type */}
           <div>
             <label className="block text-sm font-medium text-gray-900 mb-2">Issue Type *</label>
@@ -201,7 +201,7 @@ export function ReportIssueForm() {
           </Button>
 
           {/* Emergency Notice */}
-          <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+          <div className="p-3 bg-red-50 border border-red-200 rounded-lg mt-auto">
             <div className="flex items-start space-x-2">
               <AlertTriangle className="h-4 w-4 text-red-600 mt-0.5" />
               <div className="text-xs text-red-800">

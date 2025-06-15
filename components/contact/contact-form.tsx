@@ -68,7 +68,7 @@ export function ContactForm() {
   }
 
   return (
-    <Card className="shadow-lg border-0">
+    <Card className="shadow-lg border-0 flex flex-col h-full">
       <CardHeader className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white">
         <CardTitle className="text-2xl font-bold flex items-center">
           <MessageCircle className="h-6 w-6 mr-3" />
@@ -77,8 +77,8 @@ export function ContactForm() {
         <p className="text-blue-100">Send us your questions, feedback, or general inquiries</p>
       </CardHeader>
 
-      <CardContent className="p-8">
-        <form onSubmit={handleSubmit} className="space-y-6">
+      <CardContent className="p-8 flex flex-col flex-1">
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 space-y-6">
           {/* Personal Information */}
           <div className="grid md:grid-cols-2 gap-6">
             <div>
@@ -222,7 +222,7 @@ export function ContactForm() {
           </Button>
 
           {/* Privacy Notice */}
-          <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+          <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg mt-auto">
             <div className="text-xs text-gray-600">
               <strong>Privacy Notice:</strong> Your personal information will be used solely to respond to your inquiry
               and will not be shared with third parties. We comply with UK GDPR regulations.
