@@ -25,17 +25,18 @@ export default function BlogPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Blog</h1>
-        <p className="text-muted-foreground">
-          Insights and articles from leading water organisations
-        </p>
+      <div className="rounded-lg bg-gradient-to-r from-sky-500 to-purple-500 p-8 text-white mb-8">
+        <h1 className="text-4xl font-bold mb-2">Blog</h1>
+        <p className="text-sky-100">Insights and articles from leading water organisations</p>
       </div>
 
       <div className="flex flex-col md:flex-row gap-4 mb-8">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input placeholder="Search blog posts..." className="pl-10" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search blog posts..."
+            className="pl-10 rounded-full border border-sky-500 focus:ring-sky-500"
+          />
         </div>
         <div className="flex gap-2 overflow-x-auto">
           {categories.map((category) => (
@@ -103,7 +104,7 @@ export default function BlogPage() {
                       <Calendar className="h-3 w-3" />
                       {formatDate(post.published)}
                     </div>
-                    <Button variant="ghost" size="sm" asChild>
+                    <Button variant="gradient" size="sm" asChild>
                       <a href={post.link} target="_blank" rel="noreferrer">
                         Read More <ArrowRight className="h-3 w-3 ml-1" />
                       </a>
