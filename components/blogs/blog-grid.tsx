@@ -99,19 +99,6 @@ const fallbackPosts = [
     tags: ["Innovation", "Future", "Industry"],
     image: "/placeholder.svg?height=200&width=400",
   },
-  {
-    id: 9,
-    title: "Business Water Efficiency: Strategies for Commercial Success",
-    excerpt:
-      "Comprehensive guide for businesses to reduce water consumption, cut costs, and improve sustainability credentials.",
-    author: "Business Team",
-    publishDate: "2024-05-17",
-    readTime: "8 min read",
-    readCount: 892,
-    category: "Business Solutions",
-    tags: ["Business", "Efficiency", "Sustainability"],
-    image: "/placeholder.svg?height=200&width=400",
-  },
 ]
 
 const getCategoryColor = (category: string) => {
