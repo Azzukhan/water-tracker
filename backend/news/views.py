@@ -75,6 +75,8 @@ class WaterNewsAPIView(APIView):
                 return "Water Level"
             if "water quality" in text:
                 return "Water Quality"
+            if "investment" in text:
+                return "Investment"
             if any(k in text for k in ["flood", "thunderstorm", "storm"]):
                 return "Storm"
             return "General"
@@ -119,6 +121,8 @@ class AlertScraperAPIView(APIView):
                 return "Water Level"
             if "water quality" in text:
                 return "Water Quality"
+            if "investment" in text:
+                return "Investment"
             if any(k in text for k in ["flood", "thunderstorm", "storm"]):
                 return "Storm"
             return "General"
@@ -185,6 +189,8 @@ class FloodMonitoringAPIView(APIView):
                 return "Water Level"
             if "water quality" in text:
                 return "Water Quality"
+            if "investment" in text:
+                return "Investment"
             if any(k in text for k in ["flood", "thunderstorm", "storm"]):
                 return "Storm"
             return "General"
