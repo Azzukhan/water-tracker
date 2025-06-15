@@ -12,6 +12,9 @@ class NewsArticle(models.Model):
         ('Technology', 'Technology'),
         ('Research', 'Research'),
         ('Infrastructure', 'Infrastructure'),
+        ('Water Level', 'Water Level'),
+        ('Water Quality', 'Water Quality'),
+        ('Storm', 'Storm'),
     ])
     severity = models.CharField(max_length=20, choices=[
         ('low', 'Low'),

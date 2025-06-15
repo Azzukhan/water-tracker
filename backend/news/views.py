@@ -69,6 +69,16 @@ class WaterNewsAPIView(APIView):
                 return "medium"
             return "low"
 
+        def categorize(title: str, desc: str) -> str:
+            text = f"{title} {desc}".lower()
+            if "water level" in text:
+                return "Water Level"
+            if "water quality" in text:
+                return "Water Quality"
+            if any(k in text for k in ["flood", "thunderstorm", "storm"]):
+                return "Storm"
+            return "General"
+
         articles = []
         for article in data.get("articles", []):
             title = article.get("title", "")
@@ -80,6 +90,7 @@ class WaterNewsAPIView(APIView):
                     "url": article.get("url"),
                     "publishedAt": article.get("publishedAt"),
                     "severity": classify(title, description),
+                    "category": categorize(title, description),
                 }
             )
 
@@ -102,6 +113,16 @@ class AlertScraperAPIView(APIView):
     ]
 
     def get(self, request):
+        def categorize(title: str, desc: str) -> str:
+            text = f"{title} {desc}".lower()
+            if "water level" in text:
+                return "Water Level"
+            if "water quality" in text:
+                return "Water Quality"
+            if any(k in text for k in ["flood", "thunderstorm", "storm"]):
+                return "Storm"
+            return "General"
+
         articles = []
         for feed_url in self.FEEDS:
             try:
@@ -121,6 +142,7 @@ class AlertScraperAPIView(APIView):
                         "description": summary,
                         "url": entry.get("link"),
                         "publishedAt": entry.get("published", entry.get("updated")),
+                        "category": categorize(title, summary),
                     }
                 )
 
@@ -157,6 +179,16 @@ class FloodMonitoringAPIView(APIView):
             return None
 
     def get(self, request):
+        def categorize(title: str, desc: str) -> str:
+            text = f"{title} {desc}".lower()
+            if "water level" in text:
+                return "Water Level"
+            if "water quality" in text:
+                return "Water Quality"
+            if any(k in text for k in ["flood", "thunderstorm", "storm"]):
+                return "Storm"
+            return "General"
+
         articles = []
 
         data = self._fetch_json(self.EA_URL)
@@ -169,6 +201,7 @@ class FloodMonitoringAPIView(APIView):
                         "url": item.get("@id"),
                         "publishedAt": item.get("timeMessageChanged"),
                         "severity": item.get("severity", "").lower() if item.get("severity") else None,
+                        "category": categorize(item.get("description", ""), item.get("message", "")),
                     }
                 )
 
@@ -184,6 +217,7 @@ class FloodMonitoringAPIView(APIView):
                         "url": entry.get("link"),
                         "publishedAt": entry.get("published", entry.get("updated")),
                         "severity": "medium",
+                        "category": categorize(entry.get("title", ""), entry.get("summary", "")),
                     }
                 )
 

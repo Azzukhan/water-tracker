@@ -13,6 +13,7 @@ const DEFAULT_FILTERS: NewsFilterValues = {
   region: "All Regions",
   eventType: "All Types",
   dateRange: "All Time",
+  category: "All Categories",
 }
 
 export default function NewsPage() {
@@ -20,6 +21,9 @@ export default function NewsPage() {
   const [filters, setFilters] = useState<NewsFilterValues>(DEFAULT_FILTERS)
 
   const filteredNews = news.filter((item) => {
+    if (filters.category !== "All Categories" && item.category !== filters.category) {
+      return false
+    }
     if (!filters.searchTerm) return true
     const text = `${item.title} ${item.description}`.toLowerCase()
     return text.includes(filters.searchTerm.toLowerCase())

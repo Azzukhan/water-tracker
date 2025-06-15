@@ -51,12 +51,20 @@ const eventTypes = [
   "Flooding",
 ]
 
+const categories = [
+  "All Categories",
+  "Water Level",
+  "Water Quality",
+  "Storm",
+]
+
 export interface NewsFilterValues {
   searchTerm: string
   company: string
   region: string
   eventType: string
   dateRange: string
+  category: string
 }
 
 interface NewsFiltersProps {
@@ -65,13 +73,14 @@ interface NewsFiltersProps {
 }
 
 export function NewsFilters({ values, onValuesChange }: NewsFiltersProps) {
-  const { searchTerm, company, region, eventType, dateRange } = values
+  const { searchTerm, company, region, eventType, dateRange, category } = values
 
   const setSearchTerm = (val: string) => onValuesChange({ ...values, searchTerm: val })
   const setSelectedCompany = (val: string) => onValuesChange({ ...values, company: val })
   const setSelectedRegion = (val: string) => onValuesChange({ ...values, region: val })
   const setSelectedEventType = (val: string) => onValuesChange({ ...values, eventType: val })
   const setDateRange = (val: string) => onValuesChange({ ...values, dateRange: val })
+  const setSelectedCategory = (val: string) => onValuesChange({ ...values, category: val })
 
   const activeFilters = useMemo(
     () => [
@@ -79,8 +88,9 @@ export function NewsFilters({ values, onValuesChange }: NewsFiltersProps) {
       region !== "All Regions" && region,
       eventType !== "All Types" && eventType,
       dateRange !== "All Time" && dateRange,
+      category !== "All Categories" && category,
     ].filter(Boolean),
-    [company, region, eventType, dateRange]
+    [company, region, eventType, dateRange, category]
   )
 
   const clearAllFilters = () => {
@@ -90,6 +100,7 @@ export function NewsFilters({ values, onValuesChange }: NewsFiltersProps) {
       region: "All Regions",
       eventType: "All Types",
       dateRange: "All Time",
+      category: "All Categories",
     })
   }
 
@@ -97,6 +108,7 @@ export function NewsFilters({ values, onValuesChange }: NewsFiltersProps) {
     if (companies.includes(filter)) setSelectedCompany("All Companies")
     if (regions.includes(filter)) setSelectedRegion("All Regions")
     if (eventTypes.includes(filter)) setSelectedEventType("All Types")
+    if (categories.includes(filter)) setSelectedCategory("All Categories")
     if (filter === dateRange) setDateRange("All Time")
   }
 
@@ -125,7 +137,7 @@ export function NewsFilters({ values, onValuesChange }: NewsFiltersProps) {
         </div>
 
         {/* Filter Controls */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-6 gap-4 mb-6">
           <Select value={company} onValueChange={setSelectedCompany}>
             <SelectTrigger>
               <SelectValue placeholder="Company" />
@@ -160,6 +172,19 @@ export function NewsFilters({ values, onValuesChange }: NewsFiltersProps) {
               {eventTypes.map((type) => (
                 <SelectItem key={type} value={type}>
                   {type}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select value={category} onValueChange={setSelectedCategory}>
+            <SelectTrigger>
+              <SelectValue placeholder="Category" />
+            </SelectTrigger>
+            <SelectContent>
+              {categories.map((c) => (
+                <SelectItem key={c} value={c}>
+                  {c}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -217,6 +242,9 @@ export function NewsFilters({ values, onValuesChange }: NewsFiltersProps) {
           </Button>
           <Button variant="outline" size="sm" onClick={() => setSelectedEventType("Water Quality")} className="text-xs">
             Water Quality
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => setSelectedCategory("Storm")} className="text-xs">
+            Storm News
           </Button>
         </div>
       </CardContent>
