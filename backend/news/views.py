@@ -27,8 +27,12 @@ class WaterNewsAPIView(APIView):
             "bad weather",
             "heavy rain",
             "flood alert",
+            "flooding",
+            "drought",
             "water level",
             "water bill",
+            "water price",
+            "water pricing",
         ]
         query = " OR ".join(f'"{k}"' for k in keywords)
         region = (
