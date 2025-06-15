@@ -69,10 +69,10 @@ export function BlogCard({ post, isBookmarked = false, onBookmark }: BlogCardPro
         </p>
         <div className="flex items-center justify-between mb-2 text-sm text-muted-foreground">
           <div className="flex items-center gap-1">
-            <Calendar className="h-3 w-3" />
+            <Calendar className="h-4 w-4" />
             {formatDate(post.published)}
           </div>
-          <div className="flex gap-1">
+          <div className="flex items-center gap-1">
             <Button variant="ghost" size="icon" onClick={share}>
               <Share2 className="h-4 w-4" />
             </Button>

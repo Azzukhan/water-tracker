@@ -105,18 +105,18 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
               <p className="font-medium">{blogPost.author.name}</p>
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1">
-                  <Calendar className="h-3 w-3" />
+                  <Calendar className="h-4 w-4" />
                   {formatDate(blogPost.publishedAt)}
                 </div>
                 <div className="flex items-center gap-1">
-                  <Clock className="h-3 w-3" />
+                  <Clock className="h-4 w-4" />
                   {blogPost.readTime} min read
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
             <Button variant="outline" size="sm">
               <Share2 className="h-4 w-4 mr-2" />
               Share
