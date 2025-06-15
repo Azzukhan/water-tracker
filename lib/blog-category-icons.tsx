@@ -30,3 +30,24 @@ export function getCategoryIcon(category: string): LucideIcon {
       return Globe
   }
 }
+
+export function getCategoryColor(category: string): string {
+  switch (category) {
+    case "Water Conservation":
+      return "text-blue-600"
+    case "Sustainability":
+      return "text-green-600"
+    case "Innovation & Tech":
+      return "text-purple-600"
+    case "Emergency Preparedness":
+      return "text-red-600"
+    case "Industry Insights":
+      return "text-orange-600"
+    case "Home & Garden":
+      return "text-cyan-600"
+    case "Business Solutions":
+      return "text-indigo-600"
+    default:
+      return "text-gray-600"
+  }
+}

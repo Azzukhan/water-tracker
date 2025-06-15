@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Calendar, ArrowRight, Share2, Bookmark, Tag } from "lucide-react"
-import { getCategoryIcon } from "@/lib/blog-category-icons"
+import { getCategoryIcon, getCategoryColor } from "@/lib/blog-category-icons"
 import { toast } from "@/hooks/use-toast"
 import Link from "next/link"
 import type { BlogItem } from "@/hooks/use-blogs"
@@ -24,6 +24,7 @@ export function BlogCard({ post, isBookmarked = false, onBookmark }: BlogCardPro
     })
 
   const CategoryIcon = getCategoryIcon(post.category)
+  const categoryColor = getCategoryColor(post.category)
 
   const share = async () => {
     try {
@@ -42,10 +43,10 @@ export function BlogCard({ post, isBookmarked = false, onBookmark }: BlogCardPro
     <Card className="hover:shadow-lg transition-shadow flex flex-col h-full">
       <CardHeader className="pb-3">
         <div className="aspect-video bg-muted rounded mb-4 flex items-center justify-center">
-          <CategoryIcon className="h-20 w-20 text-muted-foreground" />
+          <CategoryIcon className={`h-20 w-20 ${categoryColor}`} />
         </div>
         <Badge variant="secondary" className="w-fit mb-2 flex items-center gap-1">
-          <CategoryIcon className="h-3 w-3" />
+          <CategoryIcon className={`h-3 w-3 ${categoryColor}`} />
           {post.category}
         </Badge>
         <div className="flex items-center flex-wrap gap-2 mb-2">
