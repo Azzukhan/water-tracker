@@ -1,13 +1,13 @@
 "use client"
 
 import { useState } from "react"
-import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Clock, User, Eye, Share2, BookmarkPlus, ArrowRight, Tag } from "lucide-react"
+import { BookmarkPlus } from "lucide-react"
+import { BlogCard } from "./blog-card"
+import type { BlogItem } from "@/hooks/use-blogs"
 
-// Dummy blog data
-const blogPosts = [
+// Fallback posts used when no data is provided
+const fallbackPosts = [
   {
     id: 2,
     title: "Why Saving Water Matters: The Environmental and Economic Impact",
@@ -127,14 +127,18 @@ const getCategoryColor = (category: string) => {
   return colors[category] || "bg-gray-600"
 }
 
-export function BlogGrid() {
+export interface BlogGridProps {
+  posts?: BlogItem[]
+}
+
+export function BlogGrid({ posts = fallbackPosts }: BlogGridProps) {
   const [currentPage, setCurrentPage] = useState(1)
   const [bookmarkedPosts, setBookmarkedPosts] = useState<number[]>([])
   const postsPerPage = 6
 
-  const totalPages = Math.ceil(blogPosts.length / postsPerPage)
+  const totalPages = Math.ceil(posts.length / postsPerPage)
   const startIndex = (currentPage - 1) * postsPerPage
-  const currentPosts = blogPosts.slice(startIndex, startIndex + postsPerPage)
+  const currentPosts = posts.slice(startIndex, startIndex + postsPerPage)
 
   const toggleBookmark = (id: number) => {
     setBookmarkedPosts((prev) => (prev.includes(id) ? prev.filter((post) => post !== id) : [...prev, id]))
@@ -146,7 +150,7 @@ export function BlogGrid() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Latest Articles</h2>
-          <p className="text-gray-600">{blogPosts.length} educational articles available</p>
+          <p className="text-gray-600">{posts.length} educational articles available</p>
         </div>
         <div className="flex items-center space-x-2">
           <span className="text-sm text-gray-600">Sort by:</span>
@@ -160,92 +164,23 @@ export function BlogGrid() {
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {currentPosts.map((post) => {
           const isBookmarked = bookmarkedPosts.includes(post.id)
-
           return (
-            <Card
-              key={post.id}
-              className="shadow-lg border-0 hover:shadow-xl transition-all duration-300 group cursor-pointer flex flex-col h-full"
-            >
-              <div className="relative">
-                <img
-                  src={post.image || "/placeholder.svg"}
-                  alt={post.title}
-                  className="w-full h-48 object-cover rounded-t-lg"
-                />
-                <Badge className={`absolute top-3 left-3 ${getCategoryColor(post.category)} text-white text-xs`}>
-                  {post.category}
-                </Badge>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className={`absolute top-3 right-3 ${
-                    isBookmarked ? "text-yellow-600 bg-white/90" : "text-gray-600 bg-white/90"
-                  } hover:bg-white`}
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    toggleBookmark(post.id)
-                  }}
-                >
-                  <BookmarkPlus className={`h-4 w-4 ${isBookmarked ? "fill-current" : ""}`} />
-                </Button>
-              </div>
-
-              <CardContent className="p-6 flex flex-col h-full">
-                <div className="space-y-4 flex-1 flex flex-col">
-                  {/* Title and Excerpt */}
-                  <div>
-                    <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors leading-tight mb-2">
-                      {post.title}
-                    </h3>
-                    <p className="text-gray-600 text-sm leading-relaxed">{post.excerpt}</p>
-                  </div>
-
-                  {/* Tags */}
-                  <div className="flex items-center flex-wrap gap-2">
-                    <Tag className="h-3 w-3 text-gray-500" />
-                    {Array.from(new Set(post.tags)).slice(0, 2).map((tag) => (
-                      <Badge key={tag} variant="outline" className="text-xs">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-
-                  {/* Meta Info */}
-                  <div className="flex items-center justify-between text-xs text-gray-500">
-                    <div className="flex items-center space-x-3">
-                      <div className="flex items-center space-x-1">
-                        <User className="h-3 w-3" />
-                        <span>{post.author}</span>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <Clock className="h-3 w-3" />
-                        <span>{post.readTime}</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-1">
-                      <Eye className="h-3 w-3" />
-                      <span>{post.readCount.toLocaleString()}</span>
-                    </div>
-                  </div>
-
-                  {/* Actions */}
-                  <div className="flex items-center justify-between pt-2 mt-auto">
-                    <div className="text-xs text-gray-500">
-                      {new Date(post.publishDate).toLocaleDateString("en-GB")}
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Button variant="ghost" size="sm" className="text-gray-500 hover:text-blue-600">
-                        <Share2 className="h-4 w-4" />
-                      </Button>
-                      <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-xs">
-                        Read More
-                        <ArrowRight className="ml-1 h-3 w-3" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <div key={post.id} className="relative">
+              <BlogCard post={post} />
+              <Button
+                variant="ghost"
+                size="sm"
+                className={`absolute top-3 right-3 ${
+                  isBookmarked ? "text-yellow-600 bg-white/90" : "text-gray-600 bg-white/90"
+                } hover:bg-white`}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  toggleBookmark(post.id)
+                }}
+              >
+                <BookmarkPlus className={`h-4 w-4 ${isBookmarked ? "fill-current" : ""}`} />
+              </Button>
+            </div>
           )
         })}
       </div>
@@ -253,7 +188,7 @@ export function BlogGrid() {
       {/* Pagination */}
       <div className="flex items-center justify-between">
         <div className="text-sm text-gray-600">
-          Showing {startIndex + 1}-{Math.min(startIndex + postsPerPage, blogPosts.length)} of {blogPosts.length}{" "}
+          Showing {startIndex + 1}-{Math.min(startIndex + postsPerPage, posts.length)} of {posts.length}{" "}
           articles
         </div>
 
