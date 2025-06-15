@@ -11,6 +11,7 @@ export interface BlogItem {
 export function useBlogs(refreshIntervalMs: number = 10 * 60 * 1000) {
   const [blogs, setBlogs] = useState<BlogItem[]>([])
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     let active = true
@@ -19,10 +20,19 @@ export function useBlogs(refreshIntervalMs: number = 10 * 60 * 1000) {
       setLoading(true)
       try {
         const res = await fetch('/api/blog/external')
+        if (!res.ok) {
+          throw new Error(`Status ${res.status}`)
+        }
         const data = await res.json()
-        if (active) setBlogs(Array.isArray(data.posts) ? data.posts : [])
-      } catch {
-        if (active) setBlogs([])
+        if (active) {
+          setBlogs(Array.isArray(data.posts) ? data.posts : [])
+          setError(null)
+        }
+      } catch (err) {
+        if (active) {
+          setBlogs([])
+          setError((err as Error).message)
+        }
       } finally {
         if (active) setLoading(false)
       }
@@ -36,5 +46,5 @@ export function useBlogs(refreshIntervalMs: number = 10 * 60 * 1000) {
     }
   }, [refreshIntervalMs])
 
-  return { blogs, loading }
+  return { blogs, loading, error }
 }

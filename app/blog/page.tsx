@@ -9,7 +9,7 @@ import Link from "next/link"
 import { useBlogs } from "@/hooks/use-blogs"
 
 export default function BlogPage() {
-  const { blogs, loading } = useBlogs()
+  const { blogs, loading, error } = useBlogs()
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-GB", {
@@ -116,8 +116,16 @@ export default function BlogPage() {
         </div>
         )}
 
-        {!loading && blogs.length === 0 && (
-          <div>No blog posts available.</div>
+        {!loading && error && (
+          <div className="text-center text-destructive py-20">
+            Failed to load blog posts: {error}
+          </div>
+        )}
+
+        {!loading && blogs.length === 0 && !error && (
+          <div className="text-center text-muted-foreground py-20">
+            No blog posts available at this time. Please check back later.
+          </div>
         )}
       </div>
     )
