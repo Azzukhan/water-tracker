@@ -3,6 +3,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 import feedparser
+import json
+import os
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import BlogCategory, BlogPost, Comment
 from .serializers import BlogCategorySerializer, BlogPostSerializer, BlogPostDetailSerializer, CommentSerializer
@@ -92,6 +94,15 @@ class ExternalBlogAPIView(APIView):
                         "category": category,
                     }
                 )
+
+        if not posts:
+            sample_path = os.path.join(os.path.dirname(__file__), "sample_posts.json")
+            try:
+                with open(sample_path, "r", encoding="utf-8") as fh:
+                    data = json.load(fh)
+                    posts = data.get("posts", [])
+            except Exception:
+                posts = []
 
         posts.sort(key=lambda x: x.get("published", ""), reverse=True)
         return Response({"posts": posts})
