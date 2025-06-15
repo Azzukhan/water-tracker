@@ -1,16 +1,16 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Phone, Mail, ExternalLink, MapPin, Clock } from "lucide-react"
+} from "@/components/ui/select";
+import { Phone, Mail, ExternalLink, MapPin, Clock } from "lucide-react";
 
 const agencies = [
   {
@@ -181,26 +181,44 @@ const agencies = [
     color: "bg-pink-700",
     hours: "24/7 Incident Line, office hours general",
   },
-]
+];
 
 export function AgencyContacts() {
-  const [selectedRegion, setSelectedRegion] = useState("All")
-  const regions = Array.from(new Set(agencies.map((a) => a.region)))
+  const [selectedRegion, setSelectedRegion] = useState("All");
+  const [currentPage, setCurrentPage] = useState(1);
+  const regions = Array.from(new Set(agencies.map((a) => a.region)));
   const filteredAgencies =
     selectedRegion === "All"
       ? agencies
-      : agencies.filter((a) => a.region === selectedRegion)
+      : agencies.filter((a) => a.region === selectedRegion);
+  const itemsPerPage = 6;
+  const totalPages = Math.ceil(filteredAgencies.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedAgencies = filteredAgencies.slice(
+    startIndex,
+    startIndex + itemsPerPage,
+  );
 
   return (
     <Card className="shadow-lg border-0">
       <CardHeader className="bg-gradient-to-r from-gray-800 to-gray-900 text-white">
-        <CardTitle className="text-2xl font-bold">UK Water Agency Contacts</CardTitle>
-        <p className="text-gray-300">Direct contact information for regional water authorities</p>
+        <CardTitle className="text-2xl font-bold">
+          UK Water Agency Contacts
+        </CardTitle>
+        <p className="text-gray-300">
+          Direct contact information for regional water authorities
+        </p>
       </CardHeader>
 
       <CardContent className="p-6">
         <div className="mb-6 flex justify-end">
-          <Select value={selectedRegion} onValueChange={setSelectedRegion}>
+          <Select
+            value={selectedRegion}
+            onValueChange={(v) => {
+              setSelectedRegion(v);
+              setCurrentPage(1);
+            }}
+          >
             <SelectTrigger className="w-48">
               <SelectValue placeholder="Filter by region" />
             </SelectTrigger>
@@ -215,7 +233,7 @@ export function AgencyContacts() {
           </Select>
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredAgencies.map((agency, index) => (
+          {paginatedAgencies.map((agency, index) => (
             <div
               key={index}
               className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow duration-200"
@@ -224,12 +242,18 @@ export function AgencyContacts() {
                 {/* Header */}
                 <div className="flex items-start justify-between">
                   <div className="flex items-center space-x-3">
-                    <div className={`w-12 h-12 ${agency.color} rounded-lg flex items-center justify-center`}>
-                      <span className="text-white font-bold text-sm">{agency.logo}</span>
+                    <div
+                      className={`w-12 h-12 ${agency.color} rounded-lg flex items-center justify-center`}
+                    >
+                      <span className="text-white font-bold text-sm">
+                        {agency.logo}
+                      </span>
                     </div>
                     <div>
                       <h3 className="font-bold text-gray-900">{agency.name}</h3>
-                      <p className="text-sm text-gray-600">{agency.description}</p>
+                      <p className="text-sm text-gray-600">
+                        {agency.description}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -247,7 +271,10 @@ export function AgencyContacts() {
                       <Phone className="h-4 w-4 text-blue-500" />
                       <span className="text-sm font-medium">General</span>
                     </div>
-                    <a href={`tel:${agency.phone}`} className="text-sm font-mono text-blue-600 hover:underline">
+                    <a
+                      href={`tel:${agency.phone}`}
+                      className="text-sm font-mono text-blue-600 hover:underline"
+                    >
                       {agency.phone}
                     </a>
                   </div>
@@ -257,7 +284,10 @@ export function AgencyContacts() {
                       <Phone className="h-4 w-4 text-red-500" />
                       <span className="text-sm font-medium">Emergency</span>
                     </div>
-                    <a href={`tel:${agency.emergency}`} className="text-sm font-mono text-red-600 hover:underline">
+                    <a
+                      href={`tel:${agency.emergency}`}
+                      className="text-sm font-mono text-red-600 hover:underline"
+                    >
                       {agency.emergency}
                     </a>
                   </div>
@@ -267,28 +297,44 @@ export function AgencyContacts() {
                       <Mail className="h-4 w-4 text-green-500" />
                       <span className="text-sm font-medium">Email</span>
                     </div>
-                    <a href={`mailto:${agency.email}`} className="text-sm text-green-600 hover:underline truncate">
+                    <a
+                      href={`mailto:${agency.email}`}
+                      className="text-sm text-green-600 hover:underline truncate"
+                    >
                       Contact
                     </a>
                   </div>
                 </div>
 
                 {/* Hours */}
-                <div className="flex items-center space-x-2">
-                  <Clock className="h-4 w-4 text-gray-500" />
-                  <span className="text-xs text-gray-600">{agency.hours}</span>
+                <div className="flex items-start space-x-2">
+                  <Clock className="h-4 w-4 text-gray-500 mt-0.5" />
+                  <div className="text-xs text-gray-600 space-y-0.5">
+                    {agency.hours.split(",").map((part, idx) => (
+                      <div key={idx}>{part.trim()}</div>
+                    ))}
+                  </div>
                 </div>
 
                 {/* Actions */}
                 <div className="flex space-x-2">
-                  <Button variant="outline" size="sm" className="flex-1" asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1"
+                    asChild
+                  >
                     <a href={`tel:${agency.phone}`}>
                       <Phone className="h-4 w-4 mr-1" />
                       Call
                     </a>
                   </Button>
                   <Button variant="outline" size="sm" asChild>
-                    <a href={`https://${agency.website}`} target="_blank" rel="noopener noreferrer">
+                    <a
+                      href={`https://${agency.website}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       <ExternalLink className="h-4 w-4" />
                     </a>
                   </Button>
@@ -298,20 +344,53 @@ export function AgencyContacts() {
           ))}
         </div>
 
+        <div className="flex items-center justify-between mt-6">
+          <div className="text-sm text-gray-600">
+            Showing {startIndex + 1}-
+            {Math.min(startIndex + itemsPerPage, filteredAgencies.length)} of{" "}
+            {filteredAgencies.length} agencies
+          </div>
+          <div className="flex items-center space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() =>
+                setCurrentPage(Math.min(totalPages, currentPage + 1))
+              }
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </Button>
+          </div>
+        </div>
+
         {/* Additional Information */}
         <div className="mt-8 p-6 bg-blue-50 border border-blue-200 rounded-lg">
           <div className="flex items-start space-x-3">
             <MapPin className="h-6 w-6 text-blue-600 mt-1" />
             <div>
-              <h3 className="font-semibold text-blue-900 mb-2">Finding Your Water Company</h3>
+              <h3 className="font-semibold text-blue-900 mb-2">
+                Finding Your Water Company
+              </h3>
               <p className="text-blue-800 text-sm mb-3">
-                Not sure which water company serves your area? Use your postcode to find your local water authority.
+                Not sure which water company serves your area? Use your postcode
+                to find your local water authority.
               </p>
-              <Button className="bg-blue-600 hover:bg-blue-700">Find My Water Company</Button>
+              <Button className="bg-blue-600 hover:bg-blue-700">
+                Find My Water Company
+              </Button>
             </div>
           </div>
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
