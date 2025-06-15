@@ -67,25 +67,27 @@ export function BlogCard({ post, isBookmarked = false, onBookmark }: BlogCardPro
         <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
           {post.summary}
         </p>
-        <div className="flex items-center justify-between mb-2 text-sm text-muted-foreground">
-          <div className="flex items-center gap-1">
-            <Calendar className="h-4 w-4" />
-            {formatDate(post.published)}
+        <div className="mt-auto flex flex-col gap-2">
+          <div className="flex items-center justify-between text-sm text-muted-foreground">
+            <div className="flex items-center gap-1">
+              <Calendar className="h-4 w-4" />
+              {formatDate(post.published)}
+            </div>
+            <div className="flex items-center gap-1">
+              <Button variant="ghost" size="icon" onClick={share}>
+                <Share2 className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="icon" onClick={onBookmark}>
+                <Bookmark className={`h-4 w-4 ${isBookmarked ? "fill-current" : ""}`} />
+              </Button>
+            </div>
           </div>
-          <div className="flex items-center gap-1">
-            <Button variant="ghost" size="icon" onClick={share}>
-              <Share2 className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="icon" onClick={onBookmark}>
-              <Bookmark className={`h-4 w-4 ${isBookmarked ? "fill-current" : ""}`} />
-            </Button>
-          </div>
+          <Button variant="gradient" size="sm" asChild>
+            <a href={post.link} target="_blank" rel="noreferrer">
+              Read More <ArrowRight className="h-3 w-3 ml-1" />
+            </a>
+          </Button>
         </div>
-        <Button variant="gradient" size="sm" className="mt-auto" asChild>
-          <a href={post.link} target="_blank" rel="noreferrer">
-            Read More <ArrowRight className="h-3 w-3 ml-1" />
-          </a>
-        </Button>
       </CardContent>
     </Card>
   )
