@@ -19,16 +19,22 @@ export function useNews(refreshIntervalMs: number = 5 * 60 * 1000) {
     async function load() {
       setLoading(true)
       try {
-        const [alertsRes, floodsRes] = await Promise.all([
+        const [alertsRes, floodsRes, waterRes, gdeltRes] = await Promise.all([
           fetch("/api/news/alerts"),
           fetch("/api/news/floods"),
+          fetch("/api/news/water"),
+          fetch("/api/news/gdelt"),
         ])
         const alertsData = await alertsRes.json()
         const floodsData = await floodsRes.json()
+        const waterData = await waterRes.json()
+        const gdeltData = await gdeltRes.json()
         if (active) {
           const items: NewsItem[] = []
           if (Array.isArray(alertsData.news)) items.push(...alertsData.news)
           if (Array.isArray(floodsData.news)) items.push(...floodsData.news)
+          if (Array.isArray(waterData.news)) items.push(...waterData.news)
+          if (Array.isArray(gdeltData.news)) items.push(...gdeltData.news)
           setNews(items)
         }
       } catch {

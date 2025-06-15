@@ -5,6 +5,7 @@ from .views import (
     WaterNewsAPIView,
     AlertScraperAPIView,
     FloodMonitoringAPIView,
+    GDELTNewsAPIView,
 )
 
 router = DefaultRouter()
@@ -15,4 +16,5 @@ urlpatterns = [
     path('water/', WaterNewsAPIView.as_view(), name='water-news'),
     path('alerts/', AlertScraperAPIView.as_view(), name='alert-news'),
     path('floods/', FloodMonitoringAPIView.as_view(), name='flood-news'),
+    path('gdelt/', GDELTNewsAPIView.as_view(), name='gdelt-news'),
 ]
