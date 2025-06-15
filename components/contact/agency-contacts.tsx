@@ -186,6 +186,8 @@ const agencies = [
 export function AgencyContacts() {
   const [selectedRegion, setSelectedRegion] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
+  const [localCompany, setLocalCompany] = useState<string | null>(null);
+  const [locating, setLocating] = useState(false);
   const regions = Array.from(new Set(agencies.map((a) => a.region)));
   const filteredAgencies =
     selectedRegion === "All"
@@ -198,6 +200,53 @@ export function AgencyContacts() {
     startIndex,
     startIndex + itemsPerPage,
   );
+
+  const getCompanyFromPostcode = (postcode: string) => {
+    const prefix = postcode.slice(0, 2).toUpperCase();
+    const mapping: Record<string, string> = {
+      SW: "Thames Water",
+      NW: "Thames Water",
+      SE: "Thames Water",
+      EC: "Thames Water",
+      WC: "Thames Water",
+      CB: "Anglian Water",
+      NR: "Anglian Water",
+      B: "Severn Trent",
+      CV: "Severn Trent",
+      M: "United Utilities",
+      WA: "United Utilities",
+      LS: "Yorkshire Water",
+    };
+    return mapping[prefix] || "Unknown Water Company";
+  };
+
+  const handleFindMyCompany = () => {
+    setLocating(true);
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          try {
+            const res = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${position.coords.latitude}&lon=${position.coords.longitude}`,
+            );
+            const data = await res.json();
+            const postcode = data.address?.postcode || "";
+            setLocalCompany(getCompanyFromPostcode(postcode));
+          } catch (e) {
+            console.error(e);
+            setLocalCompany(null);
+          }
+          setLocating(false);
+        },
+        (error) => {
+          console.error(error);
+          setLocating(false);
+        },
+      );
+    } else {
+      setLocating(false);
+    }
+  };
 
   return (
     <Card className="shadow-lg border-0">
@@ -384,9 +433,18 @@ export function AgencyContacts() {
                 Not sure which water company serves your area? Use your postcode
                 to find your local water authority.
               </p>
-              <Button className="bg-blue-600 hover:bg-blue-700">
-                Find My Water Company
+              <Button
+                className="bg-blue-600 hover:bg-blue-700"
+                onClick={handleFindMyCompany}
+                disabled={locating}
+              >
+                {locating ? "Finding..." : "Find My Water Company"}
               </Button>
+              {localCompany && (
+                <p className="text-blue-800 text-sm mt-3">
+                  Your local company: {localCompany}
+                </p>
+              )}
             </div>
           </div>
         </div>
