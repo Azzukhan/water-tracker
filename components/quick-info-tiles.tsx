@@ -29,7 +29,7 @@ const quickActions = [
     color: "bg-green-50 border-green-200",
     iconColor: "text-green-600",
     buttonColor: "bg-green-600 hover:bg-green-700",
-    href: "/blogs",
+    href: "/blog",
   },
 ]
 
@@ -131,7 +131,7 @@ export function QuickInfoTiles() {
                   Explore our educational blogs and guides for water conservation tips and industry insights.
                 </p>
                 <Button className="bg-green-600 hover:bg-green-700" asChild>
-                  <Link href="/blogs">
+                  <Link href="/blog">
                     Visit Blog & Awareness
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>

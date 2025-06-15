@@ -12,7 +12,7 @@ const navItems = [
   { name: "Water Levels", href: "/water-levels" },
   { name: "Weather", href: "/weather" },
   { name: "News", href: "/news" },
-  { name: "Blogs", href: "/blogs" },
+  { name: "Blogs", href: "/blog" },
   { name: "Contact", href: "/contact" },
   { name: "Dashboard", href: "/dashboard" },
 ]
