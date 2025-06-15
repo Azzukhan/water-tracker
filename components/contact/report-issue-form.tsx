@@ -50,7 +50,7 @@ export function ReportIssueForm() {
   if (submitStatus === "success") {
     return (
       <Card className="shadow-lg border-0 bg-green-50 border-green-200">
-        <CardContent className="p-6 text-center">
+        <CardContent className="p-8 text-center">
           <CheckCircle className="h-12 w-12 text-green-600 mx-auto mb-4" />
           <h3 className="text-lg font-bold text-green-900 mb-2">Issue Reported Successfully!</h3>
           <p className="text-green-800 text-sm mb-3">Your report has been submitted to the relevant water authority.</p>
@@ -63,16 +63,16 @@ export function ReportIssueForm() {
   }
 
   return (
-    <Card className="shadow-lg border-0 sticky top-24">
+    <Card className="shadow-lg border-0">
       <CardHeader className="bg-gradient-to-r from-red-600 to-orange-600 text-white">
-        <CardTitle className="text-xl font-bold flex items-center">
+        <CardTitle className="text-2xl font-bold flex items-center">
           <AlertTriangle className="h-5 w-5 mr-2" />
           Report Water Issue
         </CardTitle>
         <p className="text-red-100 text-sm">Report water quality or service problems</p>
       </CardHeader>
 
-      <CardContent className="p-6">
+      <CardContent className="p-8">
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Issue Type */}
           <div>
