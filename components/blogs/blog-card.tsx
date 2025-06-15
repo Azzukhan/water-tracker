@@ -4,20 +4,36 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Calendar, ArrowRight, Share2, Bookmark, Tag } from "lucide-react"
+import { toast } from "@/hooks/use-toast"
 import Link from "next/link"
 import type { BlogItem } from "@/hooks/use-blogs"
 
 export interface BlogCardProps {
   post: BlogItem
+  isBookmarked?: boolean
+  onBookmark?: () => void
 }
 
-export function BlogCard({ post }: BlogCardProps) {
+export function BlogCard({ post, isBookmarked = false, onBookmark }: BlogCardProps) {
   const formatDate = (dateString: string) =>
     new Date(dateString).toLocaleDateString("en-GB", {
       year: "numeric",
       month: "long",
       day: "numeric",
     })
+
+  const share = async () => {
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: post.title, url: post.link })
+      } else if (navigator.clipboard) {
+        await navigator.clipboard.writeText(post.link)
+        toast({ title: "Link copied to clipboard" })
+      }
+    } catch (err) {
+      toast({ title: "Failed to share", variant: "destructive" })
+    }
+  }
 
   return (
     <Card className="hover:shadow-lg transition-shadow flex flex-col h-full">
@@ -60,11 +76,11 @@ export function BlogCard({ post }: BlogCardProps) {
             {formatDate(post.published)}
           </div>
           <div className="flex gap-1">
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" onClick={share}>
               <Share2 className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon">
-              <Bookmark className="h-4 w-4" />
+            <Button variant="ghost" size="icon" onClick={onBookmark}>
+              <Bookmark className={`h-4 w-4 ${isBookmarked ? "fill-current" : ""}`} />
             </Button>
           </div>
         </div>
