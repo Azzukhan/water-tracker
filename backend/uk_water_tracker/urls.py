@@ -11,7 +11,7 @@ urlpatterns = [
     path('api/water-levels/', include('water_levels.urls')),
     path('api/weather/', include('weather.urls')),
     path('api/news/', include('news.urls')),
-    path('api/blogs/', include('blog.urls')),
+    path('api/blog/', include('blog.urls')),
     path('api/users/', include('users.urls')),
     path('api/dashboard/', include('dashboard.urls')),
     path('api/newsletter/', include('newsletter.urls')),
