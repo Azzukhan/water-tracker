@@ -6,6 +6,8 @@ export interface BlogItem {
   link: string
   published: string
   category: string
+  tags?: string[]
+  image?: string
 }
 
 export function useBlogs(refreshIntervalMs: number = 10 * 60 * 1000) {
@@ -25,7 +27,14 @@ export function useBlogs(refreshIntervalMs: number = 10 * 60 * 1000) {
         }
         const data = await res.json()
         if (active) {
-          setBlogs(Array.isArray(data.posts) ? data.posts : [])
+          const posts = Array.isArray(data.posts) ? data.posts : []
+          setBlogs(
+            posts.map((p: any) => ({
+              ...p,
+              tags: p.tags || [p.category],
+              image: p.image || "/placeholder.jpg",
+            }))
+          )
           setError(null)
         }
       } catch (err) {

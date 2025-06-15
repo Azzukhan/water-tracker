@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Search, Calendar, ArrowRight } from "lucide-react"
+import { Search, Calendar, ArrowRight, Share2, Bookmark } from "lucide-react"
 import Link from "next/link"
 import { useBlogs } from "@/hooks/use-blogs"
 
@@ -56,9 +56,19 @@ export default function BlogPage() {
             {featuredPosts.map((post, idx) => (
               <Card key={idx} className="overflow-hidden hover:shadow-lg transition-shadow">
                 <CardHeader>
+                  <div className="aspect-video bg-muted rounded mb-4 overflow-hidden">
+                    <img src={post.image} alt={post.title} className="w-full h-full object-cover" />
+                  </div>
                   <div className="flex items-center gap-2 mb-2">
                     <Badge variant="secondary">{post.category}</Badge>
                     <Badge variant="outline">Featured</Badge>
+                  </div>
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    {post.tags?.map((tag) => (
+                      <Badge key={tag} variant="outline">
+                        {tag}
+                      </Badge>
+                    ))}
                   </div>
                   <CardTitle className="text-xl leading-tight">
                     <Link href={post.link} target="_blank" className="hover:underline">
@@ -68,10 +78,25 @@ export default function BlogPage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground mb-4">{post.summary}</p>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Calendar className="h-3 w-3" />
-                    {formatDate(post.published)}
+                  <div className="flex items-center justify-between mb-2 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-1">
+                      <Calendar className="h-3 w-3" />
+                      {formatDate(post.published)}
+                    </div>
+                    <div className="flex gap-1">
+                      <Button variant="ghost" size="icon">
+                        <Share2 className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon">
+                        <Bookmark className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
+                  <Button variant="gradient" size="sm" asChild>
+                    <a href={post.link} target="_blank" rel="noreferrer">
+                      Full Read <ArrowRight className="h-3 w-3 ml-1" />
+                    </a>
+                  </Button>
                 </CardContent>
               </Card>
             ))}
@@ -86,9 +111,19 @@ export default function BlogPage() {
             {regularPosts.map((post, idx) => (
               <Card key={idx} className="hover:shadow-lg transition-shadow">
                 <CardHeader className="pb-3">
-                  <Badge variant="secondary" className="w-fit">
+                  <div className="aspect-video bg-muted rounded mb-4 overflow-hidden">
+                    <img src={post.image} alt={post.title} className="w-full h-full object-cover" />
+                  </div>
+                  <Badge variant="secondary" className="w-fit mb-2">
                     {post.category}
                   </Badge>
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    {post.tags?.map((tag) => (
+                      <Badge key={tag} variant="outline">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
                   <CardTitle className="text-lg leading-tight">
                     <Link href={post.link} target="_blank" className="hover:underline">
                       {post.title}
@@ -99,17 +134,25 @@ export default function BlogPage() {
                   <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
                     {post.summary}
                   </p>
-                  <div className="flex items-center justify-between text-sm text-muted-foreground">
+                  <div className="flex items-center justify-between mb-2 text-sm text-muted-foreground">
                     <div className="flex items-center gap-1">
                       <Calendar className="h-3 w-3" />
                       {formatDate(post.published)}
                     </div>
-                    <Button variant="gradient" size="sm" asChild>
-                      <a href={post.link} target="_blank" rel="noreferrer">
-                        Read More <ArrowRight className="h-3 w-3 ml-1" />
-                      </a>
-                    </Button>
+                    <div className="flex gap-1">
+                      <Button variant="ghost" size="icon">
+                        <Share2 className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon">
+                        <Bookmark className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
+                  <Button variant="gradient" size="sm" asChild>
+                    <a href={post.link} target="_blank" rel="noreferrer">
+                      Full Read <ArrowRight className="h-3 w-3 ml-1" />
+                    </a>
+                  </Button>
                 </CardContent>
               </Card>
             ))}
