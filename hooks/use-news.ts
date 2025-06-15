@@ -18,10 +18,17 @@ export function useNews(refreshIntervalMs: number = 5 * 60 * 1000) {
     async function load() {
       setLoading(true)
       try {
-        const res = await fetch("/api/news/alerts")
-        const data = await res.json()
+        const [alertsRes, floodsRes] = await Promise.all([
+          fetch("/api/news/alerts"),
+          fetch("/api/news/floods"),
+        ])
+        const alertsData = await alertsRes.json()
+        const floodsData = await floodsRes.json()
         if (active) {
-          setNews(Array.isArray(data.news) ? data.news : [])
+          const items: NewsItem[] = []
+          if (Array.isArray(alertsData.news)) items.push(...alertsData.news)
+          if (Array.isArray(floodsData.news)) items.push(...floodsData.news)
+          setNews(items)
         }
       } catch {
         if (active) {

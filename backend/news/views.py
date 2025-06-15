@@ -134,3 +134,65 @@ class AlertScraperAPIView(APIView):
 
         unique.sort(key=lambda x: x.get("publishedAt", ""), reverse=True)
         return Response({"news": unique})
+
+
+class FloodMonitoringAPIView(APIView):
+    """Fetch flood alerts from various UK public sources"""
+
+    EA_URL = "https://environment.data.gov.uk/flood-monitoring/id/floods"
+    WATER_MAG_RSS = "https://www.watermagazine.co.uk/feed/"
+    BGS_RSS = "https://www.bgs.ac.uk/news/feed/"
+
+    def _fetch_json(self, url: str):
+        try:
+            resp = requests.get(url, timeout=10)
+            return resp.json()
+        except Exception:
+            return None
+
+    def _fetch_feed(self, url: str):
+        try:
+            return feedparser.parse(url)
+        except Exception:
+            return None
+
+    def get(self, request):
+        articles = []
+
+        data = self._fetch_json(self.EA_URL)
+        if data:
+            for item in data.get("items", []):
+                articles.append(
+                    {
+                        "title": item.get("description", "Environment Agency Alert"),
+                        "description": item.get("message", ""),
+                        "url": item.get("@id"),
+                        "publishedAt": item.get("timeMessageChanged"),
+                        "severity": item.get("severity", "").lower() if item.get("severity") else None,
+                    }
+                )
+
+        for feed_url in [self.WATER_MAG_RSS, self.BGS_RSS]:
+            feed = self._fetch_feed(feed_url)
+            if not feed:
+                continue
+            for entry in feed.entries:
+                articles.append(
+                    {
+                        "title": entry.get("title", ""),
+                        "description": entry.get("summary", ""),
+                        "url": entry.get("link"),
+                        "publishedAt": entry.get("published", entry.get("updated")),
+                        "severity": "medium",
+                    }
+                )
+
+        seen = set()
+        unique = []
+        for art in articles:
+            if art["url"] not in seen:
+                seen.add(art["url"])
+                unique.append(art)
+
+        unique.sort(key=lambda x: x.get("publishedAt", ""), reverse=True)
+        return Response({"news": unique})
