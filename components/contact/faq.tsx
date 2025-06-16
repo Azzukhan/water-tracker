@@ -17,13 +17,13 @@ import { ContactForm } from "@/components/contact/contact-form"
 import { QuestionForm } from "@/components/contact/question-form"
 
 const faqCategories = [
-  { id: "all", name: "All Questions", count: 24 },
-  { id: "billing", name: "Billing & Payments", count: 6 },
-  { id: "quality", name: "Water Quality", count: 5 },
-  { id: "service", name: "Service Issues", count: 4 },
-  { id: "emergency", name: "Emergencies", count: 3 },
-  { id: "conservation", name: "Conservation", count: 3 },
-  { id: "technical", name: "Technical", count: 3 },
+  { id: "all", name: "All Questions", count: 8 },
+  { id: "billing", name: "Billing & Payments", count: 2 },
+  { id: "quality", name: "Water Quality", count: 2 },
+  { id: "service", name: "Service Issues", count: 1 },
+  { id: "emergency", name: "Emergencies", count: 1 },
+  { id: "conservation", name: "Conservation", count: 1 },
+  { id: "technical", name: "Technical", count: 1 },
 ]
 
 const faqData = [
@@ -34,7 +34,8 @@ const faqData = [
     answer:
       "There are several ways to reduce your water bill: fix leaks promptly, install water-efficient appliances, take shorter showers, use full loads in washing machines and dishwashers, and consider water-saving devices like low-flow showerheads and dual-flush toilets. You can also apply for water meter installation if you don't have one, as this often reduces bills for smaller households.",
     popular: true,
-    helpful: 156,
+    helpfulYes: 156,
+    helpfulNo: 0,
   },
   {
     id: 2,
@@ -43,7 +44,8 @@ const faqData = [
     answer:
       "Yes, UK tap water is among the safest in the world. It's strictly regulated and tested daily by water companies and independently monitored by the Drinking Water Inspectorate. The water meets or exceeds all EU and WHO standards. If you notice any unusual taste, smell, or appearance, contact your water company immediately.",
     popular: true,
-    helpful: 203,
+    helpfulYes: 203,
+    helpfulNo: 0,
   },
   {
     id: 3,
@@ -52,7 +54,8 @@ const faqData = [
     answer:
       "First, check if it's a planned outage by visiting your water company's website or calling them. Check if neighbors are affected. If it's just your property, check your stop tap is fully open and look for any obvious leaks. For emergency outages affecting multiple properties, contact your water company immediately. They're required to provide alternative water supplies for outages lasting more than 24 hours.",
     popular: false,
-    helpful: 89,
+    helpfulYes: 89,
+    helpfulNo: 0,
   },
   {
     id: 4,
@@ -61,7 +64,8 @@ const faqData = [
     answer:
       "For life-threatening emergencies involving water (like major flooding), call 999. For urgent water supply issues, burst mains, or sewage problems, call your water company's 24/7 emergency line. For flooding from rivers or seas, call the Environment Agency Floodline on 0345 988 1188. Keep these numbers handy and report emergencies immediately.",
     popular: true,
-    helpful: 134,
+    helpfulYes: 134,
+    helpfulNo: 0,
   },
   {
     id: 5,
@@ -70,7 +74,8 @@ const faqData = [
     answer:
       "Taste and smell changes can be due to seasonal variations, maintenance work, or changes in treatment processes. Common causes include chlorine (normal for disinfection), earthy tastes (from algae in reservoirs), or metallic tastes (from old pipes). Most are harmless, but if you're concerned, contact your water company for advice and possible testing.",
     popular: false,
-    helpful: 67,
+    helpfulYes: 67,
+    helpfulNo: 0,
   },
   {
     id: 6,
@@ -79,7 +84,8 @@ const faqData = [
     answer:
       "The average person in the UK uses about 150 liters per day, but the government target is to reduce this to 110 liters by 2050. Essential uses include drinking (2-3 liters), cooking, washing, and sanitation. You can track your usage through smart meters or water company apps, and many companies offer free water-saving devices to help reduce consumption.",
     popular: false,
-    helpful: 78,
+    helpfulYes: 78,
+    helpfulNo: 0,
   },
   {
     id: 7,
@@ -88,7 +94,8 @@ const faqData = [
     answer:
       "Water meters usually show usage in cubic meters (m³). Read the black numbers from left to right - these show whole cubic meters used. Red numbers or dials show fractions. Take readings at the same time each month for accurate monitoring. Many newer meters are smart meters that send readings automatically. Your water company can provide specific guidance for your meter type.",
     popular: false,
-    helpful: 92,
+    helpfulYes: 92,
+    helpfulNo: 0,
   },
   {
     id: 8,
@@ -97,7 +104,8 @@ const faqData = [
     answer:
       "Yes, water companies offer various support schemes: WaterSure caps bills for large families or those with medical conditions requiring extra water; social tariffs provide discounts for low-income households; payment plans spread costs over time; and hardship funds offer emergency assistance. Contact your water company to discuss available options - they have a duty to help customers in financial difficulty.",
     popular: true,
-    helpful: 145,
+    helpfulYes: 145,
+    helpfulNo: 0,
   },
 ]
 
@@ -105,6 +113,11 @@ export function FAQ() {
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [searchTerm, setSearchTerm] = useState("")
   const [expandedItems, setExpandedItems] = useState<number[]>([])
+  const [helpfulCounts, setHelpfulCounts] = useState(() =>
+    Object.fromEntries(
+      faqData.map((faq) => [faq.id, { yes: faq.helpfulYes, no: faq.helpfulNo }])
+    ) as Record<number, { yes: number; no: number }>
+  )
 
   const filteredFAQs = faqData.filter((faq) => {
     const matchesCategory = selectedCategory === "all" || faq.category === selectedCategory
@@ -117,6 +130,16 @@ export function FAQ() {
 
   const toggleExpanded = (id: number) => {
     setExpandedItems((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]))
+  }
+
+  const handleHelpful = (id: number, type: "yes" | "no") => {
+    setHelpfulCounts((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        [type]: prev[id][type] + 1,
+      },
+    }))
   }
 
   return (
@@ -187,7 +210,7 @@ export function FAQ() {
                           <span className="capitalize">{faq.category.replace("-", " ")}</span>
                           <div className="flex items-center space-x-1">
                             <Star className="h-4 w-4 text-yellow-500" />
-                            <span>{faq.helpful} found helpful</span>
+                            <span>{helpfulCounts[faq.id]?.yes ?? faq.helpfulYes} found helpful</span>
                           </div>
                         </div>
                       </div>
@@ -208,11 +231,21 @@ export function FAQ() {
                         <div className="flex items-center justify-between">
                           <div className="text-sm text-gray-500">Was this helpful?</div>
                           <div className="flex items-center space-x-2">
-                            <Button variant="outline" size="sm" className="text-xs">
-                              👍 Yes
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="text-xs"
+                              onClick={() => handleHelpful(faq.id, "yes")}
+                            >
+                              👍 Yes ({helpfulCounts[faq.id]?.yes ?? 0})
                             </Button>
-                            <Button variant="outline" size="sm" className="text-xs">
-                              👎 No
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="text-xs"
+                              onClick={() => handleHelpful(faq.id, "no")}
+                            >
+                              👎 No ({helpfulCounts[faq.id]?.no ?? 0})
                             </Button>
                           </div>
                         </div>
