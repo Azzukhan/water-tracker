@@ -112,7 +112,7 @@ export default function WeatherWidget() {
   const WeatherIcon = getWeatherIcon(weather.icon);
 
   return (
-    <Card className="shadow-lg border-0">
+    <Card className="shadow-lg border-0 h-full flex flex-col">
       <CardHeader className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-t-lg">
         <CardTitle className="flex items-center justify-between text-xl">
           <span>Current Weather</span>
@@ -123,11 +123,12 @@ export default function WeatherWidget() {
         </CardTitle>
         <p className="text-sm text-cyan-100">{weather.location}</p>
       </CardHeader>
-      <CardContent className="p-6">
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center mb-4">
-            <WeatherIcon className="h-16 w-16 text-blue-500" />
-          </div>
+      <CardContent className="p-6 flex flex-col flex-1">
+        <div className="flex-1">
+          <div className="text-center mb-8">
+            <div className="flex items-center justify-center mb-4">
+              <WeatherIcon className="h-16 w-16 text-blue-500" />
+            </div>
           <div className="space-y-2">
             <div className="text-4xl font-bold text-gray-900">
               {Math.round(weather.temperature)}°C

@@ -28,7 +28,7 @@ export function LiveHighlights() {
     .slice(0, 4)
 
   return (
-    <Card className="shadow-lg border-0">
+    <Card className="shadow-lg border-0 h-full flex flex-col">
       <CardHeader className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-t-lg">
         <div className="flex items-center justify-between">
           <CardTitle className="text-2xl font-bold flex items-center">
@@ -42,8 +42,8 @@ export function LiveHighlights() {
         <p className="text-blue-100">Latest water and weather updates across the UK</p>
       </CardHeader>
 
-      <CardContent className="p-6">
-        <div className="space-y-6">
+      <CardContent className="p-6 flex flex-col flex-1">
+        <div className="space-y-6 flex-1">
           {loading && <p>Loading...</p>}
           {!loading &&
             highlights.map((item, idx) => (
