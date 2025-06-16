@@ -50,7 +50,7 @@ export function NewsHeader() {
         <div className="flex items-center justify-center space-x-3">
           <Badge className="bg-red-600 text-white animate-pulse">BREAKING</Badge>
           <span className="text-red-800 font-medium">
-            Thames Water announces £2.5bn infrastructure investment for London water security
+            Scottish Water announces investment for national water security
           </span>
         </div>
       </div>

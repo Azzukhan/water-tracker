@@ -9,15 +9,7 @@ import { Switch } from "@/components/ui/switch"
 import { MapPin, Star, Plus, Check, Trash2 } from "lucide-react"
 
 const regions = [
-  { id: "london", name: "London & Thames Valley", level: 78, status: "Normal" },
-  { id: "northwest", name: "North West England", level: 65, status: "Below Average" },
-  { id: "northeast", name: "North East England", level: 82, status: "Above Average" },
-  { id: "southwest", name: "South West England", level: 71, status: "Normal" },
-  { id: "southeast", name: "South East England", level: 69, status: "Below Average" },
-  { id: "midlands", name: "Midlands", level: 75, status: "Normal" },
   { id: "scotland", name: "Scotland", level: 88, status: "High" },
-  { id: "wales", name: "Wales", level: 79, status: "Normal" },
-  { id: "ni", name: "Northern Ireland", level: 84, status: "Above Average" },
 ]
 
 const getStatusColor = (status: string) => {
@@ -38,7 +30,7 @@ const getStatusColor = (status: string) => {
 }
 
 export function RegionPreferences() {
-  const [selectedRegion, setSelectedRegion] = useState("london")
+  const [selectedRegion, setSelectedRegion] = useState("scotland")
   const [savedRegions, setSavedRegions] = useState<string[]>([])
   const [autoDetect, setAutoDetect] = useState(true)
 
@@ -48,8 +40,8 @@ export function RegionPreferences() {
     if (saved) {
       setSavedRegions(JSON.parse(saved))
     } else {
-      // Default to London if no saved regions
-      setSavedRegions(["london"])
+      // Default to Scotland if no saved regions
+      setSavedRegions(["scotland"])
     }
   }, [])
 

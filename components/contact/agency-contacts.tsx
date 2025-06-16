@@ -14,66 +14,6 @@ import { Phone, Mail, ExternalLink, MapPin, Clock } from "lucide-react";
 
 const agencies = [
   {
-    name: "Thames Water",
-    logo: "TW",
-    description: "London and Thames Valley water services",
-    phone: "0800 316 9800",
-    emergency: "0800 714 614",
-    email: "customer.services@thameswater.co.uk",
-    website: "thameswater.co.uk",
-    region: "England",
-    color: "bg-blue-600",
-    hours: "24/7 Emergency, 8AM-8PM General",
-  },
-  {
-    name: "Anglian Water",
-    logo: "AW",
-    description: "East of England water services",
-    phone: "03457 145 145",
-    emergency: "03457 145 145",
-    email: "customer.services@anglianwater.co.uk",
-    website: "anglianwater.co.uk",
-    region: "England",
-    color: "bg-cyan-600",
-    hours: "24/7 Emergency, 8AM-6PM General",
-  },
-  {
-    name: "Severn Trent",
-    logo: "ST",
-    description: "Midlands water and sewerage services",
-    phone: "0345 750 0500",
-    emergency: "0800 783 4444",
-    email: "customer.relations@severntrent.co.uk",
-    website: "stwater.co.uk",
-    region: "England",
-    color: "bg-purple-600",
-    hours: "24/7 Emergency, 8AM-8PM General",
-  },
-  {
-    name: "United Utilities",
-    logo: "UU",
-    description: "North West England water services",
-    phone: "0345 672 3723",
-    emergency: "0345 672 3723",
-    email: "customer.services@uuplc.co.uk",
-    website: "unitedutilities.com",
-    region: "England",
-    color: "bg-green-600",
-    hours: "24/7 Emergency, 8AM-8PM General",
-  },
-  {
-    name: "Yorkshire Water",
-    logo: "YW",
-    description: "Yorkshire and Humber water services",
-    phone: "0345 124 2424",
-    emergency: "0345 124 2424",
-    email: "customer.services@yorkshirewater.co.uk",
-    website: "yorkshirewater.com",
-    region: "England",
-    color: "bg-orange-600",
-    hours: "24/7 Emergency, 8AM-6PM General",
-  },
-  {
     name: "Scottish Water",
     logo: "SW",
     description: "Scotland's water and wastewater services",
@@ -86,78 +26,6 @@ const agencies = [
     hours: "24/7 Emergency, 8AM-6PM General",
   },
   {
-    name: "Dŵr Cymru Welsh Water",
-    logo: "WW",
-    description: "Water services across Wales",
-    phone: "0800 052 0145",
-    emergency: "0800 052 0130",
-    email: "customercare@dwrcymru.com",
-    website: "dwrcymru.com",
-    region: "Wales",
-    color: "bg-teal-600",
-    hours: "24/7 Emergency, 8AM-6PM General",
-  },
-  {
-    name: "Hafren Dyfrdwy",
-    logo: "HD",
-    description: "North-East Wales water services",
-    phone: "0330 678 0679",
-    emergency: "0800 085 8033",
-    email: "customercare@hdcymru.co.uk",
-    website: "hdcymru.co.uk",
-    region: "Wales",
-    color: "bg-teal-700",
-    hours: "24/7 Emergency, 8AM-6PM General",
-  },
-  {
-    name: "Northern Ireland Water",
-    logo: "NI",
-    description: "Water and sewerage services in Northern Ireland",
-    phone: "03457 440 088",
-    emergency: "03457 440 088",
-    email: "waterline@niwater.com",
-    website: "niwater.com",
-    region: "Northern Ireland",
-    color: "bg-pink-600",
-    hours: "24/7 Emergency, 8AM-6PM General",
-  },
-  {
-    name: "Uisce Éireann",
-    logo: "IW",
-    description: "National water utility for Ireland",
-    phone: "1800 278 278",
-    emergency: "1800 278 278",
-    email: "business@water.ie",
-    website: "water.ie",
-    region: "Ireland",
-    color: "bg-green-700",
-    hours: "24/7 Emergency, 8AM-6PM General",
-  },
-  {
-    name: "Environment Agency",
-    logo: "EA",
-    description: "Environmental regulator for England",
-    phone: "03708 506 506",
-    emergency: "0800 80 70 60",
-    email: "enquiries@environment-agency.gov.uk",
-    website: "gov.uk/environment-agency",
-    region: "England",
-    color: "bg-lime-700",
-    hours: "24/7 Incident Line, office hours general",
-  },
-  {
-    name: "Natural Resources Wales",
-    logo: "NRW",
-    description: "Environmental regulator for Wales",
-    phone: "0300 065 3000",
-    emergency: "0300 065 3000",
-    email: "enquiries@naturalresourceswales.gov.uk",
-    website: "naturalresources.wales",
-    region: "Wales",
-    color: "bg-green-800",
-    hours: "Mon–Fri office hours, 24/7 incidents",
-  },
-  {
     name: "Scottish Environment Protection Agency",
     logo: "SEPA",
     description: "Environmental regulator for Scotland",
@@ -167,18 +35,6 @@ const agencies = [
     website: "sepa.org.uk",
     region: "Scotland",
     color: "bg-indigo-700",
-    hours: "24/7 Incident Line, office hours general",
-  },
-  {
-    name: "Northern Ireland Environment Agency",
-    logo: "NIEA",
-    description: "Environmental regulator for Northern Ireland",
-    phone: "0300 200 7856",
-    emergency: "0800 80 70 60",
-    email: "nieainfo@daera-ni.gov.uk",
-    website: "daera-ni.gov.uk",
-    region: "Northern Ireland",
-    color: "bg-pink-700",
     hours: "24/7 Incident Line, office hours general",
   },
 ];
@@ -201,23 +57,8 @@ export function AgencyContacts() {
     startIndex + itemsPerPage,
   );
 
-  const getCompanyFromPostcode = (postcode: string) => {
-    const prefix = postcode.slice(0, 2).toUpperCase();
-    const mapping: Record<string, string> = {
-      SW: "Thames Water",
-      NW: "Thames Water",
-      SE: "Thames Water",
-      EC: "Thames Water",
-      WC: "Thames Water",
-      CB: "Anglian Water",
-      NR: "Anglian Water",
-      B: "Severn Trent",
-      CV: "Severn Trent",
-      M: "United Utilities",
-      WA: "United Utilities",
-      LS: "Yorkshire Water",
-    };
-    return mapping[prefix] || "Unknown Water Company";
+  const getCompanyFromPostcode = (_postcode: string) => {
+    return "Scottish Water";
   };
 
   const getCompanyFromAddress = (address: any) => {
@@ -225,16 +66,7 @@ export function AgencyContacts() {
     if (state.includes("Scotland")) {
       return "Scottish Water";
     }
-    if (state.includes("Wales")) {
-      return "D\u0175r Cymru Welsh Water";
-    }
-    if (state.includes("Northern Ireland")) {
-      return "Northern Ireland Water";
-    }
-    if (state.includes("Ireland")) {
-      return "Uisce \u00c9ireann";
-    }
-    return getCompanyFromPostcode(address?.postcode || "");
+    return "Scottish Water";
   };
 
   const handleFindMyCompany = () => {
