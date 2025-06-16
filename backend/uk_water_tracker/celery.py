@@ -20,6 +20,10 @@ app.conf.beat_schedule = {
         'task': 'weather.tasks.update_all_weather',
         'schedule': 300.0,  # 5 minutes in seconds
     },
+    'update-scottish-resources-daily': {
+        'task': 'water_levels.tasks.update_scottish_resources',
+        'schedule': crontab(hour=6, minute=0),
+    },
 }
 
 # Configure Celery to use Redis
