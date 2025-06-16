@@ -1,7 +1,7 @@
 "use client"
 
 import { HeroSection } from "@/components/hero-section"
-import { WeatherWidget } from "@/components/weather-widget"
+import WeatherWidget from "@/components/weather-widget"
 import { QuickInfoTiles } from "@/components/quick-info-tiles"
 import { NewsHeader } from "@/components/news/news-header"
 import { NewsList } from "@/components/news/news-list"
