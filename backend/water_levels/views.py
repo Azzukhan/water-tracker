@@ -8,6 +8,8 @@ from .models import (
     Alert,
     Prediction,
     ScottishWaterResourceLevel,
+    ScottishWaterAverageLevel,
+    ScottishWaterRegionalLevel,
 )
 from .serializers import (
     WaterStationSerializer,
@@ -15,6 +17,8 @@ from .serializers import (
     AlertSerializer,
     PredictionSerializer,
     ScottishWaterResourceLevelSerializer,
+    ScottishWaterAverageLevelSerializer,
+    ScottishWaterRegionalLevelSerializer,
 )
 
 class WaterStationViewSet(viewsets.ModelViewSet):
@@ -72,3 +76,17 @@ class ScottishWaterResourceLevelViewSet(viewsets.ModelViewSet):
     serializer_class = ScottishWaterResourceLevelSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['name']
+
+
+class ScottishWaterAverageLevelViewSet(viewsets.ModelViewSet):
+    queryset = ScottishWaterAverageLevel.objects.all().order_by('-date')
+    serializer_class = ScottishWaterAverageLevelSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['date']
+
+
+class ScottishWaterRegionalLevelViewSet(viewsets.ModelViewSet):
+    queryset = ScottishWaterRegionalLevel.objects.all().order_by('area')
+    serializer_class = ScottishWaterRegionalLevelSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['area', 'date']

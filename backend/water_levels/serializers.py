@@ -5,6 +5,8 @@ from .models import (
     Alert,
     Prediction,
     ScottishWaterResourceLevel,
+    ScottishWaterAverageLevel,
+    ScottishWaterRegionalLevel,
 )
 
 class WaterStationSerializer(serializers.ModelSerializer):
@@ -44,3 +46,28 @@ class ScottishWaterResourceLevelSerializer(serializers.ModelSerializer):
     class Meta:
         model = ScottishWaterResourceLevel
         fields = ['id', 'name', 'level', 'last_updated']
+
+
+class ScottishWaterAverageLevelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ScottishWaterAverageLevel
+        fields = [
+            'id',
+            'date',
+            'current',
+            'change_from_last_week',
+            'difference_from_average',
+        ]
+
+
+class ScottishWaterRegionalLevelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ScottishWaterRegionalLevel
+        fields = [
+            'id',
+            'area',
+            'date',
+            'current',
+            'change_from_last_week',
+            'difference_from_average',
+        ]

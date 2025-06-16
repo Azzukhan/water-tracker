@@ -6,6 +6,8 @@ from .views import (
     AlertViewSet,
     PredictionViewSet,
     ScottishWaterResourceLevelViewSet,
+    ScottishWaterAverageLevelViewSet,
+    ScottishWaterRegionalLevelViewSet,
 )
 
 router = DefaultRouter()
@@ -14,6 +16,8 @@ router.register(r'levels', WaterLevelViewSet)
 router.register(r'alerts', AlertViewSet)
 router.register(r'predictions', PredictionViewSet)
 router.register(r'scottish-resources', ScottishWaterResourceLevelViewSet)
+router.register(r'scottish-averages', ScottishWaterAverageLevelViewSet)
+router.register(r'scottish-regions', ScottishWaterRegionalLevelViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
