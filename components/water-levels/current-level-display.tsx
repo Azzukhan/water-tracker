@@ -1,20 +1,18 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { TrendingUp, TrendingDown, Minus, Droplets, Calendar, AlertTriangle } from "lucide-react"
 import { LineChart, Line, ResponsiveContainer } from "recharts"
 
-const currentData = {
-  region: "Scotland",
-  currentLevel: 88,
-  averageLevel: 85,
-  lastUpdated: "2 minutes ago",
-  trend: "stable",
-  status: "High",
-  capacity: "1.2 billion litres",
-  change24h: 0.3,
-  changeWeek: 1.1,
+interface CurrentData {
+  region: string
+  currentLevel: number
+  averageLevel: number
+  lastUpdated: string
+  changeWeek: number
+  differenceFromAverage: number
 }
 
 const sparklineData = [
@@ -50,8 +48,36 @@ const getTrendColor = (trend: string) => {
 }
 
 export function CurrentLevelDisplay() {
-  const TrendIcon = getTrendIcon(currentData.trend)
-  const percentage = (currentData.currentLevel / 100) * 100
+  const [currentData, setCurrentData] = useState<CurrentData | null>(null)
+
+  useEffect(() => {
+    fetch("/api/water-levels/scottish-averages")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          const first = data[0]
+          setCurrentData({
+            region: "Scotland",
+            currentLevel: first.current,
+            averageLevel: first.current - first.difference_from_average,
+            lastUpdated: first.date,
+            changeWeek: first.change_from_last_week,
+            differenceFromAverage: first.difference_from_average,
+          })
+        }
+      })
+      .catch(() => setCurrentData(null))
+  }, [])
+
+  const TrendIcon = getTrendIcon(
+    currentData && currentData.changeWeek > 0
+      ? "up"
+      : currentData && currentData.changeWeek < 0
+      ? "down"
+      : "stable"
+  )
+
+  const percentage = currentData ? (currentData.currentLevel / 100) * 100 : 0
 
   return (
     <div className="grid lg:grid-cols-3 gap-6">
@@ -106,10 +132,10 @@ export function CurrentLevelDisplay() {
               </div>
 
               <div className="space-y-2">
-                <div className="text-lg font-semibold text-gray-900">Capacity: {currentData.capacity}</div>
+                <div className="text-lg font-semibold text-gray-900">Capacity: 1.2 billion litres</div>
                 <div className="flex items-center justify-center space-x-2 text-sm text-gray-600">
                   <Calendar className="h-4 w-4" />
-                  <span>Updated {currentData.lastUpdated}</span>
+                  <span>Updated {currentData ? currentData.lastUpdated : "-"}</span>
                 </div>
               </div>
             </div>
@@ -124,39 +150,27 @@ export function CurrentLevelDisplay() {
                     <div>
                       <div className="text-sm text-gray-600">vs. Average</div>
                       <div className="text-lg font-semibold text-gray-900">
-                        {currentData.currentLevel - currentData.averageLevel > 0 ? "+" : ""}
-                        {currentData.currentLevel - currentData.averageLevel}%
+                        {currentData && currentData.differenceFromAverage > 0 ? "+" : ""}
+                        {currentData ? currentData.differenceFromAverage : "-"}%
                       </div>
                     </div>
                     <div className="text-right">
                       <div className="text-sm text-gray-600">Average Level</div>
-                      <div className="text-lg font-semibold text-gray-900">{currentData.averageLevel}%</div>
+                      <div className="text-lg font-semibold text-gray-900">{currentData ? currentData.averageLevel : "-"}%</div>
                     </div>
                   </div>
 
                   <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
                     <div>
-                      <div className="text-sm text-gray-600">24h Change</div>
-                      <div
-                        className={`text-lg font-semibold flex items-center ${
-                          currentData.change24h > 0 ? "text-green-600" : "text-red-600"
-                        }`}
-                      >
-                        <TrendIcon className="h-4 w-4 mr-1" />
-                        {currentData.change24h > 0 ? "+" : ""}
-                        {currentData.change24h}%
-                      </div>
-                    </div>
-                    <div className="text-right">
                       <div className="text-sm text-gray-600">7d Change</div>
                       <div
-                        className={`text-lg font-semibold flex items-center justify-end ${
-                          currentData.changeWeek > 0 ? "text-green-600" : "text-red-600"
+                        className={`text-lg font-semibold flex items-center ${
+                          currentData && currentData.changeWeek > 0 ? "text-green-600" : "text-red-600"
                         }`}
                       >
                         <TrendIcon className="h-4 w-4 mr-1" />
-                        {currentData.changeWeek > 0 ? "+" : ""}
-                        {currentData.changeWeek}%
+                        {currentData && currentData.changeWeek > 0 ? "+" : ""}
+                        {currentData ? currentData.changeWeek : "-"}%
                       </div>
                     </div>
                   </div>
@@ -165,7 +179,15 @@ export function CurrentLevelDisplay() {
                     <div className="flex items-center justify-between">
                       <div>
                         <div className="text-sm text-gray-600">Status</div>
-                        <div className="text-lg font-semibold text-green-700">{currentData.status}</div>
+                        <div className="text-lg font-semibold text-green-700">
+                          {currentData
+                            ? currentData.currentLevel >= 90
+                              ? "High"
+                              : currentData.currentLevel >= 80
+                              ? "Normal"
+                              : "Low"
+                            : "-"}
+                        </div>
                       </div>
                       <Badge className="bg-green-600 text-white">Operational</Badge>
                     </div>
@@ -207,7 +229,7 @@ export function CurrentLevelDisplay() {
             </div>
           </div>
 
-          {currentData.currentLevel < 70 && (
+          {currentData && currentData.currentLevel < 70 && (
             <div className="mt-4 p-3 bg-orange-50 border border-orange-200 rounded-lg">
               <div className="flex items-center space-x-2">
                 <AlertTriangle className="h-4 w-4 text-orange-600" />
