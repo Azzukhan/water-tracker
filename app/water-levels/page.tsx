@@ -5,7 +5,6 @@ import { CurrentLevelDisplay } from "@/components/water-levels/current-level-dis
 import { HistoryChart } from "@/components/water-levels/history-chart"
 import { PredictionChart } from "@/components/water-levels/prediction-chart"
 import { DataSources } from "@/components/water-levels/data-sources"
-import { AgencyContacts } from "@/components/contact/agency-contacts"
 
 export default function WaterLevelsPage() {
   return (
@@ -21,7 +20,6 @@ export default function WaterLevelsPage() {
       <HistoryChart />
       <PredictionChart />
       <DataSources />
-      <AgencyContacts />
     </div>
   )
 }
