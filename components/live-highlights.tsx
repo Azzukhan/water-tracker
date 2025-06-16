@@ -1,73 +1,32 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { AlertTriangle, TrendingUp, Droplets, Clock, ArrowRight, MapPin } from "lucide-react"
+import { AlertTriangle, Clock, ArrowRight } from "lucide-react"
 import Link from "next/link"
+import { useNews } from "@/hooks/use-news"
 
-const highlights = [
-  {
-    id: 1,
-    type: "alert",
-    severity: "high",
-    title: "Drought Conditions in East England",
-    description:
-      "Water levels in Essex and Suffolk have dropped to 65% of normal capacity. Residents advised to conserve water usage.",
-    location: "East England",
-    time: "2 hours ago",
-    icon: AlertTriangle,
-    color: "border-red-200 bg-red-50",
-  },
-  {
-    id: 2,
-    type: "warning",
-    severity: "medium",
-    title: "Flood Warning for West Scotland",
-    description: "Heavy rainfall expected to continue. River levels rising in Glasgow and surrounding areas.",
-    location: "West Scotland",
-    time: "4 hours ago",
-    icon: TrendingUp,
-    color: "border-orange-200 bg-orange-50",
-  },
-  {
-    id: 3,
-    type: "info",
-    severity: "low",
-    title: "Water Quality Improvement in Thames",
-    description: "Recent infrastructure upgrades show 15% improvement in water quality metrics across London area.",
-    location: "London",
-    time: "6 hours ago",
-    icon: Droplets,
-    color: "border-blue-200 bg-blue-50",
-  },
-]
-
-const getSeverityColor = (severity: string) => {
-  switch (severity) {
-    case "high":
-      return "bg-red-600"
-    case "medium":
-      return "bg-orange-500"
-    case "low":
-      return "bg-blue-500"
-    default:
-      return "bg-gray-500"
-  }
+function relativeTime(date: string) {
+  const ms = Date.now() - new Date(date).getTime()
+  const mins = Math.floor(ms / 60000)
+  if (mins < 60) return `${mins}m ago`
+  const hours = Math.floor(mins / 60)
+  if (hours < 24) return `${hours}h ago`
+  const days = Math.floor(hours / 24)
+  return `${days}d ago`
 }
 
-const getSeverityText = (severity: string) => {
-  switch (severity) {
-    case "high":
-      return "Critical"
-    case "medium":
-      return "Warning"
-    case "low":
-      return "Info"
-    default:
-      return "Update"
-  }
-}
 
 export function LiveHighlights() {
+  const { news, loading } = useNews()
+
+  const highlights = news
+    .filter((n) => n.severity === "high")
+    .sort(
+      (a, b) =>
+        new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+    )
+    .slice(0, 4)
+
   return (
     <Card className="shadow-lg border-0">
       <CardHeader className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-t-lg">
@@ -85,58 +44,50 @@ export function LiveHighlights() {
 
       <CardContent className="p-6">
         <div className="space-y-6">
-          {highlights.map((highlight) => (
-            <div
-              key={highlight.id}
-              className={`border rounded-xl p-6 ${highlight.color} hover:shadow-md transition-all duration-300 group`}
-            >
-              <div className="flex items-start space-x-4">
-                <div className={`p-3 rounded-full ${getSeverityColor(highlight.severity)} bg-opacity-10`}>
-                  <highlight.icon
-                    className={`h-6 w-6 ${getSeverityColor(highlight.severity).replace("bg-", "text-")}`}
-                  />
-                </div>
-
-                <div className="flex-1 space-y-3">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <div className="flex items-center space-x-3 mb-2">
-                        <Badge className={`${getSeverityColor(highlight.severity)} text-white`}>
-                          {getSeverityText(highlight.severity)}
-                        </Badge>
-                        <div className="flex items-center text-sm text-gray-500">
-                          <MapPin className="h-4 w-4 mr-1" />
-                          {highlight.location}
-                        </div>
-                      </div>
-                      <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
-                        {highlight.title}
-                      </h3>
-                    </div>
-
-                    <div className="flex items-center text-sm text-gray-500">
-                      <Clock className="h-4 w-4 mr-1" />
-                      {highlight.time}
-                    </div>
+          {loading && <p>Loading...</p>}
+          {!loading &&
+            highlights.map((item, idx) => (
+              <div
+                key={idx}
+                className="border rounded-xl p-6 border-red-200 bg-red-50 hover:shadow-md transition-all duration-300 group"
+              >
+                <div className="flex items-start space-x-4">
+                  <div className="p-3 rounded-full bg-red-600 bg-opacity-10">
+                    <AlertTriangle className="h-6 w-6 text-red-600" />
                   </div>
 
-                  <p className="text-gray-700 leading-relaxed">{highlight.description}</p>
-
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="group-hover:bg-blue-50 group-hover:border-blue-200 transition-colors"
-                    asChild
-                  >
-                    <Link href="/news">
-                      View Details
-                      <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                    </Link>
-                  </Button>
+                  <div className="flex-1 space-y-3">
+                    <div className="flex items-start justify-between">
+                      <Badge className="bg-red-600 text-white">Critical</Badge>
+                      <div className="flex items-center text-sm text-gray-500">
+                        <Clock className="h-4 w-4 mr-1" />
+                        {relativeTime(item.publishedAt)}
+                      </div>
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
+                      {item.title}
+                    </h3>
+                    <p className="text-gray-700 leading-relaxed">
+                      {item.description}
+                    </p>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="group-hover:bg-blue-50 group-hover:border-blue-200 transition-colors"
+                      asChild
+                    >
+                      <Link href={item.url} target="_blank" rel="noreferrer">
+                        View Details
+                        <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                      </Link>
+                    </Button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          {!loading && highlights.length === 0 && (
+            <p className="text-center text-gray-600">No high alert news.</p>
+          )}
         </div>
 
         <div className="mt-8 text-center">
