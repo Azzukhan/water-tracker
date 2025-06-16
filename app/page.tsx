@@ -17,11 +17,12 @@ export default function HomePage() {
       <div className="container mx-auto px-4 py-8 space-y-10 mt-24">
         <QuickInfoTiles />
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2">
+            <LiveHighlights />
+          </div>
           <WeatherWidget />
         </div>
-
-        <LiveHighlights />
 
         <div className="space-y-10">
           <BlogsHeader />
