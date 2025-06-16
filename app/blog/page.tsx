@@ -24,7 +24,7 @@ export default function BlogPage() {
   })
 
   return (
-    <div className="container mx-auto px-4 py-8 space-y-10">
+    <div className="container mx-auto px-4 py-8 space-y-10 mt-24">
       <BlogsHeader />
       <BlogCategories selected={category} onSelect={setCategory} />
       <div className="grid lg:grid-cols-3 gap-8">

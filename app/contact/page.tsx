@@ -9,7 +9,7 @@ import { FAQ } from "@/components/contact/faq"
 
 export default function ContactPage() {
   return (
-    <div className="container mx-auto px-4 py-8 space-y-10">
+    <div className="container mx-auto px-4 py-8 space-y-10 mt-24">
       <ContactHeader />
       <EmergencyContacts />
       <div className="grid lg:grid-cols-2 gap-8 items-start">
