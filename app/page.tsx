@@ -4,8 +4,12 @@ import { HeroSection } from "@/components/hero-section"
 import WeatherWidget from "@/components/weather-widget"
 import { QuickInfoTiles } from "@/components/quick-info-tiles"
 import { LiveHighlights } from "@/components/live-highlights"
+import { BlogsHeader } from "@/components/blogs/blogs-header"
+import { BlogGrid } from "@/components/blogs/blog-grid"
+import { useBlogs } from "@/hooks/use-blogs"
 
 export default function HomePage() {
+  const { blogs, loading: blogsLoading, error: blogsError } = useBlogs()
 
   return (
     <div className="min-h-screen">
@@ -18,6 +22,17 @@ export default function HomePage() {
         </div>
 
         <LiveHighlights />
+
+        <div className="space-y-10">
+          <BlogsHeader />
+          {blogsLoading && <div>Loading...</div>}
+          {!blogsLoading && blogsError && (
+            <div className="text-center text-destructive py-20">
+              Failed to load blog posts: {blogsError}
+            </div>
+          )}
+          {!blogsLoading && !blogsError && <BlogGrid posts={blogs.slice(0, 6)} />}
+        </div>
       </div>
     </div>
   )
