@@ -5,7 +5,7 @@ import { Mail, Phone, MapPin, Droplets } from "lucide-react"
 export default function Footer() {
   return (
     <footer className="w-full bg-gradient-to-r from-sky-100 to-blue-100 border-t border-blue-200 mt-12 text-gray-600 text-sm">
-      <div className="container mx-auto px-4 py-12 grid gap-8 md:grid-cols-4">
+      <div className="container mx-auto px-4 py-16 grid gap-8 md:grid-cols-4">
         <div>
           <div className="flex items-center gap-2 mb-2">
             <div className="relative">
@@ -49,7 +49,7 @@ export default function Footer() {
           </ul>
         </div>
       </div>
-      <div className="container mx-auto px-4 border-t border-blue-200 py-6 flex flex-col gap-2 md:flex-row items-center justify-between">
+      <div className="container mx-auto px-4 border-t border-blue-200 py-8 flex flex-col gap-2 md:flex-row items-center justify-between">
         <div className="text-center md:text-left">
           © {new Date().getFullYear()} UK Water Tracker. Built with Next.js and Django using data from official UK agencies.
         </div>
