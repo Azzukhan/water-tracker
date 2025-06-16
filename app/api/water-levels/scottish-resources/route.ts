@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server'
 export async function GET() {
   try {
     const backendUrl = process.env.BACKEND_URL || 'http://127.0.0.1:8000'
-    const res = await fetch(`${backendUrl}/api/water_levels/scottish-resources/`)
+    const res = await fetch(`${backendUrl}/api/water-levels/scottish-resources/`)
     if (!res.ok) {
       const body = await res.text()
       console.error(`Backend error: ${res.status} ${res.statusText}`, body)
