@@ -1,5 +1,11 @@
 from rest_framework import serializers
-from .models import WaterStation, WaterLevel, Alert, Prediction
+from .models import (
+    WaterStation,
+    WaterLevel,
+    Alert,
+    Prediction,
+    ScottishWaterResourceLevel,
+)
 
 class WaterStationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -30,5 +36,11 @@ class PredictionSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Prediction
-        fields = ['id', 'station', 'station_name', 'station_location', 'next_hour', 
+        fields = ['id', 'station', 'station_name', 'station_location', 'next_hour',
                   'next_6_hours', 'next_24_hours', 'confidence', 'created_at']
+
+
+class ScottishWaterResourceLevelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ScottishWaterResourceLevel
+        fields = ['id', 'name', 'level', 'last_updated']
