@@ -87,7 +87,7 @@ export function HeroSection() {
                   <div className="flex items-center justify-between text-white">
                     <span className="flex items-center">
                       <TrendingUp className="h-4 w-4 mr-2 text-green-400" />
-                      Thames Water Level
+                      Scottish Water Level
                     </span>
                     <span className="font-mono">2.4m</span>
                   </div>

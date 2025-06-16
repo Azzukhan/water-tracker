@@ -6,15 +6,15 @@ import { TrendingUp, TrendingDown, Minus, Droplets, Calendar, AlertTriangle } fr
 import { LineChart, Line, ResponsiveContainer } from "recharts"
 
 const currentData = {
-  region: "London & Thames Valley",
-  currentLevel: 78,
-  averageLevel: 82,
+  region: "Scotland",
+  currentLevel: 88,
+  averageLevel: 85,
   lastUpdated: "2 minutes ago",
   trend: "stable",
-  status: "Normal",
-  capacity: "2.4 billion litres",
-  change24h: -2.1,
-  changeWeek: -5.3,
+  status: "High",
+  capacity: "1.2 billion litres",
+  change24h: 0.3,
+  changeWeek: 1.1,
 }
 
 const sparklineData = [

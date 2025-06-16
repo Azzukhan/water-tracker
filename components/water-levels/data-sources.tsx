@@ -7,16 +7,6 @@ import { ExternalLink, Download, Database, Shield, Clock, CheckCircle } from "lu
 
 const dataSources = [
   {
-    name: "Environment Agency",
-    logo: "EA",
-    description: "Real-time water level monitoring across England",
-    website: "environment-agency.gov.uk",
-    dataTypes: ["Water Levels", "Flow Rates", "Quality"],
-    updateFrequency: "15 minutes",
-    reliability: "99.8%",
-    color: "bg-green-600",
-  },
-  {
     name: "Scottish Water",
     logo: "SW",
     description: "Scotland's water infrastructure data",
@@ -25,26 +15,6 @@ const dataSources = [
     updateFrequency: "30 minutes",
     reliability: "99.5%",
     color: "bg-blue-600",
-  },
-  {
-    name: "Natural Resources Wales",
-    logo: "NRW",
-    description: "Welsh water and environmental monitoring",
-    website: "naturalresources.wales",
-    dataTypes: ["River Levels", "Groundwater"],
-    updateFrequency: "1 hour",
-    reliability: "99.2%",
-    color: "bg-red-600",
-  },
-  {
-    name: "Met Office",
-    logo: "MO",
-    description: "Weather data and precipitation forecasts",
-    website: "metoffice.gov.uk",
-    dataTypes: ["Rainfall", "Weather Forecasts"],
-    updateFrequency: "1 hour",
-    reliability: "99.9%",
-    color: "bg-purple-600",
   },
 ]
 

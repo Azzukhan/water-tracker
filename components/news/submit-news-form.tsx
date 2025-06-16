@@ -128,16 +128,7 @@ export function SubmitNewsForm() {
                 <SelectValue placeholder="Select company" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Thames Water">Thames Water</SelectItem>
                 <SelectItem value="Scottish Water">Scottish Water</SelectItem>
-                <SelectItem value="Anglian Water">Anglian Water</SelectItem>
-                <SelectItem value="United Utilities">United Utilities</SelectItem>
-                <SelectItem value="Severn Trent">Severn Trent</SelectItem>
-                <SelectItem value="Yorkshire Water">Yorkshire Water</SelectItem>
-                <SelectItem value="Environment Agency">Environment Agency</SelectItem>
-                <SelectItem value="SEPA">SEPA</SelectItem>
-                <SelectItem value="Natural Resources Wales">Natural Resources Wales</SelectItem>
-                <SelectItem value="Other">Other</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -153,17 +144,7 @@ export function SubmitNewsForm() {
                 <SelectValue placeholder="Select region" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="London">London</SelectItem>
-                <SelectItem value="South East">South East</SelectItem>
-                <SelectItem value="South West">South West</SelectItem>
-                <SelectItem value="North West">North West</SelectItem>
-                <SelectItem value="North East">North East</SelectItem>
-                <SelectItem value="Yorkshire">Yorkshire</SelectItem>
-                <SelectItem value="Midlands">Midlands</SelectItem>
                 <SelectItem value="Scotland">Scotland</SelectItem>
-                <SelectItem value="Wales">Wales</SelectItem>
-                <SelectItem value="Northern Ireland">Northern Ireland</SelectItem>
-                <SelectItem value="National">National</SelectItem>
               </SelectContent>
             </Select>
           </div>

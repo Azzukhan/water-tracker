@@ -8,33 +8,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge"
 import { Search, Filter, X } from "lucide-react"
 
-const companies = [
-  "All Companies",
-  "Thames Water",
-  "Scottish Water",
-  "Anglian Water",
-  "United Utilities",
-  "Severn Trent",
-  "Yorkshire Water",
-  "South West Water",
-  "Environment Agency",
-  "SEPA",
-  "Natural Resources Wales",
-]
+const companies = ["All Companies", "Scottish Water"]
 
-const regions = [
-  "All Regions",
-  "London",
-  "South East",
-  "South West",
-  "North West",
-  "North East",
-  "Yorkshire",
-  "Midlands",
-  "Scotland",
-  "Wales",
-  "Northern Ireland",
-]
+const regions = ["All Regions", "Scotland"]
 
 const eventTypes = [
   "All Types",
