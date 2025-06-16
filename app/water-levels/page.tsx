@@ -6,6 +6,7 @@ import { HistoryChart } from "@/components/water-levels/history-chart"
 import { PredictionChart } from "@/components/water-levels/prediction-chart"
 import { DataSources } from "@/components/water-levels/data-sources"
 import { ScottishResourceTable } from "@/components/water-levels/scottish-resource-table"
+import { ScottishAverageTables } from "@/components/water-levels/scottish-average-tables"
 
 export default function WaterLevelsPage() {
   return (
@@ -21,6 +22,7 @@ export default function WaterLevelsPage() {
       <HistoryChart />
       <PredictionChart />
       <DataSources />
+      <ScottishAverageTables />
       <ScottishResourceTable />
     </div>
   )

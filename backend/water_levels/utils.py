@@ -5,7 +5,11 @@ from typing import Tuple
 import requests
 from bs4 import BeautifulSoup
 
-from .models import ScottishWaterResourceLevel
+from .models import (
+    ScottishWaterResourceLevel,
+    ScottishWaterAverageLevel,
+    ScottishWaterRegionalLevel,
+)
 
 
 LAST_UPDATE_REGEX = re.compile(r"(\d{1,2} \w+ \d{4})")
@@ -22,6 +26,13 @@ def _parse_last_updated(text: str) -> datetime.date:
     return datetime.utcnow().date()
 
 
+def _parse_percentage(value: str) -> float:
+    try:
+        return float(value.replace("%", "").strip())
+    except ValueError:
+        return 0.0
+
+
 def fetch_scottish_water_resource_levels() -> Tuple[int, datetime.date]:
     """Fetch resource levels from Scottish Water and store them."""
     url = (
@@ -33,17 +44,52 @@ def fetch_scottish_water_resource_levels() -> Tuple[int, datetime.date]:
 
     soup = BeautifulSoup(response.text, "html.parser")
 
-    # Attempt to find a 'last updated' text on the page
-    last_updated_text = ""
-    for tag in soup.find_all(string=re.compile("last update", re.I)):
-        last_updated_text = str(tag)
-        break
-    last_updated = _parse_last_updated(last_updated_text)
+    page_text = soup.get_text(" ", strip=True)
+    last_updated = _parse_last_updated(page_text)
 
+    # Scotland-wide average table
+    total_count = 0
+    heading = soup.find(string=re.compile("Average levels Scotland-wide", re.I))
+    if heading:
+        table = heading.find_next("table")
+        if table:
+            row = table.find_all("tr")[-1]
+            cells = row.find_all(["td", "th"])
+            if len(cells) >= 4:
+                ScottishWaterAverageLevel.objects.update_or_create(
+                    date=last_updated,
+                    defaults={
+                        "current": _parse_percentage(cells[1].get_text()),
+                        "change_from_last_week": _parse_percentage(cells[2].get_text()),
+                        "difference_from_average": _parse_percentage(cells[3].get_text()),
+                    },
+                )
+
+    # Regional averages
+    heading = soup.find(string=re.compile("Average levels across regional areas", re.I))
+    if heading:
+        table = heading.find_next("table")
+        if table:
+            for row in table.find_all("tr")[1:]:
+                cells = row.find_all(["td", "th"])
+                if len(cells) >= 4:
+                    ScottishWaterRegionalLevel.objects.update_or_create(
+                        area=cells[0].get_text(strip=True),
+                        date=last_updated,
+                        defaults={
+                            "current": _parse_percentage(cells[1].get_text()),
+                            "change_from_last_week": _parse_percentage(cells[2].get_text()),
+                            "difference_from_average": _parse_percentage(cells[3].get_text()),
+                        },
+                    )
+                    total_count += 1
+
+    # Resource levels table (reservoirs)
+    tables = soup.find_all("table")
+    resource_table = tables[-1] if tables else None
     resources = []
-    table = soup.find("table")
-    if table:
-        for row in table.find_all("tr"):
+    if resource_table:
+        for row in resource_table.find_all("tr"):
             cells = row.find_all(["td", "th"])
             if len(cells) < 2:
                 continue
@@ -55,11 +101,11 @@ def fetch_scottish_water_resource_levels() -> Tuple[int, datetime.date]:
                 continue
             resources.append((name, level))
 
-    count = 0
     for name, level in resources:
         ScottishWaterResourceLevel.objects.update_or_create(
             name=name,
             defaults={"level": level, "last_updated": last_updated},
         )
-        count += 1
-    return count, last_updated
+        total_count += 1
+
+    return total_count, last_updated
