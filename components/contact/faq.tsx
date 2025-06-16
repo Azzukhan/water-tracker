@@ -118,6 +118,8 @@ export function FAQ() {
       faqData.map((faq) => [faq.id, { yes: faq.helpfulYes, no: faq.helpfulNo }])
     ) as Record<number, { yes: number; no: number }>
   )
+  const [userVotes, setUserVotes] =
+    useState<Record<number, "yes" | "no" | null>>({})
 
   const filteredFAQs = faqData.filter((faq) => {
     const matchesCategory = selectedCategory === "all" || faq.category === selectedCategory
@@ -133,12 +135,27 @@ export function FAQ() {
   }
 
   const handleHelpful = (id: number, type: "yes" | "no") => {
-    setHelpfulCounts((prev) => ({
+    const currentVote = userVotes[id]
+
+    setHelpfulCounts((prev) => {
+      const counts = { ...prev[id] }
+
+      if (currentVote === type) {
+        // toggle off
+        counts[type] = Math.max(counts[type] - 1, 0)
+      } else {
+        if (currentVote) {
+          counts[currentVote] = Math.max(counts[currentVote] - 1, 0)
+        }
+        counts[type] += 1
+      }
+
+      return { ...prev, [id]: counts }
+    })
+
+    setUserVotes((prev) => ({
       ...prev,
-      [id]: {
-        ...prev[id],
-        [type]: prev[id][type] + 1,
-      },
+      [id]: currentVote === type ? null : type,
     }))
   }
 
@@ -232,7 +249,7 @@ export function FAQ() {
                           <div className="text-sm text-gray-500">Was this helpful?</div>
                           <div className="flex items-center space-x-2">
                             <Button
-                              variant="outline"
+                              variant={userVotes[faq.id] === "yes" ? "default" : "outline"}
                               size="sm"
                               className="text-xs"
                               onClick={() => handleHelpful(faq.id, "yes")}
@@ -240,7 +257,7 @@ export function FAQ() {
                               👍 Yes ({helpfulCounts[faq.id]?.yes ?? 0})
                             </Button>
                             <Button
-                              variant="outline"
+                              variant={userVotes[faq.id] === "no" ? "default" : "outline"}
                               size="sm"
                               className="text-xs"
                               onClick={() => handleHelpful(faq.id, "no")}
