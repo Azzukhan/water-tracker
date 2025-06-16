@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { AlertTriangle, Plus, Lightbulb, ArrowRight, Droplets, Wrench, Leaf, BookOpen, Phone } from "lucide-react"
+import { AlertTriangle, Plus, ArrowRight, Droplets, Wrench, Leaf, Phone } from "lucide-react"
 import Link from "next/link"
 
 const quickActions = [
@@ -21,15 +21,6 @@ const quickActions = [
     iconColor: "text-blue-600",
     buttonColor: "bg-blue-600 hover:bg-blue-700",
     href: "/contact",
-  },
-  {
-    title: "Water Saving Tips",
-    description: "Learn how to conserve water and reduce your bills",
-    icon: Lightbulb,
-    color: "bg-green-50 border-green-200",
-    iconColor: "text-green-600",
-    buttonColor: "bg-green-600 hover:bg-green-700",
-    href: "/blog",
   },
 ]
 
@@ -122,23 +113,7 @@ export function QuickInfoTiles() {
           </div>
 
           {/* Support CTAs */}
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="text-center">
-              <div className="bg-white rounded-xl p-6 shadow-sm">
-                <BookOpen className="h-12 w-12 text-green-600 mx-auto mb-4" />
-                <h4 className="font-bold text-gray-900 mb-2">Learn More</h4>
-                <p className="text-sm text-gray-600 mb-4">
-                  Explore our educational blogs and guides for water conservation tips and industry insights.
-                </p>
-                <Button className="bg-green-600 hover:bg-green-700" asChild>
-                  <Link href="/blog">
-                    Visit Blog & Awareness
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
-              </div>
-            </div>
-
+          <div className="grid md:grid-cols-1 gap-6">
             <div className="text-center">
               <div className="bg-white rounded-xl p-6 shadow-sm">
                 <Phone className="h-12 w-12 text-blue-600 mx-auto mb-4" />
