@@ -27,24 +27,44 @@ export function ReportIssueForm() {
     e.preventDefault()
     setIsSubmitting(true)
 
-    // Simulate form submission
-    setTimeout(() => {
-      setIsSubmitting(false)
+    try {
+      const payload = {
+        issue_type: issueData.issueType,
+        severity: issueData.severity,
+        location: issueData.location,
+        postcode: issueData.postcode,
+        description: issueData.description,
+        contact_name: issueData.contactName,
+        contact_phone: issueData.contactPhone,
+      }
+
+      const res = await fetch("/api/support/issue", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      })
+
+      if (!res.ok) {
+        throw new Error("Failed to submit")
+      }
+
       setSubmitStatus("success")
-      // Reset form after success
-      setTimeout(() => {
-        setIssueData({
-          issueType: "",
-          location: "",
-          postcode: "",
-          description: "",
-          severity: "",
-          contactName: "",
-          contactPhone: "",
-        })
-        setSubmitStatus("idle")
-      }, 3000)
-    }, 2000)
+      setIssueData({
+        issueType: "",
+        location: "",
+        postcode: "",
+        description: "",
+        severity: "",
+        contactName: "",
+        contactPhone: "",
+      })
+      setTimeout(() => setSubmitStatus("idle"), 3000)
+    } catch (err) {
+      setSubmitStatus("error")
+      setTimeout(() => setSubmitStatus("idle"), 3000)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   if (submitStatus === "success") {
