@@ -7,7 +7,14 @@ export default function Footer() {
     <footer className="w-full bg-gradient-to-r from-sky-100 to-blue-100 border-t border-blue-200 mt-12 text-gray-600 text-sm">
       <div className="container mx-auto px-4 py-12 grid gap-8 md:grid-cols-4">
         <div>
-          <h3 className="text-lg font-bold text-gray-800 mb-2">UK Water Tracker</h3>
+          <div className="flex items-center gap-2 mb-2">
+            <img
+              src="/placeholder-logo.svg"
+              alt="UK Water Tracker logo"
+              className="h-8 w-8"
+            />
+            <h3 className="text-lg font-bold text-gray-800">UK Water Tracker</h3>
+          </div>
           <p className="mb-4 text-gray-700">Providing real-time water level monitoring and weather updates for the United Kingdom.</p>
           <ul className="space-y-1">
             <li className="flex items-center"><Mail className="h-4 w-4 mr-2 text-blue-600" />info@ukwatertracker.co.uk</li>
