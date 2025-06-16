@@ -87,7 +87,7 @@ export function CurrentLevelDisplay() {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-2xl font-bold">Current Water Level</CardTitle>
-              <p className="text-blue-100">{currentData.region}</p>
+              <p className="text-blue-100">{currentData?.region ?? ""}</p>
             </div>
             <Badge variant="secondary" className="bg-white/20 text-white border-white/30">
               Live Data
@@ -125,7 +125,9 @@ export function CurrentLevelDisplay() {
 
                 {/* Center Content */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <div className="text-4xl font-bold text-gray-900">{currentData.currentLevel}%</div>
+                  <div className="text-4xl font-bold text-gray-900">
+                    {currentData ? `${currentData.currentLevel}%` : "-"}
+                  </div>
                   <div className="text-sm text-gray-600">Full</div>
                   <Droplets className="h-6 w-6 text-blue-500 mt-2" />
                 </div>
