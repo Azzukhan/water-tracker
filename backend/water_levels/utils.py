@@ -1,18 +1,12 @@
 import re
+import time
 from datetime import datetime
 from typing import Tuple
 
 import requests
-import time
 from bs4 import BeautifulSoup
 
-from .models import (
-    ScottishWaterResourceLevel,
-    ScottishWaterAverageLevel,
-    ScottishWaterRegionalLevel,
-    ScottishWaterLevel,
-)
-
+from .models import ScottishWaterAverageLevel, ScottishWaterRegionalLevel
 
 LAST_UPDATE_REGEX = re.compile(r"(\d{1,2} \w+ \d{4})")
 
@@ -36,7 +30,7 @@ def _parse_percentage(value: str) -> float:
 
 
 def fetch_scottish_water_resource_levels() -> Tuple[int, datetime.date]:
-    """Fetch resource levels from Scottish Water and store them."""
+    """Fetch average and regional resource levels from Scottish Water."""
     url = (
         "https://www.scottishwater.co.uk/Your-Home/Your-Water/Managing-Water-Resources/"
         "Scotlands-Water-Resource-Levels"
@@ -49,8 +43,8 @@ def fetch_scottish_water_resource_levels() -> Tuple[int, datetime.date]:
     page_text = soup.get_text(" ", strip=True)
     last_updated = _parse_last_updated(page_text)
 
-    # Scotland-wide average table
     total_count = 0
+
     heading = soup.find(string=re.compile("Average levels Scotland-wide", re.I))
     if heading:
         table = heading.find_next("table")
@@ -67,7 +61,6 @@ def fetch_scottish_water_resource_levels() -> Tuple[int, datetime.date]:
                     },
                 )
 
-    # Regional averages
     heading = soup.find(string=re.compile("Average levels across regional areas", re.I))
     if heading:
         table = heading.find_next("table")
@@ -85,30 +78,6 @@ def fetch_scottish_water_resource_levels() -> Tuple[int, datetime.date]:
                         },
                     )
                     total_count += 1
-
-    # Resource levels table (reservoirs)
-    tables = soup.find_all("table")
-    resource_table = tables[-1] if tables else None
-    resources = []
-    if resource_table:
-        for row in resource_table.find_all("tr"):
-            cells = row.find_all(["td", "th"])
-            if len(cells) < 2:
-                continue
-            name = cells[0].get_text(strip=True)
-            level_str = cells[1].get_text(strip=True)
-            try:
-                level = float(level_str.replace("%", ""))
-            except ValueError:
-                continue
-            resources.append((name, level))
-
-    for name, level in resources:
-        ScottishWaterResourceLevel.objects.update_or_create(
-            name=name,
-            defaults={"level": level, "last_updated": last_updated},
-        )
-        total_count += 1
 
     return total_count, last_updated
 
@@ -192,56 +161,3 @@ def fetch_scottish_water_history(limit: int = 5000, rate_limit: int = 2) -> int:
         time.sleep(rate_limit)
 
     return total_records
-
-
-def fetch_scottish_water_levels() -> int:
-    """Scrape Scottish Water website for overall and regional levels.
-
-    Returns the number of records created or updated."""
-
-    url = (
-        "https://www.scottishwater.co.uk/Your-Home/Your-Water/Managing-Water-Resources/"
-        "Scotlands-Water-Resource-Levels"
-    )
-    headers = {"User-Agent": "Mozilla/5.0"}
-
-    try:
-        res = requests.get(url, headers=headers, timeout=20)
-        res.raise_for_status()
-        soup = BeautifulSoup(res.text, "html.parser")
-
-        total_records = 0
-
-        summary_rows = soup.find_all("table")[0].find_all("tr")
-        summary_data = summary_rows[-1].find_all("td")
-        if len(summary_data) >= 3:
-            ScottishWaterLevel.objects.update_or_create(
-                date=datetime.today().date(),
-                region="Total",
-                defaults={
-                    "current": summary_data[0].text.strip(),
-                    "change_from_last_week": summary_data[1].text.strip(),
-                    "diff_from_average": summary_data[2].text.strip(),
-                    "source_url": url,
-                },
-            )
-            total_records += 1
-
-        regional_rows = soup.find_all("table")[1].find_all("tr")
-        for row in regional_rows[1:]:
-            cols = row.find_all("td")
-            if len(cols) == 4:
-                ScottishWaterLevel.objects.update_or_create(
-                    date=datetime.today().date(),
-                    region=cols[0].text.strip(),
-                    defaults={
-                        "current": cols[1].text.strip(),
-                        "change_from_last_week": cols[2].text.strip(),
-                        "diff_from_average": cols[3].text.strip(),
-                        "source_url": url,
-                    },
-                )
-                total_records += 1
-        return total_records
-    except Exception:
-        return 0
