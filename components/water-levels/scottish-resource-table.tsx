@@ -24,7 +24,13 @@ export function ScottishResourceTable() {
   useEffect(() => {
     fetch("/api/water-levels/scottish-resources")
       .then((res) => res.json())
-      .then((d) => setData(d))
+      .then((d) => {
+        if (Array.isArray(d)) {
+          setData(d)
+        } else {
+          setData([])
+        }
+      })
       .catch(() => setData([]))
   }, [])
 
