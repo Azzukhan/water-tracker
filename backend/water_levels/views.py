@@ -2,12 +2,19 @@ from rest_framework import viewsets, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
-from .models import WaterStation, WaterLevel, Alert, Prediction
+from .models import (
+    WaterStation,
+    WaterLevel,
+    Alert,
+    Prediction,
+    ScottishWaterResourceLevel,
+)
 from .serializers import (
-    WaterStationSerializer, 
-    WaterLevelSerializer, 
-    AlertSerializer, 
-    PredictionSerializer
+    WaterStationSerializer,
+    WaterLevelSerializer,
+    AlertSerializer,
+    PredictionSerializer,
+    ScottishWaterResourceLevelSerializer,
 )
 
 class WaterStationViewSet(viewsets.ModelViewSet):
@@ -58,3 +65,10 @@ class PredictionViewSet(viewsets.ModelViewSet):
     serializer_class = PredictionSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['station']
+
+
+class ScottishWaterResourceLevelViewSet(viewsets.ModelViewSet):
+    queryset = ScottishWaterResourceLevel.objects.all().order_by('name')
+    serializer_class = ScottishWaterResourceLevelSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['name']

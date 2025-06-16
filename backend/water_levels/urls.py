@@ -1,12 +1,19 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import WaterStationViewSet, WaterLevelViewSet, AlertViewSet, PredictionViewSet
+from .views import (
+    WaterStationViewSet,
+    WaterLevelViewSet,
+    AlertViewSet,
+    PredictionViewSet,
+    ScottishWaterResourceLevelViewSet,
+)
 
 router = DefaultRouter()
 router.register(r'stations', WaterStationViewSet)
 router.register(r'levels', WaterLevelViewSet)
 router.register(r'alerts', AlertViewSet)
 router.register(r'predictions', PredictionViewSet)
+router.register(r'scottish-resources', ScottishWaterResourceLevelViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),

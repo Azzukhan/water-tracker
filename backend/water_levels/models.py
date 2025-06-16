@@ -73,3 +73,20 @@ class Prediction(models.Model):
 
     def __str__(self):
         return f"Prediction for {self.station.name}"
+
+
+class ScottishWaterResourceLevel(models.Model):
+    """Water resource level information from Scottish Water."""
+
+    name = models.CharField(max_length=255)
+    level = models.FloatField(help_text="Storage level as a percentage")
+    last_updated = models.DateField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Scottish water resource level"
+        verbose_name_plural = "Scottish water resource levels"
+
+    def __str__(self):
+        return f"{self.name} - {self.level}%"
