@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -59,7 +59,11 @@ export function HistoryChart() {
   const [period, setPeriod] = useState("3m")
   const [zoomLevel, setZoomLevel] = useState(1)
 
-  const data = generateHistoricalData(period)
+  const [data, setData] = useState(() => generateHistoricalData("3m"))
+
+  useEffect(() => {
+    setData(generateHistoricalData(period))
+  }, [period])
 
   const handleExport = () => {
     const csvContent =
@@ -195,22 +199,26 @@ export function HistoryChart() {
         {/* Summary Statistics */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
           <div className="text-center p-3 bg-blue-50 rounded-lg">
-            <div className="text-2xl font-bold text-blue-600">{Math.max(...data.map((d) => d.level)).toFixed(1)}%</div>
+            <div className="text-2xl font-bold text-blue-600">
+              {data.length ? Math.max(...data.map((d) => d.level)).toFixed(1) : "0.0"}%
+            </div>
             <div className="text-sm text-gray-600">Highest</div>
           </div>
           <div className="text-center p-3 bg-red-50 rounded-lg">
-            <div className="text-2xl font-bold text-red-600">{Math.min(...data.map((d) => d.level)).toFixed(1)}%</div>
+            <div className="text-2xl font-bold text-red-600">
+              {data.length ? Math.min(...data.map((d) => d.level)).toFixed(1) : "0.0"}%
+            </div>
             <div className="text-sm text-gray-600">Lowest</div>
           </div>
           <div className="text-center p-3 bg-green-50 rounded-lg">
             <div className="text-2xl font-bold text-green-600">
-              {(data.reduce((sum, d) => sum + d.level, 0) / data.length).toFixed(1)}%
+              {data.length ? (data.reduce((sum, d) => sum + d.level, 0) / data.length).toFixed(1) : "0.0"}%
             </div>
             <div className="text-sm text-gray-600">Average</div>
           </div>
           <div className="text-center p-3 bg-gray-50 rounded-lg">
             <div className="text-2xl font-bold text-gray-600">
-              {(Math.max(...data.map((d) => d.level)) - Math.min(...data.map((d) => d.level))).toFixed(1)}%
+              {data.length ? (Math.max(...data.map((d) => d.level)) - Math.min(...data.map((d) => d.level))).toFixed(1) : "0.0"}%
             </div>
             <div className="text-sm text-gray-600">Range</div>
           </div>
