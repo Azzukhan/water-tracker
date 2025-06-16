@@ -33,6 +33,7 @@ export default function Footer() {
         <div>
           <h4 className="font-semibold text-gray-700 mb-2">Resources</h4>
           <ul className="space-y-1">
+            <li><Link href="/blog" className="hover:text-blue-600">Blog</Link></li>
             <li><Link href="/contact" className="hover:text-blue-600">Contact Support</Link></li>
             <li><Link href="/api" className="hover:text-blue-600">API Documentation</Link></li>
             <li><Link href="/data-sources" className="hover:text-blue-600">Data Sources</Link></li>
