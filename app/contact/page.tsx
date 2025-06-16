@@ -4,7 +4,7 @@ import { ContactHeader } from "@/components/contact/contact-header"
 import { EmergencyContacts } from "@/components/contact/emergency-contacts"
 import { ContactForm } from "@/components/contact/contact-form"
 import { ReportIssueForm } from "@/components/contact/report-issue-form"
-import { RegionSelector } from "@/components/water-levels/region-selector"
+import { AgencyContacts } from "@/components/contact/agency-contacts"
 import { FAQ } from "@/components/contact/faq"
 
 export default function ContactPage() {
@@ -16,7 +16,7 @@ export default function ContactPage() {
         <ContactForm />
         <ReportIssueForm />
       </div>
-      <RegionSelector />
+      <AgencyContacts />
       <FAQ />
     </div>
   )
