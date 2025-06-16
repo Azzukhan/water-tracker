@@ -2,10 +2,13 @@ from rest_framework import viewsets, filters
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
+from django.core.cache import cache
 from .models import NewsArticle
 from .serializers import NewsArticleSerializer
 import requests
 import feedparser
+
+CACHE_TIMEOUT = 5 * 60  # cache news data for five minutes
 
 class NewsArticleViewSet(viewsets.ModelViewSet):
     queryset = NewsArticle.objects.all()
@@ -19,6 +22,10 @@ class WaterNewsAPIView(APIView):
     """Fetch water industry news from NewsAPI.org"""
 
     def get(self, request):
+        cached = cache.get("water_news")
+        if cached:
+            return Response(cached)
+
         api_key = "f89107ecafb44975be3b720dd2dfa023"
 
         keywords = [
@@ -96,7 +103,9 @@ class WaterNewsAPIView(APIView):
                 }
             )
 
-        return Response({"news": articles})
+        result = {"news": articles}
+        cache.set("water_news", result, CACHE_TIMEOUT)
+        return Response(result)
 
 
 class AlertScraperAPIView(APIView):
@@ -115,6 +124,10 @@ class AlertScraperAPIView(APIView):
     ]
 
     def get(self, request):
+        cached = cache.get("alert_news")
+        if cached:
+            return Response(cached)
+
         def categorize(title: str, desc: str) -> str:
             text = f"{title} {desc}".lower()
             if "water level" in text:
@@ -159,7 +172,9 @@ class AlertScraperAPIView(APIView):
                 unique.append(art)
 
         unique.sort(key=lambda x: x.get("publishedAt", ""), reverse=True)
-        return Response({"news": unique})
+        result = {"news": unique}
+        cache.set("alert_news", result, CACHE_TIMEOUT)
+        return Response(result)
 
 
 class FloodMonitoringAPIView(APIView):
@@ -183,6 +198,10 @@ class FloodMonitoringAPIView(APIView):
             return None
 
     def get(self, request):
+        cached = cache.get("flood_news")
+        if cached:
+            return Response(cached)
+
         def categorize(title: str, desc: str) -> str:
             text = f"{title} {desc}".lower()
             if "water level" in text:
@@ -235,7 +254,9 @@ class FloodMonitoringAPIView(APIView):
                 unique.append(art)
 
         unique.sort(key=lambda x: x.get("publishedAt", ""), reverse=True)
-        return Response({"news": unique})
+        result = {"news": unique}
+        cache.set("flood_news", result, CACHE_TIMEOUT)
+        return Response(result)
 
 
 class GDELTNewsAPIView(APIView):
@@ -247,6 +268,10 @@ class GDELTNewsAPIView(APIView):
 
     def get(self, request):
         query = request.query_params.get("q", self.DEFAULT_QUERY)
+        cache_key = f"gdelt_news_{query}"
+        cached = cache.get(cache_key)
+        if cached:
+            return Response(cached)
         encoded_query = requests.utils.quote(query)
         url = (
             "https://api.gdeltproject.org/api/v2/doc/doc"
@@ -272,4 +297,6 @@ class GDELTNewsAPIView(APIView):
                 }
             )
 
-        return Response({"news": articles})
+        result = {"news": articles}
+        cache.set(cache_key, result, CACHE_TIMEOUT)
+        return Response(result)
