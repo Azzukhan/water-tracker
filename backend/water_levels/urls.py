@@ -8,6 +8,7 @@ from .views import (
     ScottishWaterResourceLevelViewSet,
     ScottishWaterAverageLevelViewSet,
     ScottishWaterRegionalLevelViewSet,
+    ScottishWaterLevelViewSet,
 )
 
 router = DefaultRouter()
@@ -18,6 +19,7 @@ router.register(r'predictions', PredictionViewSet)
 router.register(r'scottish-resources', ScottishWaterResourceLevelViewSet)
 router.register(r'scottish-averages', ScottishWaterAverageLevelViewSet)
 router.register(r'scottish-regions', ScottishWaterRegionalLevelViewSet)
+router.register(r'scottish-levels', ScottishWaterLevelViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),

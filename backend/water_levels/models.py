@@ -126,3 +126,22 @@ class ScottishWaterRegionalLevel(models.Model):
 
     def __str__(self):
         return f"{self.area} {self.date} - {self.current}%"
+
+
+class ScottishWaterLevel(models.Model):
+    """Summary and regional water level information scraped from the public
+    Scottish Water website."""
+
+    date = models.DateField()
+    region = models.CharField(max_length=100)
+    current = models.CharField(max_length=20)
+    change_from_last_week = models.CharField(max_length=20)
+    diff_from_average = models.CharField(max_length=20)
+    source_url = models.URLField()
+
+    class Meta:
+        unique_together = ("date", "region")
+        ordering = ["-date", "region"]
+
+    def __str__(self):
+        return f"{self.date} - {self.region}"
