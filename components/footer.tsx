@@ -1,6 +1,6 @@
 import React from "react"
 import Link from "next/link"
-import { Mail, Phone, MapPin } from "lucide-react"
+import { Mail, Phone, MapPin, Droplets } from "lucide-react"
 
 export default function Footer() {
   return (
@@ -8,12 +8,11 @@ export default function Footer() {
       <div className="container mx-auto px-4 py-12 grid gap-8 md:grid-cols-4">
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <img
-              src="/placeholder-logo.svg"
-              alt="UK Water Tracker logo"
-              className="h-8 w-8"
-            />
-            <h3 className="text-lg font-bold text-gray-800">UK Water Tracker</h3>
+            <div className="relative">
+              <Droplets className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-cyan-400 dark:bg-cyan-500 rounded-full animate-pulse"></div>
+            </div>
+            <h3 className="text-lg font-bold text-gray-800 dark:text-white">UK Water Tracker</h3>
           </div>
           <p className="mb-4 text-gray-700">Providing real-time water level monitoring and weather updates for the United Kingdom.</p>
           <ul className="space-y-1">
