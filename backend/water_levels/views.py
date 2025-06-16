@@ -2,6 +2,10 @@ from rest_framework import viewsets, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
+from .utils import (
+    fetch_scottish_water_resource_levels,
+    fetch_scottish_water_levels,
+)
 from .models import (
     WaterStation,
     WaterLevel,
@@ -79,12 +83,28 @@ class ScottishWaterResourceLevelViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['name']
 
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        if not queryset.exists():
+            fetch_scottish_water_resource_levels()
+            queryset = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
 
 class ScottishWaterAverageLevelViewSet(viewsets.ModelViewSet):
     queryset = ScottishWaterAverageLevel.objects.all().order_by('-date')
     serializer_class = ScottishWaterAverageLevelSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['date']
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        if not queryset.exists():
+            fetch_scottish_water_resource_levels()
+            queryset = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 class ScottishWaterRegionalLevelViewSet(viewsets.ModelViewSet):
@@ -93,9 +113,25 @@ class ScottishWaterRegionalLevelViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['area', 'date']
 
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        if not queryset.exists():
+            fetch_scottish_water_resource_levels()
+            queryset = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
 
 class ScottishWaterLevelViewSet(viewsets.ModelViewSet):
     queryset = ScottishWaterLevel.objects.all().order_by('-date')
     serializer_class = ScottishWaterLevelSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['region', 'date']
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        if not queryset.exists():
+            fetch_scottish_water_levels()
+            queryset = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)

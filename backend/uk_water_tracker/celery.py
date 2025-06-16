@@ -20,9 +20,13 @@ app.conf.beat_schedule = {
         'task': 'weather.tasks.update_all_weather',
         'schedule': 300.0,  # 5 minutes in seconds
     },
-    'update-scottish-resources-daily': {
+    'update-scottish-resources-every-10-days': {
         'task': 'water_levels.tasks.update_scottish_resources',
-        'schedule': crontab(hour=6, minute=0),
+        'schedule': crontab(hour=6, minute=0, day_of_month="*/10"),
+    },
+    'update-scottish-levels-every-10-days': {
+        'task': 'water_levels.tasks.update_scottish_levels',
+        'schedule': crontab(hour=7, minute=0, day_of_month="*/10"),
     },
 }
 
