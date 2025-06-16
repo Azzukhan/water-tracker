@@ -174,8 +174,9 @@ export default function WeatherWidget() {
                   </div>
                 </div>
               );
-            })}
+            })
           </div>
+        </div>
         </div>
         <Button className="w-full bg-blue-600 hover:bg-blue-700" asChild>
           <Link href="/weather">
