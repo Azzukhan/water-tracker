@@ -15,6 +15,13 @@ python manage.py migrate
 python manage.py runserver
 ```
 
+To populate historical Scottish Water resource levels from the Wayback Machine,
+run:
+
+```
+python manage.py import_scottish_history
+```
+
 By default the backend runs on `http://127.0.0.1:8000`.
 
 ### 2. Frontend
