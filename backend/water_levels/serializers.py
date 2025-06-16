@@ -7,6 +7,7 @@ from .models import (
     ScottishWaterResourceLevel,
     ScottishWaterAverageLevel,
     ScottishWaterRegionalLevel,
+    ScottishWaterLevel,
 )
 
 class WaterStationSerializer(serializers.ModelSerializer):
@@ -71,3 +72,9 @@ class ScottishWaterRegionalLevelSerializer(serializers.ModelSerializer):
             'change_from_last_week',
             'difference_from_average',
         ]
+
+
+class ScottishWaterLevelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ScottishWaterLevel
+        fields = '__all__'
