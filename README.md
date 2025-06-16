@@ -22,6 +22,12 @@ run:
 python manage.py import_scottish_history
 ```
 
+To quickly view the current Scottish Water tables without interacting with the database, run:
+
+```
+python scripts/print_scottish_resources.py
+```
+
 By default the backend runs on `http://127.0.0.1:8000`.
 
 ### 2. Frontend
