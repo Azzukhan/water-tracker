@@ -174,7 +174,7 @@ export default function WeatherWidget() {
                   </div>
                 </div>
               );
-            })
+            })}
           </div>
         </div>
         </div>
