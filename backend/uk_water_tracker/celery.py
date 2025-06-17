@@ -24,8 +24,9 @@ app.conf.beat_schedule = {
         'task': 'water_levels.tasks.update_scottish_resources',
         'schedule': crontab(hour=6, minute=0, day_of_month="*/10"),
     },
+    # Fetch the latest Scottish Water levels once every 10 days
     'update-scottish-levels-every-10-days': {
-        'task': 'water_levels.tasks.update_scottish_levels',
+        'task': 'water_levels.tasks.update_scottish_resources',
         'schedule': crontab(hour=7, minute=0, day_of_month="*/10"),
     },
     'weekly-severn-trent-scrape': {
