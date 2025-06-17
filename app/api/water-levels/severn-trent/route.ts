@@ -12,7 +12,8 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Backend error', status: res.status }, { status: res.status })
     }
     const data = await res.json()
-    return NextResponse.json(data)
+    const results = Array.isArray(data) ? data : data.results ?? data
+    return NextResponse.json(results)
   } catch (error) {
     return NextResponse.json({ error: 'Failed to fetch from backend', details: String(error) }, { status: 500 })
   }
