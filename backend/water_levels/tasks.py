@@ -88,7 +88,11 @@ def generate_arima_forecast():
     if qs.count() < 12:
         return "Insufficient data"
 
-    df = pd.DataFrame(qs.values("date", "percentage")).set_index("date")
+    df = pd.DataFrame(qs.values("date", "percentage"))
+    df["date"] = pd.to_datetime(df["date"])
+    df = df.set_index("date").asfreq("W-MON")
+    df["percentage"] = df["percentage"].interpolate()
+
     model = ARIMA(df["percentage"], order=(2, 1, 2))
     model_fit = model.fit()
     forecast = model_fit.forecast(steps=4)
