@@ -1,8 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   LineChart,
   Line,
@@ -31,10 +38,31 @@ interface ChartPoint {
   displayDate: string;
 }
 
+const filterByPeriod = (data: ChartPoint[], period: string): ChartPoint[] => {
+  if (!data.length) return [];
+
+  let months = 2;
+  if (period === "3m") months = 3;
+  else if (period === "4m") months = 4;
+
+  let lastRealDate = new Date(data[data.length - 1].date);
+  for (let i = data.length - 1; i >= 0; i--) {
+    if (data[i].actual !== null) {
+      lastRealDate = new Date(data[i].date);
+      break;
+    }
+  }
+  const start = new Date(lastRealDate);
+  start.setMonth(start.getMonth() - (months - 1));
+  return data.filter((d) => new Date(d.date) >= start);
+};
+
 export function SevernTrentLSTMChart() {
-  const [data, setData] = useState<ChartPoint[]>([]);
+  const [allData, setAllData] = useState<ChartPoint[]>([]);
+  const [period, setPeriod] = useState("2m");
   const [avgPrediction, setAvgPrediction] = useState(0);
   const [trend, setTrend] = useState(0);
+  const data = useMemo(() => filterByPeriod(allData, period), [allData, period]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -74,7 +102,7 @@ export function SevernTrentLSTMChart() {
           const combined = Array.from(map.values()).sort(
             (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
           );
-          setData(combined);
+          setAllData(combined);
 
           if (forecastData.length) {
             const avg =
@@ -88,7 +116,7 @@ export function SevernTrentLSTMChart() {
           }
         }
       } catch {
-        setData([]);
+        setAllData([]);
       }
     };
 
@@ -98,9 +126,21 @@ export function SevernTrentLSTMChart() {
   return (
     <Card className="shadow-lg border-0">
       <CardHeader>
-        <CardTitle className="text-xl font-bold">
-          Severn Trent Forecast - LSTM
-        </CardTitle>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
+          <CardTitle className="text-xl font-bold">
+            Severn Trent Forecast - LSTM
+          </CardTitle>
+          <Select value={period} onValueChange={setPeriod}>
+            <SelectTrigger className="w-32">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="2m">2 Months</SelectItem>
+              <SelectItem value="3m">3 Months</SelectItem>
+              <SelectItem value="4m">4 Months</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="mb-6 p-4 bg-purple-50 border border-purple-200 rounded-lg">

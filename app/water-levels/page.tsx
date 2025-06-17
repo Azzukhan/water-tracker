@@ -73,7 +73,7 @@ export default function WaterLevelsPage() {
         <>
           <SevernTrentCurrent />
           <HistoryChart />
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="space-y-6">
             <SevernTrentARIMAChart />
             <SevernTrentLSTMChart />
           </div>
