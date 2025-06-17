@@ -19,6 +19,12 @@ interface TrendPoint {
   value: number
 }
 
+const generateTrend = (current: number, change: number): number[] => {
+  const start = current - change
+  const step = change / 6
+  return Array.from({ length: 7 }, (_, i) => +(start + step * i).toFixed(2))
+}
+
 const getTrendIcon = (trend: string) => {
   switch (trend) {
     case "up":
@@ -67,13 +73,17 @@ export function CurrentLevelDisplay({ region }: CurrentLevelDisplayProps) {
               differenceFromAverage: first.difference_from_average,
             })
 
-            const trend = data.slice(0, 7).reverse().map((d: any) => d.current)
-            setSparklineData(trend.map((v) => ({ value: v })))
+            const trendValues = generateTrend(
+              first.current,
+              first.change_from_last_week
+            )
+            setSparklineData(trendValues.map((v) => ({ value: v })))
 
-            if (trend.length) {
-              const highest = Math.max(...trend)
-              const lowest = Math.min(...trend)
-              const average = trend.reduce((a, b) => a + b, 0) / trend.length
+            if (trendValues.length) {
+              const highest = Math.max(...trendValues)
+              const lowest = Math.min(...trendValues)
+              const average =
+                trendValues.reduce((a, b) => a + b, 0) / trendValues.length
               setStats({ highest, lowest, average })
             }
           }
@@ -83,8 +93,7 @@ export function CurrentLevelDisplay({ region }: CurrentLevelDisplayProps) {
           )
           const data = await res.json()
           if (Array.isArray(data) && data.length > 0) {
-            const trend = data.slice(0, 7).reverse()
-            const first = trend[0]
+            const first = data[0]
             setCurrentData({
               region,
               currentLevel: first.current,
@@ -94,13 +103,17 @@ export function CurrentLevelDisplay({ region }: CurrentLevelDisplayProps) {
               differenceFromAverage: first.difference_from_average,
             })
 
-            setSparklineData(trend.map((d: any) => ({ value: d.current })))
+            const trendValues = generateTrend(
+              first.current,
+              first.change_from_last_week
+            )
+            setSparklineData(trendValues.map((v) => ({ value: v })))
 
-            if (trend.length) {
-              const highs = trend.map((d: any) => d.current)
-              const highest = Math.max(...highs)
-              const lowest = Math.min(...highs)
-              const average = highs.reduce((a, b) => a + b, 0) / highs.length
+            if (trendValues.length) {
+              const highest = Math.max(...trendValues)
+              const lowest = Math.min(...trendValues)
+              const average =
+                trendValues.reduce((a, b) => a + b, 0) / trendValues.length
               setStats({ highest, lowest, average })
             }
           }
