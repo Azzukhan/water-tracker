@@ -3,6 +3,7 @@ from .models import (
     ScottishWaterAverageLevel,
     ScottishWaterRegionalLevel,
     SevernTrentReservoirLevel,
+    SevernTrentReservoirForecast,
 )
 
 
@@ -35,3 +36,9 @@ class SevernTrentReservoirLevelSerializer(serializers.ModelSerializer):
     class Meta:
         model = SevernTrentReservoirLevel
         fields = ["date", "percentage"]
+
+
+class SevernTrentForecastSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SevernTrentReservoirForecast
+        fields = "__all__"

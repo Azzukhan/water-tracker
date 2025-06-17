@@ -13,10 +13,10 @@ if __package__ in (None, ""):
     sys.path.append(os.path.dirname(os.path.dirname(__file__)))
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "uk_water_tracker.settings")
     django.setup()
-    from water_levels.models import SevernTrentReservoirLevel
+    from water_levels.models import SevernTrentReservoirLevel, SevernTrentReservoirForecast
     from water_levels.utils import fetch_scottish_water_resource_levels
 else:
-    from .models import SevernTrentReservoirLevel
+    from .models import SevernTrentReservoirLevel, SevernTrentReservoirForecast
     from .utils import fetch_scottish_water_resource_levels
 
 
@@ -75,3 +75,62 @@ def fetch_severn_trent_reservoir_data():
     except Exception as e:
         print(f"❌ Failed to fetch Severn Trent data: {e}")
         return "Error"
+
+
+@shared_task
+def generate_arima_forecast():
+    from .models import SevernTrentReservoirLevel, SevernTrentReservoirForecast
+    import pandas as pd
+    from statsmodels.tsa.arima.model import ARIMA
+    from datetime import timedelta
+
+    qs = SevernTrentReservoirLevel.objects.order_by("date")
+    if qs.count() < 12:
+        return "Insufficient data"
+
+    df = pd.DataFrame(qs.values("date", "percentage")).set_index("date")
+    model = ARIMA(df["percentage"], order=(2, 1, 2))
+    model_fit = model.fit()
+    forecast = model_fit.forecast(steps=4)
+
+    latest_date = qs.last().date
+    for i, value in enumerate(forecast):
+        target_date = latest_date + timedelta(weeks=i + 1)
+        SevernTrentReservoirForecast.objects.update_or_create(
+            date=target_date,
+            model_type="ARIMA",
+            defaults={"predicted_percentage": round(value, 2)},
+        )
+    return "ARIMA forecast complete"
+
+
+@shared_task
+def generate_lstm_forecast():
+    from .models import SevernTrentReservoirLevel, SevernTrentReservoirForecast
+    from datetime import timedelta
+    import pandas as pd
+    from ml.lstm_model import train_lstm
+
+    qs = SevernTrentReservoirLevel.objects.order_by("date")
+    if qs.count() < 30:
+        return "Not enough data"
+
+    df = pd.DataFrame(qs.values("date", "percentage"))
+    preds = train_lstm(df)
+    last_date = qs.last().date
+
+    for i, val in enumerate(preds):
+        target = last_date + timedelta(weeks=i + 1)
+        SevernTrentReservoirForecast.objects.update_or_create(
+            date=target,
+            model_type="LSTM",
+            defaults={"predicted_percentage": round(val, 2)},
+        )
+    return "LSTM forecast complete"
+
+
+@shared_task
+def weekly_severn_trent_predictions():
+    generate_arima_forecast.delay()
+    generate_lstm_forecast.delay()
+    return "scheduled"
