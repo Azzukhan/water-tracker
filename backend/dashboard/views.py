@@ -4,9 +4,6 @@ from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import DashboardStat, AnalyticsData
 from .serializers import DashboardStatSerializer, AnalyticsDataSerializer
-from water_levels.models import WaterStation, WaterLevel, Alert, Prediction
-from water_levels.serializers import WaterStationSerializer, WaterLevelSerializer, AlertSerializer, PredictionSerializer
-
 class DashboardStatViewSet(viewsets.ModelViewSet):
     queryset = DashboardStat.objects.all()
     serializer_class = DashboardStatSerializer
