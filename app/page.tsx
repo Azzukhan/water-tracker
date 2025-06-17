@@ -8,7 +8,7 @@ import { LiveHighlights } from "@/components/live-highlights"
 export default function HomePage() {
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen pt-20">
       <HeroSection />
       <div className="container mx-auto px-4 py-8 space-y-10 mt-24">
         <QuickInfoTiles />
