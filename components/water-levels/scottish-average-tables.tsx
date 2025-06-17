@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
 import {
   Table,
   TableBody,
@@ -31,6 +32,7 @@ interface RegionalLevel {
 export function ScottishAverageTables() {
   const [average, setAverage] = useState<AverageLevel | null>(null)
   const [regions, setRegions] = useState<RegionalLevel[]>([])
+  const [filter, setFilter] = useState("")
 
   useEffect(() => {
     fetch("/api/water-levels/scottish-averages")
@@ -51,6 +53,10 @@ export function ScottishAverageTables() {
       })
       .catch(() => setRegions([]))
   }, [])
+
+  const filteredRegions = regions.filter((r) =>
+    r.area.toLowerCase().includes(filter.toLowerCase())
+  )
 
   return (
     <div className="grid lg:grid-cols-2 gap-6">
@@ -92,6 +98,13 @@ export function ScottishAverageTables() {
           <CardTitle className="text-xl font-bold">Regional Averages</CardTitle>
         </CardHeader>
         <CardContent>
+          <div className="mb-4 max-w-sm">
+            <Input
+              placeholder="Filter regions"
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+            />
+          </div>
           <Table>
             <TableHeader>
               <TableRow>
@@ -102,7 +115,7 @@ export function ScottishAverageTables() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {regions.map((r) => (
+              {filteredRegions.map((r) => (
                 <TableRow key={r.id}>
                   <TableCell>{r.area}</TableCell>
                   <TableCell>{r.current}%</TableCell>
@@ -110,7 +123,7 @@ export function ScottishAverageTables() {
                   <TableCell>{r.difference_from_average}%</TableCell>
                 </TableRow>
               ))}
-              {regions.length === 0 && (
+              {filteredRegions.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={4} className="text-center text-sm text-gray-500">
                     No data available
