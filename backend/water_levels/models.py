@@ -35,3 +35,17 @@ class ScottishWaterRegionalLevel(models.Model):
 
     def __str__(self):
         return f"{self.area} {self.date} - {self.current}%"
+
+
+class SevernTrentReservoirLevel(models.Model):
+    """Weekly reservoir levels reported by Severn Trent Water."""
+
+    date = models.DateField(unique=True)
+    percentage = models.FloatField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-date"]
+
+    def __str__(self) -> str:  # pragma: no cover - simple representation
+        return f"{self.date}: {self.percentage}%"

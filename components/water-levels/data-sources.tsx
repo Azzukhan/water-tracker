@@ -16,6 +16,16 @@ const dataSources = [
     reliability: "99.5%",
     color: "bg-blue-600",
   },
+  {
+    name: "Severn Trent",
+    logo: "ST",
+    description: "Reservoir data for central England",
+    website: "stwater.co.uk",
+    dataTypes: ["Reservoir Levels"],
+    updateFrequency: "weekly",
+    reliability: "98%",
+    color: "bg-green-700",
+  },
 ]
 
 const exportFormats = [
