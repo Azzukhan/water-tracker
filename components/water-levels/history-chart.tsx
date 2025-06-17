@@ -1,18 +1,29 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from "recharts"
 import { Calendar, Download, ZoomIn, ZoomOut } from "lucide-react"
 
-// Generate sample historical data
-const generateHistoricalData = (period: string) => {
-  const data = []
-  const now = new Date()
-  let days = 30
 
+interface RawEntry {
+  date: string
+  percentage: number
+}
+
+interface ChartPoint {
+  date: string
+  level: number
+  average: number
+  displayDate: string
+}
+
+const filterByPeriod = (data: ChartPoint[], period: string): ChartPoint[] => {
+  if (!data.length) return []
+
+  let days = 30
   switch (period) {
     case "1m":
       days = 30
@@ -31,39 +42,50 @@ const generateHistoricalData = (period: string) => {
       break
   }
 
-  for (let i = days; i >= 0; i--) {
-    const date = new Date(now)
-    date.setDate(date.getDate() - i)
+  const lastDate = new Date(data[data.length - 1].date)
+  const start = new Date(lastDate)
+  start.setDate(start.getDate() - days)
 
-    // Generate realistic water level data with seasonal variation
-    const baseLevel = 75
-    const seasonalVariation = Math.sin((date.getMonth() / 12) * 2 * Math.PI) * 15
-    const randomVariation = (Math.random() - 0.5) * 10
-    const level = Math.max(30, Math.min(100, baseLevel + seasonalVariation + randomVariation))
-
-    data.push({
-      date: date.toISOString().split("T")[0],
-      level: Math.round(level * 10) / 10,
-      average: 82,
-      displayDate:
-        period === "1m" || period === "3m"
-          ? date.toLocaleDateString("en-GB", { day: "numeric", month: "short" })
-          : date.toLocaleDateString("en-GB", { month: "short", year: "2-digit" }),
-    })
-  }
-
-  return data
+  return data.filter((d) => new Date(d.date) >= start)
 }
 
 export function HistoryChart() {
   const [period, setPeriod] = useState("3m")
   const [zoomLevel, setZoomLevel] = useState(1)
 
-  const [data, setData] = useState(() => generateHistoricalData("3m"))
+  const [allData, setAllData] = useState<ChartPoint[]>([])
 
   useEffect(() => {
-    setData(generateHistoricalData(period))
-  }, [period])
+    const fetchData = async () => {
+      try {
+        const res = await fetch("/api/water-levels/severn-trent")
+        const json: RawEntry[] = await res.json()
+        if (Array.isArray(json)) {
+          const sorted = json
+            .map((e) => ({ ...e, dateObj: new Date(e.date) }))
+            .sort((a, b) => a.dateObj.getTime() - b.dateObj.getTime())
+          const avg =
+            sorted.reduce((sum, e) => sum + e.percentage, 0) / sorted.length
+          const mapped: ChartPoint[] = sorted.map((e) => ({
+            date: e.date,
+            level: e.percentage,
+            average: avg,
+            displayDate: e.dateObj.toLocaleDateString("en-GB", {
+              month: "short",
+              day: "numeric",
+            }),
+          }))
+          setAllData(mapped)
+        }
+      } catch {
+        setAllData([])
+      }
+    }
+
+    fetchData()
+  }, [])
+
+  const data = useMemo(() => filterByPeriod(allData, period), [allData, period])
 
   const handleExport = () => {
     const csvContent =
@@ -146,7 +168,7 @@ export function HistoryChart() {
                 }}
               />
               <ReferenceLine
-                y={82}
+                y={allData.length ? allData[0].average : 82}
                 stroke="#6b7280"
                 strokeDasharray="5 5"
                 label={{ value: "Average", position: "topRight" }}
