@@ -1,10 +1,25 @@
+"use client"
+
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, TrendingUp, Shield, Zap } from "lucide-react"
 import Link from "next/link"
 
 export function HeroSection() {
+  const [scotlandLevel, setScotlandLevel] = useState<number | null>(null)
+
+  useEffect(() => {
+    fetch("/api/water-levels/scottish-averages")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setScotlandLevel(data[0].current)
+        }
+      })
+      .catch(() => setScotlandLevel(null))
+  }, [])
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-blue-700 to-cyan-800 dark:from-blue-800 dark:via-blue-900 dark:to-cyan-900">
+    <section className="relative overflow-hidden bg-gradient-to-br from-blue-700 via-blue-800 to-cyan-900 dark:from-blue-900 dark:via-cyan-900 dark:to-blue-900">
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=&quot;60&quot; height=&quot;60&quot; viewBox=&quot;0 0 60 60&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;%3E%3Cg fill=&quot;none&quot; fillRule=&quot;evenodd&quot;%3E%3Cg fill=&quot;%23ffffff&quot; fillOpacity=&quot;0.05&quot;%3E%3Ccircle cx=&quot;30&quot; cy=&quot;30&quot; r=&quot;2&quot;/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
 
@@ -38,7 +53,7 @@ export function HeroSection() {
                 className="bg-white text-blue-700 hover:bg-blue-50 font-semibold px-8 py-4 text-lg group"
                 asChild
               >
-                <Link href="/water-levels">
+                <Link href="https://ukwatertracker.co.uk/water-levels">
                   Explore Water Levels
                   <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
@@ -50,7 +65,7 @@ export function HeroSection() {
                 className="border-white/30 text-white hover:bg-white/10 backdrop-blur-sm px-8 py-4 text-lg"
                 asChild
               >
-                <Link href="/weather">View Weather Report</Link>
+                <Link href="https://ukwatertracker.co.uk/weather">View Weather Report</Link>
               </Button>
             </div>
 
@@ -73,7 +88,7 @@ export function HeroSection() {
 
           {/* Visual Element */}
           <div className="relative">
-            <div className="relative bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
+            <div className="relative bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20 shadow-xl">
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
                   <h3 className="text-white font-semibold">Live Status</h3>
@@ -89,7 +104,9 @@ export function HeroSection() {
                       <TrendingUp className="h-4 w-4 mr-2 text-green-400" />
                       Scottish Water Level
                     </span>
-                    <span className="font-mono">2.4m</span>
+                    <span className="font-mono text-lg font-semibold">
+                      {scotlandLevel !== null ? `${scotlandLevel}%` : "-"}
+                    </span>
                   </div>
 
                   <div className="flex items-center justify-between text-white">
