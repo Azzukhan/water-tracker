@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -17,6 +18,7 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
+  Area,
   ResponsiveContainer,
 } from "recharts";
 import { Info, TrendingUp, AlertCircle } from "lucide-react";
@@ -35,6 +37,8 @@ interface ChartPoint {
   date: string;
   actual: number | null;
   predicted: number | null;
+  upperBound?: number;
+  lowerBound?: number;
   displayDate: string;
 }
 
@@ -62,6 +66,7 @@ export function SevernTrentARIMAChart() {
   const [period, setPeriod] = useState("2m");
   const [avgPrediction, setAvgPrediction] = useState(0);
   const [trend, setTrend] = useState(0);
+  const [showUncertainty, setShowUncertainty] = useState(true);
   const data = useMemo(() => filterByPeriod(allData, period), [allData, period]);
 
   useEffect(() => {
@@ -93,6 +98,8 @@ export function SevernTrentARIMAChart() {
               date: e.date,
               actual: null,
               predicted: e.predicted_percentage,
+              upperBound: Math.min(e.predicted_percentage + 5, 100),
+              lowerBound: Math.max(e.predicted_percentage - 5, 0),
               displayDate: new Date(e.date).toLocaleDateString("en-GB", {
                 month: "short",
                 day: "numeric",
@@ -127,19 +134,26 @@ export function SevernTrentARIMAChart() {
     <Card className="shadow-lg border-0">
       <CardHeader>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
-          <CardTitle className="text-xl font-bold">
-            Severn Trent Forecast - ARIMA
-          </CardTitle>
-          <Select value={period} onValueChange={setPeriod}>
-            <SelectTrigger className="w-32">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="2m">2 Months</SelectItem>
-              <SelectItem value="3m">3 Months</SelectItem>
-              <SelectItem value="4m">4 Months</SelectItem>
-            </SelectContent>
-          </Select>
+          <CardTitle className="text-xl font-bold">Severn Trent Forecast - ARIMA</CardTitle>
+          <div className="flex items-center space-x-3 sm:ml-4">
+            <Select value={period} onValueChange={setPeriod}>
+              <SelectTrigger className="w-32">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="2m">2 Months</SelectItem>
+                <SelectItem value="3m">3 Months</SelectItem>
+                <SelectItem value="4m">4 Months</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button
+              variant={showUncertainty ? "default" : "outline"}
+              size="sm"
+              onClick={() => setShowUncertainty(!showUncertainty)}
+            >
+              Uncertainty
+            </Button>
+          </div>
         </div>
       </CardHeader>
       <CardContent>
@@ -165,7 +179,38 @@ export function SevernTrentARIMAChart() {
                 tick={{ fontSize: 12 }}
                 label={{ value: "Water Level (%)", angle: -90, position: "insideLeft" }}
               />
-              <Tooltip />
+              <Tooltip
+                content={({ active, payload, label }) => {
+                  if (active && payload && payload.length) {
+                    const d = payload[0].payload;
+                    return (
+                      <div className="bg-white p-4 border border-gray-200 rounded-lg shadow-lg">
+                        <p className="font-semibold text-gray-900">{label}</p>
+                        {d.actual && (
+                          <p className="text-blue-600">Actual: {d.actual.toFixed(1)}%</p>
+                        )}
+                        {d.predicted && (
+                          <>
+                            <p className="text-purple-600">Predicted: {d.predicted.toFixed(1)}%</p>
+                            {showUncertainty && (
+                              <p className="text-gray-600 text-sm">
+                                Range: {d.lowerBound.toFixed(1)}% - {d.upperBound.toFixed(1)}%
+                              </p>
+                            )}
+                          </>
+                        )}
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
+              {showUncertainty && (
+                <Area type="monotone" dataKey="upperBound" stroke="none" fill="#a855f7" fillOpacity={0.1} />
+              )}
+              {showUncertainty && (
+                <Area type="monotone" dataKey="lowerBound" stroke="none" fill="#ffffff" fillOpacity={1} />
+              )}
               <Line type="monotone" dataKey="actual" stroke="#2563eb" strokeWidth={3} dot={{ r: 4 }} />
               <Line
                 type="monotone"
