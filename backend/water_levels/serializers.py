@@ -1,5 +1,9 @@
 from rest_framework import serializers
-from .models import ScottishWaterAverageLevel, ScottishWaterRegionalLevel
+from .models import (
+    ScottishWaterAverageLevel,
+    ScottishWaterRegionalLevel,
+    SevernTrentReservoirLevel,
+)
 
 
 class ScottishWaterAverageLevelSerializer(serializers.ModelSerializer):
@@ -25,3 +29,9 @@ class ScottishWaterRegionalLevelSerializer(serializers.ModelSerializer):
             "change_from_last_week",
             "difference_from_average",
         ]
+
+
+class SevernTrentReservoirLevelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SevernTrentReservoirLevel
+        fields = ["date", "percentage"]

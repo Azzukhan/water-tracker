@@ -1,12 +1,17 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, generics
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 
 from .utils import fetch_scottish_water_resource_levels
-from .models import ScottishWaterAverageLevel, ScottishWaterRegionalLevel
+from .models import (
+    ScottishWaterAverageLevel,
+    ScottishWaterRegionalLevel,
+    SevernTrentReservoirLevel,
+)
 from .serializers import (
     ScottishWaterAverageLevelSerializer,
     ScottishWaterRegionalLevelSerializer,
+    SevernTrentReservoirLevelSerializer,
 )
 
 
@@ -38,3 +43,8 @@ class ScottishWaterRegionalLevelViewSet(viewsets.ModelViewSet):
             queryset = self.filter_queryset(self.get_queryset())
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+
+class SevernTrentReservoirLevelListView(generics.ListAPIView):
+    queryset = SevernTrentReservoirLevel.objects.all()
+    serializer_class = SevernTrentReservoirLevelSerializer

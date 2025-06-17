@@ -1,5 +1,9 @@
 from django.contrib import admin
-from .models import ScottishWaterAverageLevel, ScottishWaterRegionalLevel
+from .models import (
+    ScottishWaterAverageLevel,
+    ScottishWaterRegionalLevel,
+    SevernTrentReservoirLevel,
+)
 
 
 @admin.register(ScottishWaterAverageLevel)
@@ -22,3 +26,8 @@ class ScottishWaterRegionalLevelAdmin(admin.ModelAdmin):
         "difference_from_average",
     )
     list_filter = ("area",)
+
+
+@admin.register(SevernTrentReservoirLevel)
+class SevernTrentReservoirLevelAdmin(admin.ModelAdmin):
+    list_display = ("date", "percentage")
