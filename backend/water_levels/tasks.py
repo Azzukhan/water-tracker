@@ -1,12 +1,23 @@
 import re
 from datetime import datetime
+import os
+import sys
 
+import django
 import requests
 from bs4 import BeautifulSoup
 from celery import shared_task
 
-from .models import SevernTrentReservoirLevel
-from .utils import fetch_scottish_water_resource_levels
+if __package__ in (None, ""):
+    # Allow running this module as a standalone script for quick testing
+    sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "uk_water_tracker.settings")
+    django.setup()
+    from water_levels.models import SevernTrentReservoirLevel
+    from water_levels.utils import fetch_scottish_water_resource_levels
+else:
+    from .models import SevernTrentReservoirLevel
+    from .utils import fetch_scottish_water_resource_levels
 
 
 @shared_task
@@ -54,3 +65,7 @@ def fetch_severn_trent_reservoir_data():
     except Exception as e:  # pragma: no cover - network errors
         print(f"❌ Failed to fetch data: {e}")
         return "Error"
+
+
+if __name__ == "__main__":
+    fetch_severn_trent_reservoir_data()
