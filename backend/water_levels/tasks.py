@@ -29,11 +29,21 @@ def update_scottish_resources():
 
 @shared_task
 def fetch_severn_trent_reservoir_data():
-    """Fetch current Severn Trent reservoir levels and store them."""
+    """
+    Celery task to scrape Severn Trent reservoir level data and save into DB.
+    """
+    import requests
+    from bs4 import BeautifulSoup
+    import re
+    from datetime import datetime
 
-    print("🔄 [TASK] Fetching Severn Trent reservoir data...")
+    from water_levels.models import SevernTrentReservoirLevel
 
-    url = "https://www.stwater.co.uk/wonderful-on-tap/our-performance/reservoir-levels/"
+    def clean_date(date_str):
+        return re.sub(r'(\d+)(st|nd|rd|th)', r'\1', date_str)
+
+    print("🔍 [TASK] Fetching Severn Trent reservoir data...")
+    url = url = "https://www.stwater.co.uk/about-us/reservoir-levels/"
     headers = {"User-Agent": "Mozilla/5.0"}
 
     try:
@@ -41,31 +51,27 @@ def fetch_severn_trent_reservoir_data():
         response.raise_for_status()
         soup = BeautifulSoup(response.text, "html.parser")
 
-        lines = [line.strip() for line in soup.get_text("\n").split("\n") if line.strip()]
-
+        lines = [line.strip() for line in soup.text.split("\n") if line.strip()]
         count = 0
+
         for i in range(len(lines) - 1):
-            if "%" in lines[i] and re.search(r"\d{1,2} \w+ 20\d{2}", lines[i + 1]):
+            if "%" in lines[i] and "20" in lines[i + 1]:
                 try:
                     percentage = float(lines[i].replace("%", "").strip())
-                    clean_date = re.sub(r"(\d+)(st|nd|rd|th)", r"\1", lines[i + 1])
-                    date_obj = datetime.strptime(clean_date, "%d %B %Y").date()
+                    raw_date = clean_date(lines[i + 1])
+                    date_parsed = datetime.strptime(raw_date, "%d %B %Y").date()
 
                     SevernTrentReservoirLevel.objects.update_or_create(
-                        date=date_obj,
+                        date=date_parsed,
                         defaults={"percentage": percentage},
                     )
                     count += 1
-                except Exception as e:  # pragma: no cover - best effort parsing
-                    print(f"❌ Skipped {lines[i]} / {lines[i + 1]}: {e}")
+                except Exception as e:
+                    print(f"❌ Skipped {lines[i]}, {lines[i+1]} → {e}")
 
-        print(f"✅ Task completed: {count} entries updated.")
+        print(f"✅ Task completed: {count} entries saved/updated.")
         return f"{count} records updated."
-
-    except Exception as e:  # pragma: no cover - network errors
-        print(f"❌ Failed to fetch data: {e}")
+    
+    except Exception as e:
+        print(f"❌ Failed to fetch Severn Trent data: {e}")
         return "Error"
-
-
-if __name__ == "__main__":
-    fetch_severn_trent_reservoir_data()
