@@ -1,9 +1,13 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
     const backendUrl = process.env.BACKEND_URL || 'http://127.0.0.1:8000'
-    const res = await fetch(`${backendUrl}/api/water-levels/scottish-averages/`)
+    const url = new URL(req.url)
+    const query = url.search
+    const res = await fetch(
+      `${backendUrl}/api/water-levels/scottish-averages/${query}`
+    )
     if (!res.ok) {
       const body = await res.text()
       console.error(`Backend error: ${res.status} ${res.statusText}`, body)
