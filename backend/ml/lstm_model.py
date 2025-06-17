@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 from keras.models import Sequential
-from keras.layers import LSTM, Dense
+from keras.layers import Input, LSTM, Dense
 
 def train_lstm(df):
     df = df.set_index("date")
@@ -16,7 +16,8 @@ def train_lstm(df):
     X, y = np.array(X), np.array(y)
 
     model = Sequential()
-    model.add(LSTM(50, activation='relu', input_shape=(X.shape[1], 1)))
+    model.add(Input(shape=(X.shape[1], 1)))
+    model.add(LSTM(50, activation='relu'))
     model.add(Dense(1))
     model.compile(optimizer='adam', loss='mse')
     model.fit(X, y, epochs=50, verbose=0)
