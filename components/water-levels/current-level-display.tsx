@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { TrendingUp, TrendingDown, Minus, Droplets, Calendar, AlertTriangle } from "lucide-react"
+import { calculateTrendMeta } from "@/lib/utils"
 import { LineChart, Line, ResponsiveContainer } from "recharts"
 
 interface CurrentData {
@@ -28,8 +29,10 @@ const generateTrend = (current: number, change: number): number[] => {
 const getTrendIcon = (trend: string) => {
   switch (trend) {
     case "up":
+    case "rising":
       return TrendingUp
     case "down":
+    case "falling":
       return TrendingDown
     default:
       return Minus
@@ -39,8 +42,10 @@ const getTrendIcon = (trend: string) => {
 const getTrendColor = (trend: string) => {
   switch (trend) {
     case "up":
+    case "rising":
       return "text-green-600"
     case "down":
+    case "falling":
       return "text-red-600"
     default:
       return "text-gray-600"
@@ -128,13 +133,11 @@ export function CurrentLevelDisplay({ region }: CurrentLevelDisplayProps) {
     fetchData()
   }, [region])
 
-  const TrendIcon = getTrendIcon(
-    currentData && currentData.changeWeek > 0
-      ? "up"
-      : currentData && currentData.changeWeek < 0
-      ? "down"
-      : "stable"
+  const trendMeta = calculateTrendMeta(
+    currentData?.currentLevel ?? 0,
+    currentData?.changeWeek ?? 0
   )
+  const TrendIcon = getTrendIcon(trendMeta.direction)
 
   const percentage = currentData ? (currentData.currentLevel / 100) * 100 : 0
 
@@ -225,13 +228,14 @@ export function CurrentLevelDisplay({ region }: CurrentLevelDisplayProps) {
                     <div>
                       <div className="text-sm text-gray-600">7d Change</div>
                       <div
-                        className={`text-lg font-semibold flex items-center ${
-                          currentData && currentData.changeWeek > 0 ? "text-green-600" : "text-red-600"
-                        }`}
+                        className={`text-lg font-semibold flex items-center ${getTrendColor(trendMeta.direction)}`}
                       >
                         <TrendIcon className="h-4 w-4 mr-1" />
                         {currentData && currentData.changeWeek > 0 ? "+" : ""}
                         {currentData ? currentData.changeWeek : "-"}%
+                        <span className="ml-2 text-sm text-gray-600">
+                          {trendMeta.angle.toFixed(1)}&deg; {trendMeta.direction}
+                        </span>
                       </div>
                     </div>
                   </div>
