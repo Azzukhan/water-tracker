@@ -2,12 +2,15 @@
 
 import { RegionSelector } from "@/components/water-levels/region-selector"
 import { CurrentLevelDisplay } from "@/components/water-levels/current-level-display"
+import { useState } from "react"
 import { HistoryChart } from "@/components/water-levels/history-chart"
 import { PredictionChart } from "@/components/water-levels/prediction-chart"
 import { DataSources } from "@/components/water-levels/data-sources"
 import { ScottishAverageTables } from "@/components/water-levels/scottish-average-tables"
 
 export default function WaterLevelsPage() {
+  const [selectedRegion, setSelectedRegion] = useState("scotland")
+
   return (
     <div className="container mx-auto px-4 py-8 space-y-10 mt-24">
       <div className="text-center space-y-2">
@@ -16,8 +19,8 @@ export default function WaterLevelsPage() {
           Real-time water level data, historical trends, and AI-powered predictions across the United Kingdom
         </p>
       </div>
-      <RegionSelector />
-      <CurrentLevelDisplay />
+      <RegionSelector selectedRegion={selectedRegion} onSelect={setSelectedRegion} />
+      <CurrentLevelDisplay region={selectedRegion} />
       <HistoryChart />
       <PredictionChart />
       <DataSources />

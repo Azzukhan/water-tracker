@@ -42,9 +42,13 @@ const getStatusColor = (status: string) => {
   }
 }
 
-export function RegionSelector() {
+interface RegionSelectorProps {
+  selectedRegion: string
+  onSelect: (id: string) => void
+}
+
+export function RegionSelector({ selectedRegion, onSelect }: RegionSelectorProps) {
   const [regions, setRegions] = useState<Region[]>([])
-  const [selectedRegion, setSelectedRegion] = useState("")
   const [viewMode, setViewMode] = useState<"list" | "grid" | "map">("grid")
   const [postcode, setPostcode] = useState("")
   const [filter, setFilter] = useState("")
@@ -85,7 +89,7 @@ export function RegionSelector() {
         }
 
         setRegions(result)
-        if (result.length) setSelectedRegion("scotland")
+        if (result.length) onSelect("scotland")
       })
       .catch(() => setRegions([]))
   }, [])
@@ -93,8 +97,6 @@ export function RegionSelector() {
   const filtered = regions.filter((r) =>
     r.name.toLowerCase().includes(filter.toLowerCase())
   )
-
-  const selected = regions.find((r) => r.id === selectedRegion)
 
   return (
     <div className="space-y-6">
@@ -165,7 +167,7 @@ export function RegionSelector() {
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
           />
-          <Select value={selectedRegion} onValueChange={setSelectedRegion}>
+          <Select value={selectedRegion} onValueChange={onSelect}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select a region" />
             </SelectTrigger>
@@ -193,7 +195,7 @@ export function RegionSelector() {
                     ? "border-blue-500 bg-blue-50"
                     : "border-gray-200 hover:border-blue-300 hover:bg-gray-50"
                 }`}
-                onClick={() => setSelectedRegion(region.id)}
+                onClick={() => onSelect(region.id)}
               >
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="font-semibold text-gray-900">{region.name}</h3>
@@ -221,7 +223,7 @@ export function RegionSelector() {
                 className={`p-4 rounded-lg border cursor-pointer transition-all duration-200 ${
                   selectedRegion === region.id ? "border-blue-500 bg-blue-50" : "border-gray-200 hover:border-blue-300"
                 }`}
-                onClick={() => setSelectedRegion(region.id)}
+                onClick={() => onSelect(region.id)}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
@@ -260,7 +262,7 @@ export function RegionSelector() {
                     className={`p-2 rounded text-xs cursor-pointer transition-colors ${
                       selectedRegion === region.id ? "bg-blue-600 text-white" : "bg-gray-200 hover:bg-gray-300"
                     }`}
-                    onClick={() => setSelectedRegion(region.id)}
+                    onClick={() => onSelect(region.id)}
                   >
                     {region.name.split(" ")[0]}
                   </div>
@@ -272,64 +274,6 @@ export function RegionSelector() {
       </CardContent>
       </Card>
 
-      {selected && (
-        <Card className="shadow-lg border-0">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-2xl font-bold">Current Water Level</CardTitle>
-                <p className="text-gray-600">{selected.name}</p>
-              </div>
-              <Badge variant="secondary" className="bg-blue-600 text-white">Live Data</Badge>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="text-center space-y-2">
-                <div className="text-5xl font-bold text-gray-900">{selected.level}%</div>
-                <div className="text-sm text-gray-600">Full</div>
-                <div className="text-sm text-gray-600">Capacity: 1.2 billion litres</div>
-                <div className="text-sm text-gray-600">Updated {selected.date}</div>
-              </div>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                  <div>
-                    <div className="text-sm text-gray-600">vs. Average</div>
-                    <div className="text-lg font-semibold text-gray-900">
-                      {selected.difference > 0 ? "+" : ""}
-                      {selected.difference}%
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-sm text-gray-600">Average Level</div>
-                    <div className="text-lg font-semibold text-gray-900">
-                      {(selected.level - selected.difference).toFixed(0)}%
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
-                  <div>
-                    <div className="text-sm text-gray-600">7d Change</div>
-                    <div className={`text-lg font-semibold ${selected.change > 0 ? "text-green-600" : "text-red-600"}`}>
-                      {selected.change > 0 ? "+" : ""}
-                      {selected.change}%
-                    </div>
-                  </div>
-                </div>
-                <div className="p-4 bg-green-50 rounded-lg">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="text-sm text-gray-600">Status</div>
-                      <div className="text-lg font-semibold text-green-700">{selected.status}</div>
-                    </div>
-                    <Badge className="bg-green-600 text-white">Operational</Badge>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
     </div>
   )
 }
