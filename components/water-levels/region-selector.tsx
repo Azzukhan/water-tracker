@@ -13,6 +13,9 @@ interface Region {
   name: string
   level: number
   status: string
+  change: number
+  difference: number
+  date: string
 }
 
 const statusForLevel = (level: number) => {
@@ -47,19 +50,42 @@ export function RegionSelector() {
   const [filter, setFilter] = useState("")
 
   useEffect(() => {
-    fetch("/api/water-levels/scottish-regions")
-      .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
-          const mapped = data.map((r: any) => ({
-            id: r.area,
-            name: r.area,
-            level: r.current,
-            status: statusForLevel(r.current),
-          })) as Region[]
-          setRegions(mapped)
-          if (mapped.length) setSelectedRegion(mapped[0].id)
+    Promise.all([
+      fetch("/api/water-levels/scottish-averages").then((res) => res.json()),
+      fetch("/api/water-levels/scottish-regions").then((res) => res.json()),
+    ])
+      .then(([avgData, regionalData]) => {
+        const result: Region[] = []
+
+        if (Array.isArray(avgData) && avgData.length > 0) {
+          const avg = avgData[0]
+          result.push({
+            id: "scotland",
+            name: "Scotland overall",
+            level: avg.current,
+            status: statusForLevel(avg.current),
+            change: avg.change_from_last_week,
+            difference: avg.difference_from_average,
+            date: avg.date,
+          })
         }
+
+        if (Array.isArray(regionalData)) {
+          regionalData.forEach((r: any) => {
+            result.push({
+              id: r.area,
+              name: r.area,
+              level: r.current,
+              status: statusForLevel(r.current),
+              change: r.change_from_last_week,
+              difference: r.difference_from_average,
+              date: r.date,
+            })
+          })
+        }
+
+        setRegions(result)
+        if (result.length) setSelectedRegion("scotland")
       })
       .catch(() => setRegions([]))
   }, [])
@@ -68,13 +94,16 @@ export function RegionSelector() {
     r.name.toLowerCase().includes(filter.toLowerCase())
   )
 
+  const selected = regions.find((r) => r.id === selectedRegion)
+
   return (
-    <Card className="shadow-lg border-0">
-      <CardHeader className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
-          <div>
-            <CardTitle className="text-2xl font-bold">Select Region</CardTitle>
-            <p className="text-blue-100">Choose a region to view detailed water level data</p>
+    <div className="space-y-6">
+      <Card className="shadow-lg border-0">
+        <CardHeader className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+            <div>
+              <CardTitle className="text-2xl font-bold">Select Region</CardTitle>
+              <p className="text-blue-100">Choose a region to view detailed water level data</p>
           </div>
 
           {/* View Mode Toggle */}
@@ -241,6 +270,66 @@ export function RegionSelector() {
           </div>
         )}
       </CardContent>
-    </Card>
+      </Card>
+
+      {selected && (
+        <Card className="shadow-lg border-0">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-2xl font-bold">Current Water Level</CardTitle>
+                <p className="text-gray-600">{selected.name}</p>
+              </div>
+              <Badge variant="secondary" className="bg-blue-600 text-white">Live Data</Badge>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="text-center space-y-2">
+                <div className="text-5xl font-bold text-gray-900">{selected.level}%</div>
+                <div className="text-sm text-gray-600">Full</div>
+                <div className="text-sm text-gray-600">Capacity: 1.2 billion litres</div>
+                <div className="text-sm text-gray-600">Updated {selected.date}</div>
+              </div>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                  <div>
+                    <div className="text-sm text-gray-600">vs. Average</div>
+                    <div className="text-lg font-semibold text-gray-900">
+                      {selected.difference > 0 ? "+" : ""}
+                      {selected.difference}%
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm text-gray-600">Average Level</div>
+                    <div className="text-lg font-semibold text-gray-900">
+                      {(selected.level - selected.difference).toFixed(0)}%
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
+                  <div>
+                    <div className="text-sm text-gray-600">7d Change</div>
+                    <div className={`text-lg font-semibold ${selected.change > 0 ? "text-green-600" : "text-red-600"}`}>
+                      {selected.change > 0 ? "+" : ""}
+                      {selected.change}%
+                    </div>
+                  </div>
+                </div>
+                <div className="p-4 bg-green-50 rounded-lg">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="text-sm text-gray-600">Status</div>
+                      <div className="text-lg font-semibold text-green-700">{selected.status}</div>
+                    </div>
+                    <Badge className="bg-green-600 text-white">Operational</Badge>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </div>
   )
 }
