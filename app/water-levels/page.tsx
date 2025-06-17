@@ -7,7 +7,7 @@ import { HistoryChart } from "@/components/water-levels/history-chart"
 import { PredictionChart } from "@/components/water-levels/prediction-chart"
 import { DataSources } from "@/components/water-levels/data-sources"
 import { ScottishAverageTables } from "@/components/water-levels/scottish-average-tables"
-import { SevernTrentTable } from "@/components/water-levels/severn-trent/table"
+import { SevernTrentDownload } from "@/components/water-levels/severn-trent/csv-download"
 import { SevernTrentCurrent } from "@/components/water-levels/severn-trent/current"
 import { Button } from "@/components/ui/button"
 
@@ -63,7 +63,7 @@ export default function WaterLevelsPage() {
         <>
           <SevernTrentCurrent />
           <HistoryChart />
-          <SevernTrentTable />
+          <SevernTrentDownload />
         </>
       )}
     </div>
