@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { LineChart, Line, ResponsiveContainer } from "recharts"
-import { ArrowUp, ArrowDown, ArrowRight } from "lucide-react"
+import { ArrowRight } from "lucide-react"
 import { calculateTrendMeta } from "@/lib/utils"
 
 interface TrendChartProps {
@@ -31,8 +31,16 @@ export function TrendChart({
   const max = Math.max(...trendValues)
   const avg = trendValues.reduce((a, b) => a + b, 0) / trendValues.length
 
-  const { angle, direction } = calculateTrendMeta(currentLevel, changeFromLastWeek)
-  const ArrowIcon = direction === "rising" ? ArrowUp : direction === "falling" ? ArrowDown : ArrowRight
+  const { angle, direction } = calculateTrendMeta(
+    currentLevel,
+    changeFromLastWeek
+  )
+  const arrowClass =
+    direction === "rising"
+      ? "text-green-600"
+      : direction === "falling"
+      ? "text-red-600"
+      : "text-gray-600"
 
   return (
     <Card className="shadow-lg border-0">
@@ -65,9 +73,11 @@ export function TrendChart({
         </div>
 
         <div className="flex items-center justify-center text-gray-600 text-sm">
-          <ArrowIcon className="h-4 w-4 mr-1" />
-          <span>{angle.toFixed(1)}&deg;</span>
-          <span className="ml-2 capitalize">{direction}</span>
+          <ArrowRight
+            className={`h-4 w-4 mr-1 ${arrowClass}`}
+            style={{ transform: `rotate(${angle}deg)` }}
+          />
+          <span className="capitalize">{direction}</span>
         </div>
       </CardContent>
     </Card>
