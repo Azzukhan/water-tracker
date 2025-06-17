@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -8,9 +8,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge"
 import { MapPin, Search, Map, List, Grid } from "lucide-react"
 
-const regions = [
-  { id: "scotland", name: "Scotland", level: 88, status: "High" },
-]
+interface Region {
+  id: string
+  name: string
+  level: number
+  status: string
+}
+
+const statusForLevel = (level: number) => {
+  if (level >= 90) return "High"
+  if (level >= 80) return "Normal"
+  if (level >= 70) return "Below Average"
+  return "Low"
+}
 
 const getStatusColor = (status: string) => {
   switch (status) {
@@ -30,9 +40,33 @@ const getStatusColor = (status: string) => {
 }
 
 export function RegionSelector() {
-  const [selectedRegion, setSelectedRegion] = useState("scotland")
+  const [regions, setRegions] = useState<Region[]>([])
+  const [selectedRegion, setSelectedRegion] = useState("")
   const [viewMode, setViewMode] = useState<"list" | "grid" | "map">("grid")
   const [postcode, setPostcode] = useState("")
+  const [filter, setFilter] = useState("")
+
+  useEffect(() => {
+    fetch("/api/water-levels/scottish-regions")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          const mapped = data.map((r: any) => ({
+            id: r.area,
+            name: r.area,
+            level: r.current,
+            status: statusForLevel(r.current),
+          })) as Region[]
+          setRegions(mapped)
+          if (mapped.length) setSelectedRegion(mapped[0].id)
+        }
+      })
+      .catch(() => setRegions([]))
+  }, [])
+
+  const filtered = regions.filter((r) =>
+    r.name.toLowerCase().includes(filter.toLowerCase())
+  )
 
   return (
     <Card className="shadow-lg border-0">
@@ -96,13 +130,18 @@ export function RegionSelector() {
         </div>
 
         {/* Quick Region Selector */}
-        <div className="mb-6">
+        <div className="mb-6 space-y-2">
+          <Input
+            placeholder="Filter regions"
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+          />
           <Select value={selectedRegion} onValueChange={setSelectedRegion}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select a region" />
             </SelectTrigger>
             <SelectContent>
-              {regions.map((region) => (
+              {filtered.map((region) => (
                 <SelectItem key={region.id} value={region.id}>
                   <div className="flex items-center justify-between w-full">
                     <span>{region.name}</span>
@@ -117,7 +156,7 @@ export function RegionSelector() {
         {/* Region Grid/List View */}
         {viewMode === "grid" && (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {regions.map((region) => (
+            {filtered.map((region) => (
               <div
                 key={region.id}
                 className={`p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
@@ -147,7 +186,7 @@ export function RegionSelector() {
 
         {viewMode === "list" && (
           <div className="space-y-3">
-            {regions.map((region) => (
+            {filtered.map((region) => (
               <div
                 key={region.id}
                 className={`p-4 rounded-lg border cursor-pointer transition-all duration-200 ${
@@ -186,7 +225,7 @@ export function RegionSelector() {
             <div className="bg-white rounded-lg p-6 shadow-sm">
               <div className="text-sm text-gray-500 mb-4">Map visualization would be integrated here</div>
               <div className="grid grid-cols-3 gap-2">
-                {regions.slice(0, 9).map((region) => (
+                {filtered.slice(0, 9).map((region) => (
                   <div
                     key={region.id}
                     className={`p-2 rounded text-xs cursor-pointer transition-colors ${
