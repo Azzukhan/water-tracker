@@ -49,3 +49,18 @@ class SevernTrentReservoirLevel(models.Model):
 
     def __str__(self) -> str:  # pragma: no cover - simple representation
         return f"{self.date}: {self.percentage}%"
+
+
+class SevernTrentReservoirForecast(models.Model):
+    """Forecasted reservoir levels for Severn Trent."""
+
+    date = models.DateField()
+    predicted_percentage = models.FloatField()
+    model_type = models.CharField(max_length=10, choices=(("ARIMA", "ARIMA"), ("LSTM", "LSTM")))
+
+    class Meta:
+        unique_together = ("date", "model_type")
+        ordering = ["date"]
+
+    def __str__(self) -> str:  # pragma: no cover - simple representation
+        return f"{self.date} {self.model_type}: {self.predicted_percentage}%"

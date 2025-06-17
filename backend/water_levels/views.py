@@ -7,11 +7,13 @@ from .models import (
     ScottishWaterAverageLevel,
     ScottishWaterRegionalLevel,
     SevernTrentReservoirLevel,
+    SevernTrentReservoirForecast,
 )
 from .serializers import (
     ScottishWaterAverageLevelSerializer,
     ScottishWaterRegionalLevelSerializer,
     SevernTrentReservoirLevelSerializer,
+    SevernTrentForecastSerializer,
 )
 
 
@@ -49,3 +51,15 @@ class SevernTrentReservoirLevelListView(generics.ListAPIView):
     queryset = SevernTrentReservoirLevel.objects.all()
     serializer_class = SevernTrentReservoirLevelSerializer
     pagination_class = None
+
+
+class SevernTrentForecastAPIView(generics.ListAPIView):
+    serializer_class = SevernTrentForecastSerializer
+    pagination_class = None
+
+    def get_queryset(self):
+        model_type = self.kwargs.get("model", "ARIMA").upper()
+        return (
+            SevernTrentReservoirForecast.objects.filter(model_type=model_type)
+            .order_by("date")
+        )
