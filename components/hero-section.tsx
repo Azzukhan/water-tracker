@@ -53,19 +53,19 @@ export function HeroSection() {
                 className="bg-white text-blue-700 hover:bg-blue-50 font-semibold px-8 py-4 text-lg group"
                 asChild
               >
-                <Link href="https://ukwatertracker.co.uk/water-levels">
+                <Link href="/water-levels">
                   Explore Water Levels
                   <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </Button>
 
               <Button
-                variant="outline"
+                variant="gradient"
                 size="lg"
-                className="border-white/30 text-white hover:bg-white/10 backdrop-blur-sm px-8 py-4 text-lg"
+                className="px-8 py-4 text-lg"
                 asChild
               >
-                <Link href="https://ukwatertracker.co.uk/weather">View Weather Report</Link>
+                <Link href="/weather">View Weather Report</Link>
               </Button>
             </div>
 
