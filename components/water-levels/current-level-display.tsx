@@ -41,43 +41,79 @@ const getTrendColor = (trend: string) => {
   }
 }
 
-export function CurrentLevelDisplay() {
+interface CurrentLevelDisplayProps {
+  region: string
+}
+
+export function CurrentLevelDisplay({ region }: CurrentLevelDisplayProps) {
   const [currentData, setCurrentData] = useState<CurrentData | null>(null)
   const [sparklineData, setSparklineData] = useState<TrendPoint[]>([])
   const [stats, setStats] = useState({ highest: 0, lowest: 0, average: 0 })
 
   useEffect(() => {
-    fetch("/api/water-levels/scottish-averages")
-      .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data) && data.length > 0) {
-          const first = data[0]
-          setCurrentData({
-            region: "Scotland",
-            currentLevel: first.current,
-            averageLevel: first.current - first.difference_from_average,
-            lastUpdated: first.date,
-            changeWeek: first.change_from_last_week,
-            differenceFromAverage: first.difference_from_average,
-          })
+    const fetchData = async () => {
+      try {
+        if (region === "scotland") {
+          const res = await fetch("/api/water-levels/scottish-averages")
+          const data = await res.json()
+          if (Array.isArray(data) && data.length > 0) {
+            const first = data[0]
+            setCurrentData({
+              region: "Scotland",
+              currentLevel: first.current,
+              averageLevel: first.current - first.difference_from_average,
+              lastUpdated: first.date,
+              changeWeek: first.change_from_last_week,
+              differenceFromAverage: first.difference_from_average,
+            })
 
-          const trend = data.slice(0, 7).reverse().map((d: any) => d.current)
-          setSparklineData(trend.map((v) => ({ value: v })))
+            const trend = data.slice(0, 7).reverse().map((d: any) => d.current)
+            setSparklineData(trend.map((v) => ({ value: v })))
 
-          if (trend.length) {
-            const highest = Math.max(...trend)
-            const lowest = Math.min(...trend)
-            const average = trend.reduce((a, b) => a + b, 0) / trend.length
-            setStats({ highest, lowest, average })
+            if (trend.length) {
+              const highest = Math.max(...trend)
+              const lowest = Math.min(...trend)
+              const average = trend.reduce((a, b) => a + b, 0) / trend.length
+              setStats({ highest, lowest, average })
+            }
+          }
+        } else {
+          const res = await fetch(
+            `/api/water-levels/scottish-regions?area=${encodeURIComponent(region)}`
+          )
+          const data = await res.json()
+          if (Array.isArray(data) && data.length > 0) {
+            const trend = data.slice(0, 7).reverse()
+            const first = trend[0]
+            setCurrentData({
+              region,
+              currentLevel: first.current,
+              averageLevel: first.current - first.difference_from_average,
+              lastUpdated: first.date,
+              changeWeek: first.change_from_last_week,
+              differenceFromAverage: first.difference_from_average,
+            })
+
+            setSparklineData(trend.map((d: any) => ({ value: d.current })))
+
+            if (trend.length) {
+              const highs = trend.map((d: any) => d.current)
+              const highest = Math.max(...highs)
+              const lowest = Math.min(...highs)
+              const average = highs.reduce((a, b) => a + b, 0) / highs.length
+              setStats({ highest, lowest, average })
+            }
           }
         }
-      })
-      .catch(() => {
+      } catch {
         setCurrentData(null)
         setSparklineData([])
         setStats({ highest: 0, lowest: 0, average: 0 })
-      })
-  }, [])
+      }
+    }
+
+    fetchData()
+  }, [region])
 
   const TrendIcon = getTrendIcon(
     currentData && currentData.changeWeek > 0
