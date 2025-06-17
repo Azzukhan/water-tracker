@@ -15,15 +15,9 @@ interface CurrentData {
   differenceFromAverage: number
 }
 
-const sparklineData = [
-  { value: 85 },
-  { value: 83 },
-  { value: 81 },
-  { value: 79 },
-  { value: 78 },
-  { value: 80 },
-  { value: 78 },
-]
+interface TrendPoint {
+  value: number
+}
 
 const getTrendIcon = (trend: string) => {
   switch (trend) {
@@ -49,6 +43,8 @@ const getTrendColor = (trend: string) => {
 
 export function CurrentLevelDisplay() {
   const [currentData, setCurrentData] = useState<CurrentData | null>(null)
+  const [sparklineData, setSparklineData] = useState<TrendPoint[]>([])
+  const [stats, setStats] = useState({ highest: 0, lowest: 0, average: 0 })
 
   useEffect(() => {
     fetch("/api/water-levels/scottish-averages")
@@ -64,9 +60,23 @@ export function CurrentLevelDisplay() {
             changeWeek: first.change_from_last_week,
             differenceFromAverage: first.difference_from_average,
           })
+
+          const trend = data.slice(0, 7).reverse().map((d: any) => d.current)
+          setSparklineData(trend.map((v) => ({ value: v })))
+
+          if (trend.length) {
+            const highest = Math.max(...trend)
+            const lowest = Math.min(...trend)
+            const average = trend.reduce((a, b) => a + b, 0) / trend.length
+            setStats({ highest, lowest, average })
+          }
         }
       })
-      .catch(() => setCurrentData(null))
+      .catch(() => {
+        setCurrentData(null)
+        setSparklineData([])
+        setStats({ highest: 0, lowest: 0, average: 0 })
+      })
   }, [])
 
   const TrendIcon = getTrendIcon(
@@ -219,15 +229,21 @@ export function CurrentLevelDisplay() {
           <div className="space-y-3">
             <div className="flex items-center justify-between text-sm">
               <span className="text-gray-600">Highest</span>
-              <span className="font-semibold">85%</span>
+              <span className="font-semibold">
+                {stats.highest ? `${stats.highest.toFixed(0)}%` : "-"}
+              </span>
             </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-gray-600">Lowest</span>
-              <span className="font-semibold">78%</span>
+              <span className="font-semibold">
+                {stats.lowest ? `${stats.lowest.toFixed(0)}%` : "-"}
+              </span>
             </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-gray-600">Average</span>
-              <span className="font-semibold">81%</span>
+              <span className="font-semibold">
+                {stats.average ? `${stats.average.toFixed(0)}%` : "-"}
+              </span>
             </div>
           </div>
 
