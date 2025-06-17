@@ -48,3 +48,4 @@ class ScottishWaterRegionalLevelViewSet(viewsets.ModelViewSet):
 class SevernTrentReservoirLevelListView(generics.ListAPIView):
     queryset = SevernTrentReservoirLevel.objects.all()
     serializer_class = SevernTrentReservoirLevelSerializer
+    pagination_class = None
