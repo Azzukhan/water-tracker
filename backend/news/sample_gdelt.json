@@ -1,0 +1,22 @@
+{
+  "news": [
+    {
+      "title": "Water Scarcity Challenges Continue Globally",
+      "description": "Communities around the world are still facing severe water shortages due to climate change and overuse.",
+      "url": "https://example.com/water-scarcity-challenges",
+      "publishedAt": "2025-06-15"
+    },
+    {
+      "title": "Innovative Technology Helps Monitor Water Quality",
+      "description": "New sensors are being deployed to track contaminants in real time, improving safety for millions.",
+      "url": "https://example.com/monitor-water-quality",
+      "publishedAt": "2025-06-10"
+    },
+    {
+      "title": "Flood Prevention Strategies in Urban Areas",
+      "description": "Cities are investing in green infrastructure to reduce flood risk as rainfall patterns change.",
+      "url": "https://example.com/flood-prevention-urban",
+      "publishedAt": "2025-06-05"
+    }
+  ]
+}
