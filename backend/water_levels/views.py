@@ -74,13 +74,16 @@ class SevernTrentForecastAPIView(generics.ListAPIView):
 class YorkshireWaterReportViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = YorkshireWaterReport.objects.order_by('-report_month')
     serializer_class = YorkshireWaterReportSerializer
+    pagination_class = None
 
 
 class YorkshireWaterPredictionViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = YorkshireWaterPrediction.objects.order_by('date')
     serializer_class = YorkshireWaterPredictionSerializer
+    pagination_class = None
 
 
 class YorkshireReservoirDataViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = YorkshireReservoirData.objects.order_by('-report_date')
     serializer_class = YorkshireReservoirSerializer
+    pagination_class = None
