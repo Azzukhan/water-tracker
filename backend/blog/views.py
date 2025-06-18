@@ -76,6 +76,16 @@ class ExternalBlogAPIView(APIView):
         "sustainability": "https://www.unwater.org/rss.xml",
     }
 
+    CATEGORY_NAMES = {
+        "water-conservation": "Water Conservation",
+        "industry-insights": "Industry Insights",
+        "innovation-tech": "Innovation & Tech",
+        "global-water-awareness": "Global Awareness",
+        "ea-announcements": "EA Announcements",
+        "drought-tips": "Emergency Preparedness",
+        "sustainability": "Sustainability",
+    }
+
     def get(self, request):
         posts = []
         for category, url in self.FEEDS.items():
@@ -91,7 +101,7 @@ class ExternalBlogAPIView(APIView):
                         "summary": entry.get("summary", ""),
                         "link": entry.get("link"),
                         "published": entry.get("published", entry.get("updated")),
-                        "category": category,
+                        "category": self.CATEGORY_NAMES.get(category, category),
                     }
                 )
 
