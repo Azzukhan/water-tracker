@@ -28,6 +28,18 @@ To quickly view the current Scottish Water tables without interacting with the d
 python scripts/print_scottish_resources.py
 ```
 
+### Scheduled Updates
+
+Water level data is kept fresh using Celery beat. Every **Wednesday** the
+backend automatically:
+
+1. Scrapes the latest Scottish Water resource levels.
+2. Retrieves new Severn Trent reservoir data and generates 4‑week
+   forecasts.
+
+No manual intervention is required as long as the Celery worker and beat
+processes are running.
+
 By default the backend runs on `http://127.0.0.1:8000`.
 
 ### 2. Frontend

@@ -20,22 +20,20 @@ app.conf.beat_schedule = {
         'task': 'weather.tasks.update_all_weather',
         'schedule': 300.0,  # 5 minutes in seconds
     },
-    'update-scottish-resources-every-10-days': {
+    # Fetch Scottish Water resource levels once a week on Wednesday
+    'weekly-scottish-resources': {
         'task': 'water_levels.tasks.update_scottish_resources',
-        'schedule': crontab(hour=6, minute=0, day_of_month="*/10"),
+        'schedule': crontab(day_of_week='wed', hour=6, minute=0),
     },
-    # Fetch the latest Scottish Water levels once every 10 days
-    'update-scottish-levels-every-10-days': {
-        'task': 'water_levels.tasks.update_scottish_resources',
-        'schedule': crontab(hour=7, minute=0, day_of_month="*/10"),
-    },
+    # Scrape Severn Trent reservoir data every Wednesday morning
     'weekly-severn-trent-scrape': {
         'task': 'water_levels.tasks.fetch_severn_trent_reservoir_data',
-        'schedule': crontab(day_of_week='monday', hour=10, minute=0),
+        'schedule': crontab(day_of_week='wed', hour=8, minute=0),
     },
+    # Generate new forecasts after scraping the latest data
     'weekly-severn-trent-predictions': {
         'task': 'water_levels.tasks.weekly_severn_trent_predictions',
-        'schedule': crontab(day_of_week='monday', hour=6, minute=0),
+        'schedule': crontab(day_of_week='wed', hour=9, minute=0),
     },
 }
 
