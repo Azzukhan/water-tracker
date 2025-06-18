@@ -80,14 +80,20 @@ def parse_pdf(url: str):
 
 def fetch_and_store_reports():
     """Fetch latest PDFs and store parsed data into the database."""
-    for date, url in fetch_latest_pdfs():
+    pdfs = fetch_latest_pdfs()
+    if not pdfs:
+        print("No PDF reports found")
+    for date, url in pdfs:
+        print(f"Parsing report for {date} from {url}")
         data = parse_pdf(url)
         if not data:
+            print(f"Failed to parse {url}")
             continue
         YorkshireWaterReport.objects.update_or_create(
             report_month=date,
             defaults={**data, "source_pdf": url},
         )
+        print(f"Saved data for {date}: {data}")
 
 
 if __name__ == "__main__":
