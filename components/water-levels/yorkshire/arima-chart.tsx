@@ -24,8 +24,8 @@ import {
 import { Info, TrendingUp, AlertCircle } from "lucide-react";
 
 interface HistoricalEntry {
-  date: string;
-  percentage: number;
+  report_date: string;
+  reservoir_level: number;
 }
 
 interface ForecastEntry {
@@ -86,11 +86,11 @@ export function YorkshireARIMAChart() {
         if (Array.isArray(histData) && filtered.length) {
           const map = new Map<string, ChartPoint>();
           histData.forEach((e: HistoricalEntry) => {
-            map.set(e.date, {
-              date: e.date,
-              actual: e.percentage,
+            map.set(e.report_date, {
+              date: e.report_date,
+              actual: e.reservoir_level,
               predicted: null,
-              displayDate: new Date(e.date).toLocaleDateString("en-GB", {
+              displayDate: new Date(e.report_date).toLocaleDateString("en-GB", {
                 month: "short",
                 day: "numeric",
               }),
