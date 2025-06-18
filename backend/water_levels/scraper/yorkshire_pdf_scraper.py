@@ -42,13 +42,15 @@ def extract_yorkshire_reservoir_data():
             break
 
         soup = BeautifulSoup(response.content, "html.parser")
+        # Each report summary is wrapped in a flex container
         blocks = soup.find_all("div", class_="container is-flex")
 
         if not blocks:
             break
 
         for block in blocks:
-            text = block.get_text(separator=" ", strip=True)
+            # Get the text content and normalise whitespace
+            text = " ".join(block.get_text(separator=" ", strip=True).split())
 
             date_match = DATE_RE.search(text)
             level_match = LEVEL_RE.search(text)
@@ -56,9 +58,12 @@ def extract_yorkshire_reservoir_data():
             diff_match = DIFF_RE.search(text)
 
             if not (date_match and level_match):
+                print("❌ Skipping:", text)
                 continue
 
-            report_date = datetime.strptime(date_match.group(), "%B %Y").date()
+            report_date = datetime.strptime(date_match.group(), "%B %Y")
+            # normalise to first of month
+            report_date = datetime(report_date.year, report_date.month, 1).date()
             level = float(level_match.group(1))
             direction = direction_match.group(1).lower() if direction_match else ""
 
@@ -89,10 +94,11 @@ def scrape_site():
     records = extract_yorkshire_reservoir_data()
     if not records:
         print("No data found. Check scraping structure.")
-        return
+        return False
 
+    inserted = False
     for item in records:
-        YorkshireReservoirData.objects.update_or_create(
+        obj, created = YorkshireReservoirData.objects.update_or_create(
             report_date=item["report_date"],
             defaults={
                 "reservoir_level": item["reservoir_level"],
@@ -100,7 +106,10 @@ def scrape_site():
                 "direction": item["direction"],
             },
         )
+        inserted = inserted or created
         print(item)
+
+    return inserted
 
 if __name__ == "__main__":
     scrape_site()
