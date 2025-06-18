@@ -21,50 +21,74 @@ DATE_RE = re.compile(
     re.I,
 )
 LEVEL_RE = re.compile(r"Reservoir Stocks Have (increased|decreased) to ([\d.]+)%", re.I)
-DIFF_RE = re.compile(r"(up|down) ([\d.]+)% from previous week", re.I)
+DIFF_RE = re.compile(r"\(up ([\d.]+)%|down ([\d.]+)%", re.I)
 
-def scrape_site():
+
+def extract_yorkshire_reservoir_data():
+    """Scrape reservoir summary blocks from the Yorkshire Water dataset page."""
+
     try:
         response = requests.get(URL, timeout=20)
         response.raise_for_status()
     except Exception:
         print("Failed to fetch Yorkshire page")
-        return
+        return []
 
     soup = BeautifulSoup(response.content, "html.parser")
-    items = soup.find_all("li", class_="resource-item")
-    if not items:
-        print("No PDF reports found")
-    for block in items:
-        text = block.get_text(strip=True)
-        date_match = DATE_RE.search(text)
-        if not date_match:
-            continue
-        report_date = datetime.strptime(date_match.group(0), "%B %Y").date()
 
+    data_list = []
+    blocks = soup.find_all("div", class_="container is-flex")
+
+    for block in blocks:
+        text = block.get_text(separator=" ", strip=True)
+
+        date_match = DATE_RE.search(text)
         stock_match = LEVEL_RE.search(text)
-        if not stock_match:
+        diff_match = DIFF_RE.search(text)
+
+        if not (date_match and stock_match):
             continue
+
+        report_date = datetime.strptime(date_match.group(), "%B %Y").date()
         direction = stock_match.group(1).lower()
         level = float(stock_match.group(2))
 
-        diff_match = DIFF_RE.search(text)
-        diff = float(diff_match.group(2)) if diff_match else None
+        weekly_diff = None
+        if diff_match:
+            if diff_match.group(1):
+                weekly_diff = float(diff_match.group(1))
+            elif diff_match.group(2):
+                weekly_diff = float(diff_match.group(2)) * -1
 
-        YorkshireReservoirData.objects.update_or_create(
-            report_date=report_date,
-            defaults={
+        data_list.append(
+            {
+                "report_date": report_date,
                 "reservoir_level": level,
-                "weekly_difference": diff,
+                "weekly_difference": weekly_diff,
                 "direction": direction,
+            }
+        )
+
+    return data_list
+
+def scrape_site():
+    """Fetch Yorkshire reservoir data and store it in the database."""
+
+    records = extract_yorkshire_reservoir_data()
+    if not records:
+        print("No data found. Check scraping structure.")
+        return
+
+    for item in records:
+        YorkshireReservoirData.objects.update_or_create(
+            report_date=item["report_date"],
+            defaults={
+                "reservoir_level": item["reservoir_level"],
+                "weekly_difference": item["weekly_difference"],
+                "direction": item["direction"],
             },
         )
-        print({
-            "date": report_date,
-            "level": level,
-            "diff": diff,
-            "direction": direction,
-        })
+        print(item)
 
 if __name__ == "__main__":
     scrape_site()
