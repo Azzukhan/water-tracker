@@ -25,8 +25,8 @@ DATE_RE = re.compile(
     r"(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4}",
     re.I,
 )
-TO_LEVEL_RE = re.compile(r"Reservoir Stocks[^\d]*to ([\d.]+)%", re.I)
-FROM_TO_LEVEL_RE = re.compile(r"Reservoir Stocks[^\d]*from ([\d.]+)% to ([\d.]+)%", re.I)
+TO_LEVEL_RE = re.compile(r"Reservoir Stocks.*?to ([\d.]+)%", re.I)
+FROM_TO_LEVEL_RE = re.compile(r"Reservoir Stocks.*?from ([\d.]+)%.*?to ([\d.]+)%", re.I)
 DIRECTION_RE = re.compile(r"(increased|decreased|up|down)", re.I)
 DIFF_RE = re.compile(r"\(up ([\d.]+)%|down ([\d.]+)%", re.I)
 
