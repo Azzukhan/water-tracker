@@ -6,6 +6,7 @@ from .models import (
     SevernTrentReservoirForecast,
     YorkshireWaterReport,
     YorkshireWaterPrediction,
+    YorkshireReservoirData,
 )
 
 
@@ -46,3 +47,4 @@ class SevernTrentReservoirForecastAdmin(admin.ModelAdmin):
 
 admin.site.register(YorkshireWaterReport)
 admin.site.register(YorkshireWaterPrediction)
+admin.site.register(YorkshireReservoirData)

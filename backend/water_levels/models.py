@@ -95,3 +95,18 @@ class YorkshireWaterPrediction(models.Model):
 
     def __str__(self) -> str:  # pragma: no cover
         return f"{self.date} {self.model_type}: {self.predicted_reservoir_percent}%"
+
+
+class YorkshireReservoirData(models.Model):
+    """Monthly reservoir level summaries for Yorkshire Water."""
+
+    report_date = models.DateField()
+    reservoir_level = models.FloatField()
+    weekly_difference = models.FloatField(null=True, blank=True)
+    direction = models.CharField(max_length=10)
+
+    class Meta:
+        ordering = ["-report_date"]
+
+    def __str__(self) -> str:  # pragma: no cover
+        return f"{self.report_date}: {self.reservoir_level}%"
