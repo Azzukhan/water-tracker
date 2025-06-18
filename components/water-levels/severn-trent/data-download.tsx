@@ -3,7 +3,12 @@
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Download } from "lucide-react"
+import {
+  FileSpreadsheet,
+  FileJson,
+  CodeXml,
+  FileText,
+} from "lucide-react"
 import { PDFDocument, StandardFonts } from "pdf-lib"
 
 interface Entry {
@@ -82,24 +87,24 @@ export function SevernTrentDownload() {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Button onClick={() => handleDownload("csv")} disabled={data.length === 0}>
-            <Download className="h-4 w-4 mr-2" />
-            CSV
-          </Button>
-          <Button onClick={() => handleDownload("json")} disabled={data.length === 0}>
-            <Download className="h-4 w-4 mr-2" />
-            JSON
-          </Button>
-          <Button onClick={() => handleDownload("xml")} disabled={data.length === 0}>
-            <Download className="h-4 w-4 mr-2" />
-            XML
-          </Button>
-          <Button onClick={() => handleDownload("pdf")} disabled={data.length === 0}>
-            <Download className="h-4 w-4 mr-2" />
-            PDF
-          </Button>
-        </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Button onClick={() => handleDownload("csv")} disabled={data.length === 0}>
+              <FileSpreadsheet className="h-4 w-4 mr-2" />
+              CSV
+            </Button>
+            <Button onClick={() => handleDownload("json")} disabled={data.length === 0}>
+              <FileJson className="h-4 w-4 mr-2" />
+              JSON
+            </Button>
+            <Button onClick={() => handleDownload("xml")} disabled={data.length === 0}>
+              <CodeXml className="h-4 w-4 mr-2" />
+              XML
+            </Button>
+            <Button onClick={() => handleDownload("pdf")} disabled={data.length === 0}>
+              <FileText className="h-4 w-4 mr-2" />
+              PDF
+            </Button>
+          </div>
         {data.length === 0 && <p className="text-sm text-gray-500">No data</p>}
       </CardContent>
     </Card>
