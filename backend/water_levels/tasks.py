@@ -142,6 +142,6 @@ def weekly_severn_trent_predictions():
 
 @shared_task
 def fetch_yorkshire_water_reports():
-    from .scraper.yorkshire_pdf_scraper import fetch_and_store_reports
-    fetch_and_store_reports()
+    from .scraper.yorkshire_pdf_scraper import scrape_site
+    scrape_site()
     return "done"

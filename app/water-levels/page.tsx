@@ -12,6 +12,7 @@ import { SevernTrentCurrent } from "@/components/water-levels/severn-trent/curre
 import { SevernTrentARIMAChart } from "@/components/water-levels/severn-trent/arima-chart";
 import { SevernTrentLSTMChart } from "@/components/water-levels/severn-trent/lstm-chart";
 import { YorkshireCurrent } from "@/components/water-levels/yorkshire/current";
+import { YorkshireReservoirChart } from "@/components/water-levels/yorkshire/chart";
 import { Button } from "@/components/ui/button";
 
 export default function WaterLevelsPage() {
@@ -79,6 +80,7 @@ export default function WaterLevelsPage() {
       ) : agency === "yorkshire" ? (
         <>
           <YorkshireCurrent />
+          <YorkshireReservoirChart />
         </>
       ) : (
         <>
