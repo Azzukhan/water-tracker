@@ -41,6 +41,14 @@ app.conf.beat_schedule = {
     },
 }
 
+# Run Yorkshire prediction pipeline monthly
+app.conf.beat_schedule.update({
+    'run-yorkshire-prediction-task-monthly': {
+        'task': 'water_levels.tasks.run_yorkshire_lstm_prediction_task',
+        'schedule': crontab(day_of_month=1, hour=2, minute=0),
+    }
+})
+
 # Configure Celery to use Redis
 app.conf.update(
     broker_url='redis://localhost:6379/0',

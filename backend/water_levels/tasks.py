@@ -149,3 +149,11 @@ def fetch_yorkshire_water_reports():
     if inserted:
         train_and_predict_yorkshire()
     return "done"
+
+@shared_task
+def run_yorkshire_lstm_prediction_task():
+    """Generate monthly Yorkshire predictions."""
+    from ml.yorkshire_ai_pipeline import generate_yorkshire_predictions
+
+    generate_yorkshire_predictions()
+    return "predictions generated"
