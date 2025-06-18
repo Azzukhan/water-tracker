@@ -39,7 +39,10 @@ export function ScottishAverageTables() {
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
-          setAverage(data[0])
+          const latest = data.reduce((a: any, b: any) =>
+            new Date(b.date) > new Date(a.date) ? b : a
+          )
+          setAverage(latest)
         }
       })
       .catch(() => setAverage(null))
@@ -48,7 +51,16 @@ export function ScottishAverageTables() {
       .then((res) => res.json())
       .then((d) => {
         if (Array.isArray(d)) {
-          setRegions(d)
+          const latestByArea: Record<string, any> = {}
+          d.forEach((r: any) => {
+            if (
+              !latestByArea[r.area] ||
+              new Date(r.date) > new Date(latestByArea[r.area].date)
+            ) {
+              latestByArea[r.area] = r
+            }
+          })
+          setRegions(Object.values(latestByArea))
         }
       })
       .catch(() => setRegions([]))
