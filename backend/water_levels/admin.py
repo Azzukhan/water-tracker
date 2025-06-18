@@ -4,7 +4,8 @@ from .models import (
     ScottishWaterRegionalLevel,
     SevernTrentReservoirLevel,
     SevernTrentReservoirForecast,
-
+    YorkshireWaterReport,
+    YorkshireWaterPrediction,
 )
 
 
@@ -41,3 +42,7 @@ class SevernTrentReservoirForecastAdmin(admin.ModelAdmin):
         "predicted_percentage",
         "model_type",
     )
+
+
+admin.site.register(YorkshireWaterReport)
+admin.site.register(YorkshireWaterPrediction)

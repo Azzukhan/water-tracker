@@ -138,3 +138,10 @@ def weekly_severn_trent_predictions():
     generate_arima_forecast.delay()
     generate_lstm_forecast.delay()
     return "scheduled"
+
+
+@shared_task
+def fetch_yorkshire_water_reports():
+    from .scraper.yorkshire_pdf_scraper import fetch_and_store_reports
+    fetch_and_store_reports()
+    return "done"

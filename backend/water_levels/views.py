@@ -8,12 +8,16 @@ from .models import (
     ScottishWaterRegionalLevel,
     SevernTrentReservoirLevel,
     SevernTrentReservoirForecast,
+    YorkshireWaterReport,
+    YorkshireWaterPrediction,
 )
 from .serializers import (
     ScottishWaterAverageLevelSerializer,
     ScottishWaterRegionalLevelSerializer,
     SevernTrentReservoirLevelSerializer,
     SevernTrentForecastSerializer,
+    YorkshireWaterReportSerializer,
+    YorkshireWaterPredictionSerializer,
 )
 
 
@@ -63,3 +67,13 @@ class SevernTrentForecastAPIView(generics.ListAPIView):
             SevernTrentReservoirForecast.objects.filter(model_type=model_type)
             .order_by("date")
         )
+
+
+class YorkshireWaterReportViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = YorkshireWaterReport.objects.order_by('-report_month')
+    serializer_class = YorkshireWaterReportSerializer
+
+
+class YorkshireWaterPredictionViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = YorkshireWaterPrediction.objects.order_by('date')
+    serializer_class = YorkshireWaterPredictionSerializer

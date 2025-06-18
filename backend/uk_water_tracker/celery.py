@@ -35,6 +35,10 @@ app.conf.beat_schedule = {
         'task': 'water_levels.tasks.weekly_severn_trent_predictions',
         'schedule': crontab(day_of_week='wed', hour=9, minute=0),
     },
+    'yorkshire-scraper-monthly': {
+        'task': 'water_levels.tasks.fetch_yorkshire_water_reports',
+        'schedule': crontab(day_of_month=3, hour=8, minute=0),
+    },
 }
 
 # Configure Celery to use Redis

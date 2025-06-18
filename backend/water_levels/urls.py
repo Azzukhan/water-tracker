@@ -5,11 +5,15 @@ from .views import (
     ScottishWaterRegionalLevelViewSet,
     SevernTrentReservoirLevelListView,
     SevernTrentForecastAPIView,
+    YorkshireWaterReportViewSet,
+    YorkshireWaterPredictionViewSet,
 )
 
 router = DefaultRouter()
 router.register(r'scottish-averages', ScottishWaterAverageLevelViewSet)
 router.register(r'scottish-regions', ScottishWaterRegionalLevelViewSet)
+router.register(r'yorkshire-water-reports', YorkshireWaterReportViewSet)
+router.register(r'yorkshire-predictions', YorkshireWaterPredictionViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
