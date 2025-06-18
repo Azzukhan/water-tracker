@@ -13,10 +13,20 @@ if __package__ in (None, ""):
     sys.path.append(os.path.dirname(os.path.dirname(__file__)))
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "uk_water_tracker.settings")
     django.setup()
-    from water_levels.models import SevernTrentReservoirLevel, SevernTrentReservoirForecast
+    from water_levels.models import (
+        SevernTrentReservoirLevel,
+        SevernTrentReservoirForecast,
+        YorkshireReservoirData,
+        YorkshireWaterPrediction,
+    )
     from water_levels.utils import fetch_scottish_water_resource_levels
 else:
-    from .models import SevernTrentReservoirLevel, SevernTrentReservoirForecast
+    from .models import (
+        SevernTrentReservoirLevel,
+        SevernTrentReservoirForecast,
+        YorkshireReservoirData,
+        YorkshireWaterPrediction,
+    )
     from .utils import fetch_scottish_water_resource_levels
 
 
@@ -141,19 +151,32 @@ def weekly_severn_trent_predictions():
 
 
 @shared_task
+def generate_yorkshire_arima_forecast():
+    """Generate 4-month ARIMA forecast for Yorkshire Water."""
+    from ml.yorkshire_arima_model import generate_arima_forecast as _gen
+
+    _gen()
+    return "ARIMA forecast complete"
+
+
+@shared_task
 def fetch_yorkshire_water_reports():
     from .scraper.yorkshire_pdf_scraper import scrape_site
     from ml.yorkshire_lstm_model import train_and_predict_yorkshire
+    from ml.yorkshire_arima_model import generate_arima_forecast as _gen_arima
 
     inserted = scrape_site()
     if inserted:
         train_and_predict_yorkshire()
+        _gen_arima()
     return "done"
 
 @shared_task
 def run_yorkshire_lstm_prediction_task():
-    """Generate monthly Yorkshire predictions."""
-    from ml.yorkshire_ai_pipeline import generate_yorkshire_predictions
+    """Generate monthly Yorkshire predictions using both models."""
+    from ml.yorkshire_lstm_model import train_and_predict_yorkshire
+    from ml.yorkshire_arima_model import generate_arima_forecast as _gen_arima
 
-    generate_yorkshire_predictions()
+    train_and_predict_yorkshire()
+    _gen_arima()
     return "predictions generated"
