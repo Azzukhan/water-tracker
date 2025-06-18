@@ -143,5 +143,9 @@ def weekly_severn_trent_predictions():
 @shared_task
 def fetch_yorkshire_water_reports():
     from .scraper.yorkshire_pdf_scraper import scrape_site
-    scrape_site()
+    from ml.yorkshire_lstm_model import train_and_predict_yorkshire
+
+    inserted = scrape_site()
+    if inserted:
+        train_and_predict_yorkshire()
     return "done"

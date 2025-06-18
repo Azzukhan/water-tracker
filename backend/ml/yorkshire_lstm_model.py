@@ -4,6 +4,9 @@ from sklearn.preprocessing import MinMaxScaler
 from keras.models import Sequential
 from keras.layers import Input, LSTM, Dense
 
+from water_levels.models import YorkshireWaterReport, YorkshireWaterPrediction
+from dateutil.relativedelta import relativedelta
+
 
 def train_yorkshire_lstm(df: pd.DataFrame, target: str):
     df = df.set_index("date")
@@ -28,3 +31,28 @@ def train_yorkshire_lstm(df: pd.DataFrame, target: str):
         last_input = np.vstack((last_input[1:], pred))
     inv = scaler.inverse_transform(np.array(preds).reshape(-1, 1)).flatten()
     return inv
+
+
+def train_and_predict_yorkshire() -> None:
+    """Train LSTM on Yorkshire Water reports and save predictions."""
+    qs = YorkshireWaterReport.objects.order_by("report_month")
+    if qs.count() < 12:
+        return
+
+    df = pd.DataFrame(qs.values("report_month", "reservoir_percent"))
+    df = df.rename(columns={"report_month": "date", "reservoir_percent": "level"})
+
+    preds = train_yorkshire_lstm(df, target="level")
+
+    last_date = qs.last().report_month
+    predicted_dates = [last_date + relativedelta(months=i + 1) for i in range(len(preds))]
+
+    for d, val in zip(predicted_dates, preds):
+        YorkshireWaterPrediction.objects.update_or_create(
+            date=d,
+            model_type="LSTM",
+            defaults={
+                "predicted_reservoir_percent": round(float(val), 2),
+                "predicted_demand_mld": 0.0,
+            },
+        )
