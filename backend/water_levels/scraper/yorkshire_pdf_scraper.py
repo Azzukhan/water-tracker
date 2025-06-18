@@ -2,6 +2,7 @@ import os
 import re
 import sys
 from datetime import datetime
+import time
 
 import requests
 from bs4 import BeautifulSoup
@@ -20,54 +21,65 @@ DATE_RE = re.compile(
     r"(January|February|March|April|May|June|July|August|September|October|November|December) \d{4}",
     re.I,
 )
-LEVEL_RE = re.compile(r"Reservoir Stocks Have (increased|decreased) to ([\d.]+)%", re.I)
+LEVEL_RE = re.compile(r"Reservoir Stocks[^\d]*([\d.]+)%", re.I)
+DIRECTION_RE = re.compile(r"(increased|decreased|up|down)", re.I)
 DIFF_RE = re.compile(r"\(up ([\d.]+)%|down ([\d.]+)%", re.I)
 
 
 def extract_yorkshire_reservoir_data():
     """Scrape reservoir summary blocks from the Yorkshire Water dataset page."""
 
-    try:
-        response = requests.get(URL, timeout=20)
-        response.raise_for_status()
-    except Exception:
-        print("Failed to fetch Yorkshire page")
-        return []
-
-    soup = BeautifulSoup(response.content, "html.parser")
-
     data_list = []
-    blocks = soup.find_all("div", class_="container is-flex")
+    page = 1
 
-    for block in blocks:
-        text = block.get_text(separator=" ", strip=True)
+    while True:
+        try:
+            response = requests.get(f"{URL}?page={page}", timeout=20)
+            response.raise_for_status()
+        except Exception:
+            if page == 1:
+                print("Failed to fetch Yorkshire page")
+            break
 
-        date_match = DATE_RE.search(text)
-        stock_match = LEVEL_RE.search(text)
-        diff_match = DIFF_RE.search(text)
+        soup = BeautifulSoup(response.content, "html.parser")
+        blocks = soup.find_all("div", class_="container is-flex")
 
-        if not (date_match and stock_match):
-            continue
+        if not blocks:
+            break
 
-        report_date = datetime.strptime(date_match.group(), "%B %Y").date()
-        direction = stock_match.group(1).lower()
-        level = float(stock_match.group(2))
+        for block in blocks:
+            text = block.get_text(separator=" ", strip=True)
 
-        weekly_diff = None
-        if diff_match:
-            if diff_match.group(1):
-                weekly_diff = float(diff_match.group(1))
-            elif diff_match.group(2):
-                weekly_diff = float(diff_match.group(2)) * -1
+            date_match = DATE_RE.search(text)
+            level_match = LEVEL_RE.search(text)
+            direction_match = DIRECTION_RE.search(text)
+            diff_match = DIFF_RE.search(text)
 
-        data_list.append(
-            {
-                "report_date": report_date,
-                "reservoir_level": level,
-                "weekly_difference": weekly_diff,
-                "direction": direction,
-            }
-        )
+            if not (date_match and level_match):
+                continue
+
+            report_date = datetime.strptime(date_match.group(), "%B %Y").date()
+            level = float(level_match.group(1))
+            direction = direction_match.group(1).lower() if direction_match else ""
+
+            weekly_diff = None
+            if diff_match:
+                if diff_match.group(1):
+                    weekly_diff = float(diff_match.group(1))
+                elif diff_match.group(2):
+                    weekly_diff = float(diff_match.group(2)) * -1
+
+            data_list.append(
+                {
+                    "report_date": report_date,
+                    "reservoir_level": level,
+                    "weekly_difference": weekly_diff,
+                    "direction": direction,
+                }
+            )
+
+        page += 1
+        time.sleep(0.5)
 
     return data_list
 
