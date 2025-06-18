@@ -13,10 +13,8 @@ if __package__ in (None, ""):
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "uk_water_tracker.settings")
     django.setup()
     from water_levels.models import YorkshireReservoirData
-    #from water_levels.ai_models import train_lstm_for_yorkshire  # Ensure this exists
 else:
     from ..models import YorkshireReservoirData
-    from ..ai_models import train_lstm_for_yorkshire
 
 
 URL = "https://datamillnorth.org/dataset/vqxw4/watsit-water-situation-report"
@@ -25,8 +23,8 @@ DATE_RE = re.compile(
     r"(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4}",
     re.I,
 )
-TO_LEVEL_RE = re.compile(r"Reservoir Stocks.*?to ([\d.]+)%", re.I)
-FROM_TO_LEVEL_RE = re.compile(r"Reservoir Stocks.*?from ([\d.]+)%.*?to ([\d.]+)%", re.I)
+TO_LEVEL_RE = re.compile(r"Reservoir Stocks.*?(?:Have\s+(?:Increased|Decreased))?.*?To\s+([\d.]+)%", re.I)
+FROM_TO_LEVEL_RE = re.compile(r"Reservoir Stocks.*?from\s+([\d.]+)%\s+to\s+([\d.]+)%", re.I)
 DIRECTION_RE = re.compile(r"(increased|decreased|up|down)", re.I)
 DIFF_RE = re.compile(r"\(up ([\d.]+)%|down ([\d.]+)%", re.I)
 
@@ -34,25 +32,30 @@ DIFF_RE = re.compile(r"\(up ([\d.]+)%|down ([\d.]+)%", re.I)
 def extract_yorkshire_reservoir_data():
     """Scrape reservoir summary blocks from the Yorkshire Water dataset page."""
     data_list = []
-    page = 1
+    processed_texts = set()
+    max_pages = 10
 
-    while True:
+    for page in range(1, max_pages + 1):
         try:
             response = requests.get(f"{URL}?page={page}", timeout=20)
             response.raise_for_status()
-        except Exception:
-            if page == 1:
-                print("Failed to fetch Yorkshire page")
+        except Exception as e:
+            print(f"Failed to fetch page {page}: {e}")
             break
 
         soup = BeautifulSoup(response.content, "html.parser")
         blocks = soup.find_all("div", class_="container is-flex")
 
         if not blocks:
+            print(f"No blocks found on page {page}. Stopping pagination.")
             break
 
         for block in blocks:
             text = " ".join(block.get_text(separator=" ", strip=True).split()).replace("%%", "%")
+            if text in processed_texts:
+                print(f"Skipping duplicate block: {text[:50]}...")
+                continue
+            processed_texts.add(text)
 
             date_match = DATE_RE.search(text)
             from_to_match = FROM_TO_LEVEL_RE.search(text)
@@ -61,7 +64,7 @@ def extract_yorkshire_reservoir_data():
             diff_match = DIFF_RE.search(text)
 
             if not date_match:
-                print("❌ Skipping (no date):", text)
+                print(f"❌ Skipping (no date): {text[:100]}...")
                 continue
 
             report_date = datetime.strptime(date_match.group(), "%B %Y").date()
@@ -73,7 +76,7 @@ def extract_yorkshire_reservoir_data():
             elif to_level_match:
                 level = float(to_level_match.group(1))
             else:
-                print("❌ Skipping (no reservoir level):", text)
+                print(f"❌ Skipping (no reservoir level match): {text[:100]}...")
                 continue
 
             direction = direction_match.group(1).lower() if direction_match else ""
@@ -94,22 +97,21 @@ def extract_yorkshire_reservoir_data():
                 "direction": direction,
             })
 
-        page += 1
         time.sleep(0.5)
 
     return data_list
 
 
 def scrape_site():
-    """Fetch and store Yorkshire reservoir data into database, then train model if updated."""
+    """Fetch and store Yorkshire reservoir data into the database."""
     records = extract_yorkshire_reservoir_data()
     if not records:
-        print("❌ No data found. Check scraping structure.")
+        print("❌ No data found. Check scraping structure or website.")
         return False
 
     inserted = False
     for item in records:
-        obj, created = YorkshireReservoirData.objects.update_or_create(
+        _, created = YorkshireReservoirData.objects.update_or_create(
             report_date=item["report_date"],
             defaults={
                 "reservoir_level": item["reservoir_level"],
@@ -118,12 +120,7 @@ def scrape_site():
             },
         )
         inserted = inserted or created
-        print("✅ Saved:", item)
-
-    if inserted:
-        print("📈 Training LSTM model...")
-        train_lstm_for_yorkshire()
-        print("✅ AI training completed.")
+        print(f"✅ Saved: {item}")
 
     return inserted
 
