@@ -9,8 +9,16 @@ import requests
 import feedparser
 import json
 import os
+from bs4 import BeautifulSoup
 
 CACHE_TIMEOUT = 5 * 60  # cache news data for five minutes
+
+
+def clean_html(text: str) -> str:
+    """Strip HTML tags from a string."""
+    if not text:
+        return ""
+    return BeautifulSoup(text, "html.parser").get_text(" ", strip=True)
 
 class NewsArticleViewSet(viewsets.ModelViewSet):
     queryset = NewsArticle.objects.all()
@@ -93,7 +101,7 @@ class WaterNewsAPIView(APIView):
         articles = []
         for article in data.get("articles", []):
             title = article.get("title", "")
-            description = article.get("description", "")
+            description = clean_html(article.get("description", ""))
             articles.append(
                 {
                     "title": title,
@@ -151,7 +159,7 @@ class AlertScraperAPIView(APIView):
 
             for entry in feed.entries:
                 title = entry.get("title", "")
-                summary = entry.get("summary", "")
+                summary = clean_html(entry.get("summary", ""))
                 text = f"{title} {summary}".lower()
                 if not any(k in text for k in self.KEYWORDS):
                     continue
@@ -224,11 +232,11 @@ class FloodMonitoringAPIView(APIView):
                 articles.append(
                     {
                         "title": item.get("description", "Environment Agency Alert"),
-                        "description": item.get("message", ""),
+                        "description": clean_html(item.get("message", "")),
                         "url": item.get("@id"),
                         "publishedAt": item.get("timeMessageChanged"),
                         "severity": item.get("severity", "").lower() if item.get("severity") else None,
-                        "category": categorize(item.get("description", ""), item.get("message", "")),
+                        "category": categorize(item.get("description", ""), clean_html(item.get("message", ""))),
                     }
                 )
 
@@ -240,11 +248,11 @@ class FloodMonitoringAPIView(APIView):
                 articles.append(
                     {
                         "title": entry.get("title", ""),
-                        "description": entry.get("summary", ""),
+                        "description": clean_html(entry.get("summary", "")),
                         "url": entry.get("link"),
                         "publishedAt": entry.get("published", entry.get("updated")),
                         "severity": "medium",
-                        "category": categorize(entry.get("title", ""), entry.get("summary", "")),
+                        "category": categorize(entry.get("title", ""), clean_html(entry.get("summary", ""))),
                     }
                 )
 
@@ -305,7 +313,7 @@ class GDELTNewsAPIView(APIView):
             articles.append(
                 {
                     "title": title,
-                    "description": item.get("trans", desc) or desc,
+                    "description": clean_html(item.get("trans", desc) or desc),
                     "url": item.get("url"),
                     "publishedAt": item.get("publishedAt") or item.get("seendate"),
                 }
