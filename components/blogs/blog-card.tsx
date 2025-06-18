@@ -69,6 +69,8 @@ export function BlogCard({ post, isBookmarked = false, onBookmark }: BlogCardPro
           className="text-sm text-muted-foreground mb-4 line-clamp-3"
           dangerouslySetInnerHTML={{
             __html: sanitizeHtml(post.summary, {
+              // Strip any embedded images from the summary so we only
+              // display the category icons provided by the app.
               allowedTags: [
                 "b",
                 "i",
@@ -81,11 +83,9 @@ export function BlogCard({ post, isBookmarked = false, onBookmark }: BlogCardPro
                 "ol",
                 "br",
                 "figure",
-                "img",
               ],
               allowedAttributes: {
                 a: ["href"],
-                img: ["src", "alt"],
               },
             }),
           }}
