@@ -1,12 +1,23 @@
 import io
+import os
 import re
+import sys
 from datetime import datetime
 
 import requests
 from bs4 import BeautifulSoup
 import pdfplumber
 
-from ..models import YorkshireWaterReport
+if __package__ in (None, ""):
+    import django
+
+    # Allow running this module directly
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "uk_water_tracker.settings")
+    django.setup()
+    from water_levels.models import YorkshireWaterReport
+else:
+    from ..models import YorkshireWaterReport
 
 DATASET_API = "https://datamillnorth.org/api/3/action/package_show?id=vqxw4"
 
@@ -77,3 +88,7 @@ def fetch_and_store_reports():
             report_month=date,
             defaults={**data, "source_pdf": url},
         )
+
+
+if __name__ == "__main__":
+    fetch_and_store_reports()
