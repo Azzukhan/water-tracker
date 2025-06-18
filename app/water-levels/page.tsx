@@ -11,10 +11,11 @@ import { SevernTrentDownload } from "@/components/water-levels/severn-trent/data
 import { SevernTrentCurrent } from "@/components/water-levels/severn-trent/current";
 import { SevernTrentARIMAChart } from "@/components/water-levels/severn-trent/arima-chart";
 import { SevernTrentLSTMChart } from "@/components/water-levels/severn-trent/lstm-chart";
+import { YorkshireCurrent } from "@/components/water-levels/yorkshire/current";
 import { Button } from "@/components/ui/button";
 
 export default function WaterLevelsPage() {
-  const [agency, setAgency] = useState<"scotland" | "severn_trent">(
+  const [agency, setAgency] = useState<"scotland" | "severn_trent" | "yorkshire">(
     "severn_trent",
   );
   const [selectedRegion, setSelectedRegion] = useState("scotland");
@@ -55,6 +56,12 @@ export default function WaterLevelsPage() {
         >
           Scotland
         </Button>
+        <Button
+          variant={agency === "yorkshire" ? "default" : "outline"}
+          onClick={() => setAgency("yorkshire")}
+        >
+          Yorkshire
+        </Button>
       </div>
 
       {agency === "scotland" ? (
@@ -68,6 +75,10 @@ export default function WaterLevelsPage() {
           <PredictionChart />
           <DataSources />
           <ScottishAverageTables />
+        </>
+      ) : agency === "yorkshire" ? (
+        <>
+          <YorkshireCurrent />
         </>
       ) : (
         <>
