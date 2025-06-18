@@ -20,7 +20,7 @@ def generate_yorkshire_predictions() -> None:
     df = pd.DataFrame(qs.values("report_date", "reservoir_level"))
     df["report_date"] = pd.to_datetime(df["report_date"])
     df = df.set_index("report_date").asfreq("D")
-    df = df.fillna(method="ffill")
+    df = df.ffill()
 
     reservoir_roll = df["reservoir_level"].rolling(window=3, min_periods=1).mean()
 
