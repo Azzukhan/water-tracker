@@ -4,7 +4,10 @@ from sklearn.preprocessing import MinMaxScaler
 from keras.models import Sequential
 from keras.layers import Input, LSTM, Dense
 
-from water_levels.models import YorkshireWaterReport, YorkshireWaterPrediction
+from water_levels.models import (
+    YorkshireReservoirData,
+    YorkshireWaterPrediction,
+)
 from dateutil.relativedelta import relativedelta
 
 
@@ -34,17 +37,17 @@ def train_yorkshire_lstm(df: pd.DataFrame, target: str):
 
 
 def train_and_predict_yorkshire() -> None:
-    """Train LSTM on Yorkshire Water reports and save predictions."""
-    qs = YorkshireWaterReport.objects.order_by("report_month")
+    """Train LSTM on Yorkshire reservoir data and save predictions."""
+    qs = YorkshireReservoirData.objects.order_by("report_date")
     if qs.count() < 12:
         return
 
-    df = pd.DataFrame(qs.values("report_month", "reservoir_percent"))
-    df = df.rename(columns={"report_month": "date", "reservoir_percent": "level"})
+    df = pd.DataFrame(qs.values("report_date", "reservoir_level"))
+    df = df.rename(columns={"report_date": "date", "reservoir_level": "level"})
 
     preds = train_yorkshire_lstm(df, target="level")
 
-    last_date = qs.last().report_month
+    last_date = qs.last().report_date
     predicted_dates = [last_date + relativedelta(months=i + 1) for i in range(len(preds))]
 
     for d, val in zip(predicted_dates, preds):
