@@ -7,6 +7,8 @@ from .models import NewsArticle
 from .serializers import NewsArticleSerializer
 import requests
 import feedparser
+import json
+import os
 
 CACHE_TIMEOUT = 5 * 60  # cache news data for five minutes
 
@@ -280,20 +282,32 @@ class GDELTNewsAPIView(APIView):
 
         try:
             resp = requests.get(url, timeout=10)
+            resp.raise_for_status()
             data = resp.json()
+            raw_articles = data.get("articles", [])
         except Exception:
-            return Response({"news": []}, status=500)
+            sample_path = os.path.join(os.path.dirname(__file__), "sample_gdelt.json")
+            try:
+                with open(sample_path, "r", encoding="utf-8") as fh:
+                    sample = json.load(fh)
+                    raw_articles = sample.get("news", [])
+            except Exception:
+                raw_articles = []
 
         articles = []
-        for item in data.get("articles", []):
+        for item in raw_articles:
             title = item.get("title", "")
-            desc = item.get("seendate", "")
+            desc = (
+                item.get("trans")
+                or item.get("description")
+                or item.get("seendate", "")
+            )
             articles.append(
                 {
                     "title": title,
                     "description": item.get("trans", desc) or desc,
                     "url": item.get("url"),
-                    "publishedAt": item.get("seendate"),
+                    "publishedAt": item.get("publishedAt") or item.get("seendate"),
                 }
             )
 
