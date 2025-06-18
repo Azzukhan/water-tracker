@@ -62,20 +62,32 @@ export function RegionSelector({ selectedRegion, onSelect }: RegionSelectorProps
         const result: Region[] = []
 
         if (Array.isArray(avgData) && avgData.length > 0) {
-          const avg = avgData[0]
+          const latest = avgData.reduce((a, b) =>
+            new Date(b.date) > new Date(a.date) ? b : a
+          )
           result.push({
             id: "scotland",
             name: "Scotland overall",
-            level: avg.current,
-            status: statusForLevel(avg.current),
-            change: avg.change_from_last_week,
-            difference: avg.difference_from_average,
-            date: avg.date,
+            level: latest.current,
+            status: statusForLevel(latest.current),
+            change: latest.change_from_last_week,
+            difference: latest.difference_from_average,
+            date: latest.date,
           })
         }
 
         if (Array.isArray(regionalData)) {
+          const latestByArea: Record<string, any> = {}
           regionalData.forEach((r: any) => {
+            if (
+              !latestByArea[r.area] ||
+              new Date(r.date) > new Date(latestByArea[r.area].date)
+            ) {
+              latestByArea[r.area] = r
+            }
+          })
+
+          Object.values(latestByArea).forEach((r: any) => {
             result.push({
               id: r.area,
               name: r.area,

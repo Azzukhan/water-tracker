@@ -68,7 +68,9 @@ export function CurrentLevelDisplay({ region }: CurrentLevelDisplayProps) {
           const res = await fetch("/api/water-levels/scottish-averages")
           const data = await res.json()
           if (Array.isArray(data) && data.length > 0) {
-            const first = data[0]
+            const first = data.reduce((a: any, b: any) =>
+              new Date(b.date) > new Date(a.date) ? b : a
+            )
             setCurrentData({
               region: "Scotland",
               currentLevel: first.current,
@@ -98,7 +100,9 @@ export function CurrentLevelDisplay({ region }: CurrentLevelDisplayProps) {
           )
           const data = await res.json()
           if (Array.isArray(data) && data.length > 0) {
-            const first = data[0]
+            const first = data.reduce((a: any, b: any) =>
+              new Date(b.date) > new Date(a.date) ? b : a
+            )
             setCurrentData({
               region,
               currentLevel: first.current,
