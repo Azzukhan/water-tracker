@@ -8,6 +8,7 @@ import { getCategoryIcon, getCategoryColor } from "@/lib/blog-category-icons"
 import { toast } from "@/hooks/use-toast"
 import Link from "next/link"
 import type { BlogItem } from "@/hooks/use-blogs"
+import sanitizeHtml from "sanitize-html"
 
 export interface BlogCardProps {
   post: BlogItem
@@ -64,9 +65,31 @@ export function BlogCard({ post, isBookmarked = false, onBookmark }: BlogCardPro
         </CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col flex-1">
-        <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
-          {post.summary}
-        </p>
+        <div
+          className="text-sm text-muted-foreground mb-4 line-clamp-3"
+          dangerouslySetInnerHTML={{
+            __html: sanitizeHtml(post.summary, {
+              allowedTags: [
+                "b",
+                "i",
+                "em",
+                "strong",
+                "a",
+                "p",
+                "ul",
+                "li",
+                "ol",
+                "br",
+                "figure",
+                "img",
+              ],
+              allowedAttributes: {
+                a: ["href"],
+                img: ["src", "alt"],
+              },
+            }),
+          }}
+        />
         <div className="mt-auto flex flex-col gap-2">
           <div className="flex items-center justify-between text-sm text-muted-foreground">
             <div className="flex items-center gap-1">
