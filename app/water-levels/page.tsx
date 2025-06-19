@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { RegionSelector } from "@/components/water-levels/region-selector";
 import { CurrentLevelDisplay } from "@/components/water-levels/current-level-display";
 import { HistoryChart } from "@/components/water-levels/history-chart";
@@ -16,14 +15,19 @@ import { YorkshireCurrent } from "@/components/water-levels/yorkshire/current";
 import { YorkshireHistoryChart } from "@/components/water-levels/yorkshire/history-chart";
 import { YorkshireARIMAChart } from "@/components/water-levels/yorkshire/arima-chart";
 import { YorkshireLSTMChart } from "@/components/water-levels/yorkshire/lstm-chart";
+import { SouthernWaterReservoirSelector } from "@/components/water-levels/southern-water/reservoir-selector";
+import { SouthernWaterCurrent } from "@/components/water-levels/southern-water/current";
+import { SouthernHistoryChart } from "@/components/water-levels/southern-water/history-chart";
+import { SouthernARIMAChart } from "@/components/water-levels/southern-water/arima-chart";
+import { SouthernLSTMChart } from "@/components/water-levels/southern-water/lstm-chart";
 import { Button } from "@/components/ui/button";
 
 export default function WaterLevelsPage() {
-  const reservoirs = ["Bewl", "Darwell", "Powdermill", "Weir Wood"];
   const [agency, setAgency] = useState<
     "scotland" | "severn_trent" | "yorkshire" | "southern_water"
   >("severn_trent");
   const [selectedRegion, setSelectedRegion] = useState("scotland");
+  const [southernReservoir, setSouthernReservoir] = useState("Bewl");
 
   useEffect(() => {
     if (typeof navigator !== "undefined" && navigator.geolocation) {
@@ -98,16 +102,16 @@ export default function WaterLevelsPage() {
         </>
       ) : agency === "southern_water" ? (
         <>
-          <h2 className="text-3xl lg:text-4xl font-bold text-center">
-            Southern Water Reservoirs
-          </h2>
-          <ul className="grid md:grid-cols-2 gap-4 text-center">
-            {reservoirs.map((r) => (
-              <li key={r} className="p-6 border rounded-lg hover:bg-gray-50">
-                <Link href={`/southernwater/${r}`}>{r}</Link>
-              </li>
-            ))}
-          </ul>
+          <SouthernWaterReservoirSelector
+            selectedReservoir={southernReservoir}
+            onSelect={setSouthernReservoir}
+          />
+          <SouthernWaterCurrent reservoir={southernReservoir} />
+          <SouthernHistoryChart reservoir={southernReservoir} />
+          <div className="space-y-6">
+            <SouthernARIMAChart reservoir={southernReservoir} />
+            <SouthernLSTMChart reservoir={southernReservoir} />
+          </div>
         </>
       ) : (
         <>
