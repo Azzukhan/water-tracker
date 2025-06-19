@@ -5,6 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Grid, List, MapPin, Map, Search } from "lucide-react";
 
 interface ReservoirSelectorProps {
@@ -51,16 +58,9 @@ export function SouthernWaterReservoirSelector({
   onSelect,
 }: ReservoirSelectorProps) {
   const [reservoirs, setReservoirs] = useState<Reservoir[]>([]);
-  const [viewMode, setViewMode] = useState<"grid" | "list" | "map">("grid");
-  const [filter, setFilter] = useState("");
+  const [viewMode, setViewMode] = useState<"list" | "grid" | "map">("grid");
   const [postcode, setPostcode] = useState("");
-
-  const quickFilters = [
-    "Bewl",
-    "Darwell",
-    "Powdermill",
-    "Weir Wood",
-  ];
+  const [filter, setFilter] = useState("");
 
   useEffect(() => {
     fetch("/api/water-levels/southernwater")
@@ -160,29 +160,27 @@ export function SouthernWaterReservoirSelector({
             </div>
           </div>
 
-          <div className="mb-6">
+          <div className="mb-6 space-y-2">
             <Input
               placeholder="Filter reservoirs"
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
             />
-          </div>
-          <div className="mb-6 flex flex-wrap gap-2 items-center">
-            <span className="text-sm text-gray-600 mr-2">Quick filters:</span>
-            {quickFilters.map((name) => (
-              <Button
-                key={name}
-                variant={filter === name ? "secondary" : "outline"}
-                size="sm"
-                className="text-xs"
-                onClick={() => {
-                  setFilter(name)
-                  onSelect(name)
-                }}
-              >
-                {name}
-              </Button>
-            ))}
+            <Select value={selectedReservoir} onValueChange={onSelect}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select a reservoir" />
+              </SelectTrigger>
+              <SelectContent>
+                {filtered.map((res) => (
+                  <SelectItem key={res.id} value={res.id}>
+                    <div className="flex items-center justify-between w-full">
+                      <span>{res.name}</span>
+                      <Badge className={`ml-2 ${getStatusColor(res.status)} text-white`}>{res.level}%</Badge>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           {viewMode === "grid" && (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
