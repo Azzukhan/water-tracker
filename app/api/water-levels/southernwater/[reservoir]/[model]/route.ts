@@ -6,7 +6,7 @@ export async function GET(
 ) {
   try {
     const backendUrl = process.env.BACKEND_URL || 'http://127.0.0.1:8000'
-    const { reservoir, model } = params
+    const { reservoir, model } = await params
     const res = await fetch(
       `${backendUrl}/api/water-levels/southernwater/${reservoir}/${model}/`
     )
