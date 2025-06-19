@@ -110,3 +110,37 @@ class YorkshireReservoirData(models.Model):
 
     def __str__(self) -> str:  # pragma: no cover
         return f"{self.report_date}: {self.reservoir_level}%"
+
+class SouthernWaterReservoirLevel(models.Model):
+    """Weekly reservoir levels for Southern Water reservoirs."""
+
+    reservoir = models.CharField(max_length=50)
+    date = models.DateField()
+    current_level = models.FloatField()
+    average_level = models.FloatField()
+    change_week = models.FloatField()
+    change_month = models.FloatField()
+    difference_from_average = models.FloatField()
+
+    class Meta:
+        unique_together = ("reservoir", "date")
+        ordering = ["reservoir", "-date"]
+
+    def __str__(self) -> str:  # pragma: no cover
+        return f"{self.reservoir} {self.date}: {self.current_level}%"
+
+
+class SouthernWaterReservoirForecast(models.Model):
+    """Forecasted levels for Southern Water reservoirs."""
+
+    reservoir = models.CharField(max_length=50)
+    date = models.DateField()
+    predicted_level = models.FloatField()
+    model_type = models.CharField(max_length=10, choices=(("ARIMA", "ARIMA"), ("LSTM", "LSTM")))
+
+    class Meta:
+        unique_together = ("reservoir", "date", "model_type")
+        ordering = ["reservoir", "date"]
+
+    def __str__(self) -> str:  # pragma: no cover
+        return f"{self.reservoir} {self.date} {self.model_type}: {self.predicted_level}%"
