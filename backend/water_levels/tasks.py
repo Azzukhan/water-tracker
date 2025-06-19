@@ -272,7 +272,8 @@ def generate_southern_arima_forecast():
         try:
             model = ARIMA(df["current_level"], order=(2,1,2))
             fit = model.fit()
-            forecast = fit.forecast(steps=4)
+            # Predict the next 6 months (approx. 24 weeks)
+            forecast = fit.forecast(steps=24)
         except Exception as e:
             print(f"ARIMA fit error for {reservoir}: {e}")
             continue
@@ -309,7 +310,8 @@ def generate_southern_lstm_forecast():
         df = pd.DataFrame(res_qs.values("date", "current_level"))
         df = df.rename(columns={"current_level": "percentage"})
 
-        preds = train_lstm(df)
+        # Predict 6 months (~24 weeks) of reservoir levels
+        preds = train_lstm(df, steps=24)
 
         last_date = res_qs.last().date
         for i, val in enumerate(preds):

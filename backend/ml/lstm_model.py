@@ -4,7 +4,17 @@ from sklearn.preprocessing import MinMaxScaler
 from keras.models import Sequential
 from keras.layers import Input, LSTM, Dense
 
-def train_lstm(df):
+def train_lstm(df, steps: int = 4):
+    """Train an LSTM model and predict future values.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        DataFrame containing a ``date`` column and a ``percentage`` column.
+    steps : int, optional
+        Number of weekly forecast steps to produce, by default ``4``.
+    """
+
     df = df.set_index("date")
     scaler = MinMaxScaler()
     scaled = scaler.fit_transform(df[["percentage"]])
@@ -24,7 +34,7 @@ def train_lstm(df):
 
     preds = []
     last_input = scaled[-10:]
-    for _ in range(4):
+    for _ in range(steps):
         pred = model.predict(last_input.reshape(1, 10, 1), verbose=0)
         preds.append(pred[0][0])
         last_input = np.vstack((last_input[1:], pred))
