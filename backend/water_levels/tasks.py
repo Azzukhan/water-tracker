@@ -2,13 +2,15 @@ import re
 from datetime import datetime
 import os
 import sys
-
+import warnings
 import django
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 from statsmodels.tsa.arima.model import ARIMA
 from celery import shared_task
+from datetime import timedelta
+from ml.lstm_model import train_lstm
 
 if __package__ in (None, ""):
     # Allow running this module as a standalone script for quick testing
@@ -187,7 +189,6 @@ def run_yorkshire_lstm_prediction_task():
 
 @shared_task
 def fetch_southern_water_levels():
-    """Scrape Southern Water reservoir levels and store them."""
     url = "https://www.southernwater.co.uk/about-us/environmental-performance/water-levels/reservoir-levels/"
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
     try:
@@ -199,6 +200,8 @@ def fetch_southern_water_levels():
 
     blocks = re.findall(r"addRows\(\[\s*(.*?)\s*\]\);", html, re.DOTALL)[:4]
     reservoir_names = ["Bewl", "Darwell", "Powdermill", "Weir Wood"]
+    water_year = 2024  # Adjust for your season
+
     for i, block in enumerate(blocks):
         rows = re.findall(r"\['(.*?)',\s*([\d.]+),\s*([\d.]+),\s*([\d.]+)\]", block)
         df = pd.DataFrame(rows, columns=["date", "actual", "average", "minimum"])
@@ -214,6 +217,7 @@ def fetch_southern_water_levels():
             diff = round(current - avg, 2)
             change_week = round(current - df.loc[j-1, "actual"], 2) if j > 0 else 0.0
             change_month = round(current - df.loc[j-4, "actual"], 2) if j >= 4 else 0.0
+
             SouthernWaterReservoirLevel.objects.update_or_create(
                 reservoir=name,
                 date=date,
@@ -230,22 +234,50 @@ def fetch_southern_water_levels():
 
 @shared_task
 def generate_southern_arima_forecast():
-    from datetime import timedelta
+    warnings.filterwarnings("ignore")  # Optionally suppress warnings
     qs = SouthernWaterReservoirLevel.objects.order_by("reservoir", "date")
     if not qs.exists():
+        print("No data in SouthernWaterReservoirLevel")
         return "no data"
+
     for reservoir in qs.values_list("reservoir", flat=True).distinct():
         res_qs = qs.filter(reservoir=reservoir)
         if res_qs.count() < 12:
+            print(f"Skipping {reservoir}: not enough data ({res_qs.count()})")
             continue
+
         df = pd.DataFrame(res_qs.values("date", "current_level"))
         df["date"] = pd.to_datetime(df["date"])
-        df = df.set_index("date").asfreq("W")
+        df = df.set_index("date").sort_index()
+        df = df.resample("W").ffill()
+
+        # Debug: Print recent values
+        print(f"Reservoir: {reservoir}")
+        print("Last values before interpolate:")
+        print(df["current_level"].tail(10))
+
+        # Only interpolate if there are a few missing values (not all)
+        if df["current_level"].isnull().all():
+            print(f"All NaN for {reservoir}, skipping.")
+            continue
+
         df["current_level"] = df["current_level"].interpolate()
-        model = ARIMA(df["current_level"], order=(2,1,2))
-        fit = model.fit()
-        forecast = fit.forecast(steps=4)
-        last_date = res_qs.last().date
+        print("Last values after interpolate:")
+        print(df["current_level"].tail(10))
+
+        if df["current_level"].nunique() == 1:
+            print(f"{reservoir} is constant value, skipping.")
+            continue
+
+        try:
+            model = ARIMA(df["current_level"], order=(2,1,2))
+            fit = model.fit()
+            forecast = fit.forecast(steps=4)
+        except Exception as e:
+            print(f"ARIMA fit error for {reservoir}: {e}")
+            continue
+
+        last_date = df.index[-1].date()
         for i, val in enumerate(forecast):
             target = last_date + timedelta(weeks=i+1)
             SouthernWaterReservoirForecast.objects.update_or_create(
@@ -254,22 +286,31 @@ def generate_southern_arima_forecast():
                 model_type="ARIMA",
                 defaults={"predicted_level": round(float(val),2)},
             )
+        print(f"ARIMA forecast for {reservoir}: {[round(float(x),2) for x in forecast]}")
     return "arima"
+
 
 
 @shared_task
 def generate_southern_lstm_forecast():
-    from datetime import timedelta
-    from ml.lstm_model import train_lstm
+    """
+    Generate LSTM-based forecasts for Southern Water reservoirs and save predictions to the DB.
+    """
     qs = SouthernWaterReservoirLevel.objects.order_by("reservoir", "date")
     if not qs.exists():
         return "no data"
+
     for reservoir in qs.values_list("reservoir", flat=True).distinct():
         res_qs = qs.filter(reservoir=reservoir)
         if res_qs.count() < 30:
-            continue
+            continue  # not enough data for robust prediction
+
+        # Build dataframe and match column names to what the LSTM expects
         df = pd.DataFrame(res_qs.values("date", "current_level"))
+        df = df.rename(columns={"current_level": "percentage"})
+
         preds = train_lstm(df)
+
         last_date = res_qs.last().date
         for i, val in enumerate(preds):
             target = last_date + timedelta(weeks=i+1)
@@ -277,10 +318,9 @@ def generate_southern_lstm_forecast():
                 reservoir=reservoir,
                 date=target,
                 model_type="LSTM",
-                defaults={"predicted_level": round(float(val),2)},
+                defaults={"predicted_level": round(float(val), 2)},
             )
     return "lstm"
-
 
 @shared_task
 def monthly_southernwater_predictions():
