@@ -39,6 +39,10 @@ app.conf.beat_schedule = {
         'task': 'water_levels.tasks.fetch_yorkshire_water_reports',
         'schedule': crontab(day_of_month=1, hour=6, minute=0),
     },
+    'monthly-southernwater-update': {
+        'task': 'water_levels.tasks.monthly_southernwater_predictions',
+        'schedule': crontab(day_of_month=1, hour=10, minute=0),
+    },
 }
 
 # Configure Celery to use Redis

@@ -6,6 +6,8 @@ import sys
 import django
 import requests
 from bs4 import BeautifulSoup
+import pandas as pd
+from statsmodels.tsa.arima.model import ARIMA
 from celery import shared_task
 
 if __package__ in (None, ""):
@@ -26,6 +28,8 @@ else:
         SevernTrentReservoirForecast,
         YorkshireReservoirData,
         YorkshireWaterPrediction,
+        SouthernWaterReservoirLevel,
+        SouthernWaterReservoirForecast,
     )
     from .utils import fetch_scottish_water_resource_levels
 
@@ -180,3 +184,106 @@ def run_yorkshire_lstm_prediction_task():
     train_and_predict_yorkshire()
     _gen_arima()
     return "predictions generated"
+
+@shared_task
+def fetch_southern_water_levels():
+    """Scrape Southern Water reservoir levels and store them."""
+    url = "https://www.southernwater.co.uk/about-us/environmental-performance/water-levels/reservoir-levels/"
+    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
+    try:
+        response = requests.get(url, headers=headers, timeout=20)
+        html = response.text
+    except Exception as e:
+        print(f"Failed to fetch southern water page: {e}")
+        return "error"
+
+    blocks = re.findall(r"addRows\(\[\s*(.*?)\s*\]\);", html, re.DOTALL)[:4]
+    reservoir_names = ["Bewl", "Darwell", "Powdermill", "Weir Wood"]
+    for i, block in enumerate(blocks):
+        rows = re.findall(r"\['(.*?)',\s*([\d.]+),\s*([\d.]+),\s*([\d.]+)\]", block)
+        df = pd.DataFrame(rows, columns=["date", "actual", "average", "minimum"])
+        df["actual"] = df["actual"].astype(float)
+        df["average"] = df["average"].astype(float)
+        df = df.reset_index(drop=True)
+        name = reservoir_names[i]
+        for j, row in df.iterrows():
+            date = pd.to_datetime(row["date"]).date()
+            current = row["actual"]
+            avg = row["average"]
+            diff = round(current - avg, 2)
+            change_week = round(current - df.loc[j-1, "actual"], 2) if j > 0 else 0.0
+            change_month = round(current - df.loc[j-4, "actual"], 2) if j >= 4 else 0.0
+            SouthernWaterReservoirLevel.objects.update_or_create(
+                reservoir=name,
+                date=date,
+                defaults={
+                    "current_level": current,
+                    "average_level": avg,
+                    "change_week": change_week,
+                    "change_month": change_month,
+                    "difference_from_average": diff,
+                },
+            )
+    return "done"
+
+
+@shared_task
+def generate_southern_arima_forecast():
+    from datetime import timedelta
+    qs = SouthernWaterReservoirLevel.objects.order_by("reservoir", "date")
+    if not qs.exists():
+        return "no data"
+    for reservoir in qs.values_list("reservoir", flat=True).distinct():
+        res_qs = qs.filter(reservoir=reservoir)
+        if res_qs.count() < 12:
+            continue
+        df = pd.DataFrame(res_qs.values("date", "current_level"))
+        df["date"] = pd.to_datetime(df["date"])
+        df = df.set_index("date").asfreq("W")
+        df["current_level"] = df["current_level"].interpolate()
+        model = ARIMA(df["current_level"], order=(2,1,2))
+        fit = model.fit()
+        forecast = fit.forecast(steps=4)
+        last_date = res_qs.last().date
+        for i, val in enumerate(forecast):
+            target = last_date + timedelta(weeks=i+1)
+            SouthernWaterReservoirForecast.objects.update_or_create(
+                reservoir=reservoir,
+                date=target,
+                model_type="ARIMA",
+                defaults={"predicted_level": round(float(val),2)},
+            )
+    return "arima"
+
+
+@shared_task
+def generate_southern_lstm_forecast():
+    from datetime import timedelta
+    from ml.lstm_model import train_lstm
+    qs = SouthernWaterReservoirLevel.objects.order_by("reservoir", "date")
+    if not qs.exists():
+        return "no data"
+    for reservoir in qs.values_list("reservoir", flat=True).distinct():
+        res_qs = qs.filter(reservoir=reservoir)
+        if res_qs.count() < 30:
+            continue
+        df = pd.DataFrame(res_qs.values("date", "current_level"))
+        preds = train_lstm(df)
+        last_date = res_qs.last().date
+        for i, val in enumerate(preds):
+            target = last_date + timedelta(weeks=i+1)
+            SouthernWaterReservoirForecast.objects.update_or_create(
+                reservoir=reservoir,
+                date=target,
+                model_type="LSTM",
+                defaults={"predicted_level": round(float(val),2)},
+            )
+    return "lstm"
+
+
+@shared_task
+def monthly_southernwater_predictions():
+    fetch_southern_water_levels.delay()
+    generate_southern_arima_forecast.delay()
+    generate_southern_lstm_forecast.delay()
+    return "scheduled"

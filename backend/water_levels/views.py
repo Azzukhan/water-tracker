@@ -11,6 +11,8 @@ from .models import (
     YorkshireWaterReport,
     YorkshireWaterPrediction,
     YorkshireReservoirData,
+    SouthernWaterReservoirLevel,
+    SouthernWaterReservoirForecast,
 )
 from .serializers import (
     ScottishWaterAverageLevelSerializer,
@@ -20,6 +22,8 @@ from .serializers import (
     YorkshireWaterReportSerializer,
     YorkshireWaterPredictionSerializer,
     YorkshireReservoirSerializer,
+    SouthernWaterReservoirLevelSerializer,
+    SouthernWaterForecastSerializer,
 )
 
 
@@ -87,3 +91,24 @@ class YorkshireReservoirDataViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = YorkshireReservoirData.objects.order_by('-report_date')
     serializer_class = YorkshireReservoirSerializer
     pagination_class = None
+
+class SouthernWaterReservoirLevelViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = SouthernWaterReservoirLevel.objects.all()
+    serializer_class = SouthernWaterReservoirLevelSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["reservoir", "date"]
+    pagination_class = None
+
+
+class SouthernWaterForecastAPIView(generics.ListAPIView):
+    serializer_class = SouthernWaterForecastSerializer
+    pagination_class = None
+
+    def get_queryset(self):
+        reservoir = self.kwargs.get("reservoir")
+        model_type = self.kwargs.get("model", "ARIMA").upper()
+        return (
+            SouthernWaterReservoirForecast.objects.filter(
+                reservoir=reservoir, model_type=model_type
+            ).order_by("date")
+        )
