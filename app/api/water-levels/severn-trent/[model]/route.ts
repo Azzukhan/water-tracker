@@ -2,9 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { model: string } }
+  context: { params: { model: string } }
 ) {
   try {
+    const { params } = context
     const backendUrl = process.env.BACKEND_URL || 'http://127.0.0.1:8000'
     const model = params.model || 'ARIMA'
     const res = await fetch(
