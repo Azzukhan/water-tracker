@@ -33,20 +33,20 @@ const filterByPeriod = (data: ChartPoint[], period: string): ChartPoint[] => {
 
   let days = 30;
   switch (period) {
-    case "1m":
-      days = 30;
+    case "4m":
+      days = 120;
       break;
-    case "3m":
-      days = 90;
-      break;
-    case "6m":
-      days = 180;
+    case "8m":
+      days = 240;
       break;
     case "1y":
-      days = 365;
+      days = 265;
       break;
     case "2y":
       days = 730;
+      break;
+    case "4y":
+      days = 1460;
       break;
   }
 
@@ -124,11 +124,11 @@ export function YorkshireHistoryChart() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="1m">1 Month</SelectItem>
-                <SelectItem value="3m">3 Months</SelectItem>
-                <SelectItem value="6m">6 Months</SelectItem>
+                <SelectItem value="4m">4 Month</SelectItem>
+                <SelectItem value="8m">8 Months</SelectItem>
                 <SelectItem value="1y">1 Year</SelectItem>
-                <SelectItem value="2y">2 Years</SelectItem>
+                <SelectItem value="2y">2 Year</SelectItem>
+                <SelectItem value="4y">4 Years</SelectItem>
               </SelectContent>
             </Select>
 
