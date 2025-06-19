@@ -45,9 +45,11 @@ interface ChartPoint {
 const filterByPeriod = (data: ChartPoint[], period: string): ChartPoint[] => {
   if (!data.length) return [];
 
-  let months = 2;
-  if (period === "3m") months = 3;
-  else if (period === "4m") months = 4;
+  // real months of historical data to display before forecast begins
+  let realMonths = 3; // default corresponds to 9 month view (3 real + 6 forecast)
+  if (period === "12m") realMonths = 6;
+  else if (period === "15m") realMonths = 9;
+  else if (period === "18m") realMonths = 12;
 
   let lastRealDate = new Date(data[data.length - 1].date);
   for (let i = data.length - 1; i >= 0; i--) {
@@ -57,13 +59,14 @@ const filterByPeriod = (data: ChartPoint[], period: string): ChartPoint[] => {
     }
   }
   const start = new Date(lastRealDate);
-  start.setMonth(start.getMonth() - (months - 1));
+  start.setMonth(start.getMonth() - realMonths);
   return data.filter((d) => new Date(d.date) >= start);
 };
 
 export function SouthernLSTMChart({ reservoir }: { reservoir: string }) {
   const [allData, setAllData] = useState<ChartPoint[]>([]);
-  const [period, setPeriod] = useState("2m");
+  // default to 9 month view (3 months real + 6 months forecast)
+  const [period, setPeriod] = useState("9m");
   const [avgPrediction, setAvgPrediction] = useState(0);
   const [trend, setTrend] = useState(0);
   const [showUncertainty, setShowUncertainty] = useState(true);
@@ -141,9 +144,10 @@ export function SouthernLSTMChart({ reservoir }: { reservoir: string }) {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="2m">2 Months</SelectItem>
-                <SelectItem value="3m">3 Months</SelectItem>
-                <SelectItem value="4m">4 Months</SelectItem>
+                <SelectItem value="9m">9 Months</SelectItem>
+                <SelectItem value="12m">12 Months</SelectItem>
+                <SelectItem value="15m">15 Months</SelectItem>
+                <SelectItem value="18m">18 Months</SelectItem>
               </SelectContent>
             </Select>
             <Button
