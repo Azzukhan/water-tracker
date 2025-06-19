@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Grid, List, MapPin, Search } from "lucide-react";
+import { Grid, List, MapPin, Map, Search } from "lucide-react";
 
 interface ReservoirSelectorProps {
   selectedReservoir: string;
@@ -51,7 +51,7 @@ export function SouthernWaterReservoirSelector({
   onSelect,
 }: ReservoirSelectorProps) {
   const [reservoirs, setReservoirs] = useState<Reservoir[]>([]);
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [viewMode, setViewMode] = useState<"grid" | "list" | "map">("grid");
   const [filter, setFilter] = useState("");
   const [postcode, setPostcode] = useState("");
 
@@ -128,6 +128,14 @@ export function SouthernWaterReservoirSelector({
               >
                 <List className="h-4 w-4" />
               </Button>
+              <Button
+                variant={viewMode === "map" ? "secondary" : "ghost"}
+                size="sm"
+                onClick={() => setViewMode("map")}
+                className="text-white hover:bg-white/20"
+              >
+                <Map className="h-4 w-4" />
+              </Button>
             </div>
           </div>
         </CardHeader>
@@ -176,7 +184,7 @@ export function SouthernWaterReservoirSelector({
               </Button>
             ))}
           </div>
-          {viewMode === "grid" ? (
+          {viewMode === "grid" && (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               {filtered.map((r) => (
                 <div
@@ -208,7 +216,9 @@ export function SouthernWaterReservoirSelector({
                 </div>
               ))}
             </div>
-          ) : (
+          )}
+
+          {viewMode === "list" && (
             <div className="space-y-3">
               {filtered.map((r) => (
                 <div
@@ -242,6 +252,30 @@ export function SouthernWaterReservoirSelector({
                   </div>
                 </div>
               ))}
+            </div>
+          )}
+
+          {viewMode === "map" && (
+            <div className="bg-gray-100 rounded-lg p-8 text-center">
+              <Map className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Interactive Map View</h3>
+              <p className="text-gray-600 mb-4">Click on reservoirs to view detailed water level information</p>
+              <div className="bg-white rounded-lg p-6 shadow-sm">
+                <div className="text-sm text-gray-500 mb-4">Map visualization would be integrated here</div>
+                <div className="grid grid-cols-3 gap-2">
+                  {filtered.slice(0, 9).map((r) => (
+                    <div
+                      key={r.id}
+                      className={`p-2 rounded text-xs cursor-pointer transition-colors ${
+                        selectedReservoir === r.id ? "bg-blue-600 text-white" : "bg-gray-200 hover:bg-gray-300"
+                      }`}
+                      onClick={() => onSelect(r.id)}
+                    >
+                      {r.name.split(" ")[0]}
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           )}
         </CardContent>
