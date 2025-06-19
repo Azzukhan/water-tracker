@@ -207,7 +207,8 @@ def fetch_southern_water_levels():
         df = df.reset_index(drop=True)
         name = reservoir_names[i]
         for j, row in df.iterrows():
-            date = pd.to_datetime(row["date"]).date()
+            date_str = row["date"].replace(",", "").strip()
+            date = pd.to_datetime(date_str, dayfirst=True).date()
             current = row["actual"]
             avg = row["average"]
             diff = round(current - avg, 2)
