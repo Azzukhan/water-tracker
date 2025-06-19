@@ -54,6 +54,13 @@ export function SouthernWaterReservoirSelector({
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [filter, setFilter] = useState("");
 
+  const quickFilters = [
+    "Bewl",
+    "Darwell",
+    "Powdermill",
+    "Weir Wood",
+  ];
+
   useEffect(() => {
     fetch("/api/water-levels/southernwater")
       .then((res) => res.json())
@@ -130,6 +137,23 @@ export function SouthernWaterReservoirSelector({
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
             />
+          </div>
+          <div className="mb-6 flex flex-wrap gap-2 items-center">
+            <span className="text-sm text-gray-600 mr-2">Quick filters:</span>
+            {quickFilters.map((name) => (
+              <Button
+                key={name}
+                variant={filter === name ? "secondary" : "outline"}
+                size="sm"
+                className="text-xs"
+                onClick={() => {
+                  setFilter(name)
+                  onSelect(name)
+                }}
+              >
+                {name}
+              </Button>
+            ))}
           </div>
           {viewMode === "grid" ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
