@@ -60,7 +60,7 @@ export function SouthernWaterCurrent({ reservoir }: { reservoir: string }) {
             const step = changeAmt / 6
             return Array.from({ length: 7 }, (_, i) => +(start + step * i).toFixed(2))
           }
-          const trendValues = generateTrend(latest.percentage, change)
+          const trendValues = generateTrend(latest.current_level, change)
           setSparklineData(trendValues.map((v) => ({ value: v })))
           if (trendValues.length) {
             const highest = Math.max(...trendValues)
@@ -75,7 +75,7 @@ export function SouthernWaterCurrent({ reservoir }: { reservoir: string }) {
         setSparklineData([])
         setStats({ highest: 0, lowest: 0, average: 0 })
       })
-  }, [])
+  }, [reservoir])
 
   const trendMeta = calculateTrendMeta(
     currentData?.currentLevel ?? 0,
