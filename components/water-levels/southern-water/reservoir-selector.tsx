@@ -57,9 +57,8 @@ export function SouthernWaterReservoirSelector({
   const [filter, setFilter] = useState("");
 
   useEffect(() => {
-    Promise.all([
-    fetch("/api/water-levels/southernwater").then((res) => res.json())
-    ])
+    fetch("/api/water-levels/southernwater")
+      .then((res) => res.json())
       .then((data: any[]) => {
         if (Array.isArray(data)) {
           const latestByReservoir: Record<string, any> = {};
