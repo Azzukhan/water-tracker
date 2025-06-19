@@ -221,12 +221,24 @@ export function SouthernWaterReservoirSelector({
                   onClick={() => onSelect(r.id)}
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-semibold text-gray-900">
-                      {r.name}
-                    </span>
-                    <Badge className={`${getStatusColor(r.status)} text-white`}>
-                      {r.level}%
-                    </Badge>
+                    <div className="flex items-center space-x-4">
+                      <MapPin className="h-5 w-5 text-gray-400" />
+                      <div>
+                        <h3 className="font-semibold text-gray-900">{r.name}</h3>
+                        <p className="text-sm text-gray-600">Status: {r.status}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-4">
+                      <div className="text-right">
+                        <div className="text-2xl font-bold text-gray-900">{r.level}%</div>
+                        <div className="w-20 bg-gray-200 rounded-full h-2">
+                          <div className="bg-blue-600 h-2 rounded-full" style={{ width: `${r.level}%` }}></div>
+                        </div>
+                      </div>
+                      <Badge className={`${getStatusColor(r.status)} text-white`}>
+                        {r.status}
+                      </Badge>
+                    </div>
                   </div>
                 </div>
               ))}
