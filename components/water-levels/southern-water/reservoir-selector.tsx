@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Grid, List } from "lucide-react";
+import { Grid, List, MapPin, Search } from "lucide-react";
 
 interface ReservoirSelectorProps {
   selectedReservoir: string;
@@ -53,6 +53,7 @@ export function SouthernWaterReservoirSelector({
   const [reservoirs, setReservoirs] = useState<Reservoir[]>([]);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [filter, setFilter] = useState("");
+  const [postcode, setPostcode] = useState("");
 
   const quickFilters = [
     "Bewl",
@@ -131,6 +132,26 @@ export function SouthernWaterReservoirSelector({
           </div>
         </CardHeader>
         <CardContent className="p-6">
+          <div className="mb-6">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex-1">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Input
+                    placeholder="Enter postcode (e.g., SW1A 1AA)"
+                    value={postcode}
+                    onChange={(e) => setPostcode(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+              <Button className="bg-blue-600 hover:bg-blue-700">
+                <MapPin className="h-4 w-4 mr-2" />
+                Find My Area
+              </Button>
+            </div>
+          </div>
+
           <div className="mb-6">
             <Input
               placeholder="Filter reservoirs"
