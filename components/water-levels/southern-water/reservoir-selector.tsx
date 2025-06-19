@@ -5,19 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Grid, List, MapPin, Map, Search } from "lucide-react";
-
-interface ReservoirSelectorProps {
-  selectedReservoir: string;
-  onSelect: (name: string) => void;
-}
 
 interface Reservoir {
   id: string;
@@ -51,7 +40,12 @@ const getStatusColor = (status: string) => {
     default:
       return "bg-gray-600";
   }
-};
+}
+
+interface ReservoirSelectorProps {
+  selectedReservoir: string;
+  onSelect: (name: string) => void;
+}
 
 export function SouthernWaterReservoirSelector({
   selectedReservoir,
@@ -63,8 +57,9 @@ export function SouthernWaterReservoirSelector({
   const [filter, setFilter] = useState("");
 
   useEffect(() => {
-    fetch("/api/water-levels/southernwater")
-      .then((res) => res.json())
+    Promise.all([
+    fetch("/api/water-levels/southernwater").then((res) => res.json())
+    ])
       .then((data: any[]) => {
         if (Array.isArray(data)) {
           const latestByReservoir: Record<string, any> = {};
