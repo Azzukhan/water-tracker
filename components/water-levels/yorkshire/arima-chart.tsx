@@ -30,7 +30,7 @@ interface HistoricalEntry {
 
 interface ForecastEntry {
   date: string;
-  predicted_percentage: number;
+  predicted_reservoir_percent: number;
 }
 
 interface ChartPoint {
@@ -45,9 +45,9 @@ interface ChartPoint {
 const filterByPeriod = (data: ChartPoint[], period: string): ChartPoint[] => {
   if (!data.length) return [];
 
-  let months = 2;
-  if (period === "3m") months = 3;
-  else if (period === "4m") months = 4;
+  let months = 4;
+  if (period === "8m") months = 8;
+  else if (period === "12m") months = 12;
 
   let lastRealDate = new Date(data[data.length - 1].date);
   for (let i = data.length - 1; i >= 0; i--) {
@@ -100,9 +100,9 @@ export function YorkshireARIMAChart() {
             map.set(e.date, {
               date: e.date,
               actual: null,
-              predicted: e.predicted_percentage,
-              upperBound: Math.min(e.predicted_percentage + 5, 100),
-              lowerBound: Math.max(e.predicted_percentage - 5, 0),
+              predicted: e.predicted_reservoir_percent,
+              upperBound: Math.min(e.predicted_reservoir_percent + 5, 100),
+              lowerBound: Math.max(e.predicted_reservoir_percent - 5, 0),
               displayDate: new Date(e.date).toLocaleDateString("en-GB", {
                 month: "short",
                 day: "numeric",
@@ -116,12 +116,12 @@ export function YorkshireARIMAChart() {
 
           if (filtered.length) {
             const avg =
-              filtered.reduce((s, d) => s + d.predicted_percentage, 0) /
+              filtered.reduce((s, d) => s + d.predicted_reservoir_percent, 0) /
               filtered.length;
             setAvgPrediction(avg);
             const tr =
-              filtered[filtered.length - 1].predicted_percentage -
-              filtered[0].predicted_percentage;
+              filtered[filtered.length - 1].predicted_reservoir_percent -
+              filtered[0].predicted_reservoir_percent;
             setTrend(tr);
           }
         }
@@ -144,9 +144,9 @@ export function YorkshireARIMAChart() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="2m">2 Months</SelectItem>
-                <SelectItem value="3m">3 Months</SelectItem>
-                <SelectItem value="4m">4 Months</SelectItem>
+                <SelectItem value="2m">4 Months</SelectItem>
+                <SelectItem value="8m">8 Months</SelectItem>
+                <SelectItem value="12m">12 Months</SelectItem>
               </SelectContent>
             </Select>
             <Button
