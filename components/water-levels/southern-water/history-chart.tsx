@@ -84,7 +84,7 @@ export function SouthernHistoryChart({ reservoir }: { reservoir: string }) {
     }
 
     fetchData()
-  }, [])
+  }, [reservoir])
 
   const data = useMemo(() => filterByPeriod(allData, period), [allData, period])
 
