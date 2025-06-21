@@ -116,3 +116,19 @@ class ExternalBlogAPIView(APIView):
 
         posts.sort(key=lambda x: x.get("published", ""), reverse=True)
         return Response({"posts": posts})
+
+
+class LocalBlogAPIView(APIView):
+    """Return blog posts from the bundled JSON file."""
+
+    def get(self, request):
+        sample_path = os.path.join(os.path.dirname(__file__), "sample_posts.json")
+        try:
+            with open(sample_path, "r", encoding="utf-8") as fh:
+                data = json.load(fh)
+                posts = data.get("posts", [])
+        except Exception:
+            posts = []
+
+        posts.sort(key=lambda x: x.get("published", ""), reverse=True)
+        return Response({"posts": posts})
