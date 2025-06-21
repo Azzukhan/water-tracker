@@ -44,15 +44,17 @@ By default the backend runs on `http://127.0.0.1:8000`.
 
 ### 2. Frontend
 
-Create a `.env.local` file in the project root (or copy from `.env.example`) and set `BACKEND_URL` to the URL where the Django server is running:
+All Next.js code now resides in the `frontend` directory.
+Create a `.env.local` file inside `frontend` (or copy from `frontend/.env.example`) and set `BACKEND_URL` to the URL where the Django server is running:
 
 ```
 BACKEND_URL=http://localhost:8000
 ```
 
-Then install dependencies and start the Next.js app:
+Then install dependencies and start the Next.js app from within `frontend`:
 
 ```
+cd frontend
 npm install
 npm run dev
 ```
