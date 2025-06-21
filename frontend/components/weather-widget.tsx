@@ -38,7 +38,7 @@ export default function WeatherWidget() {
 
     function fetchWeather(lat: number, lon: number) {
       setLoading(true);
-      fetch(`/api/weather/unified/?latitude=${lat}&longitude=${lon}`)
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/weather/unified/?latitude=${lat}&longitude=${lon}`)
         .then((res) => {
           if (!res.ok) throw new Error("Failed to fetch weather");
           return res.json();

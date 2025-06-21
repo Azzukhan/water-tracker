@@ -59,7 +59,7 @@ export function SouthernHistoryChart({ reservoir }: { reservoir: string }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch(`/api/water-levels/southernwater?reservoir=${reservoir}`)
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/water-levels/southernwater?reservoir=${reservoir}`)
         const json: RawEntry[] = await res.json()
         if (Array.isArray(json)) {
           const sorted = json

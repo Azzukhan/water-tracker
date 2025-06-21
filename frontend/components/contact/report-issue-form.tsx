@@ -38,7 +38,7 @@ export function ReportIssueForm() {
         contact_phone: issueData.contactPhone,
       }
 
-      const res = await fetch("/api/support/issue", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/support/issue`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

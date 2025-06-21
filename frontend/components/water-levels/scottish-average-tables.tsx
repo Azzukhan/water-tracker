@@ -35,7 +35,7 @@ export function ScottishAverageTables() {
   const [filter, setFilter] = useState("")
 
   useEffect(() => {
-    fetch("/api/water-levels/scottish-averages")
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/water-levels/scottish-averages`)
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
@@ -47,7 +47,7 @@ export function ScottishAverageTables() {
       })
       .catch(() => setAverage(null))
 
-    fetch("/api/water-levels/scottish-regions")
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/water-levels/scottish-regions`)
       .then((res) => res.json())
       .then((d) => {
         if (Array.isArray(d)) {

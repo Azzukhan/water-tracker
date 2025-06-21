@@ -55,8 +55,8 @@ export function RegionSelector({ selectedRegion, onSelect }: RegionSelectorProps
 
   useEffect(() => {
     Promise.all([
-      fetch("/api/water-levels/scottish-averages").then((res) => res.json()),
-      fetch("/api/water-levels/scottish-regions").then((res) => res.json()),
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/water-levels/scottish-averages`).then((res) => res.json()),
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/water-levels/scottish-regions`).then((res) => res.json()),
     ])
       .then(([avgData, regionalData]) => {
         const result: Region[] = []

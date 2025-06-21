@@ -9,7 +9,7 @@ export function HeroSection() {
   const [scotlandLevel, setScotlandLevel] = useState<number | null>(null)
 
   useEffect(() => {
-    fetch("/api/water-levels/scottish-averages")
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/water-levels/scottish-averages`)
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {

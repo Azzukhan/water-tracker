@@ -1,6 +1,6 @@
 # UK Water Tracker
 
-This project consists of a Next.js frontend and a Django backend. The frontend fetches data from the backend using the `BACKEND_URL` environment variable.
+This project consists of a Next.js frontend and a Django backend. The frontend fetches data from the backend using the `NEXT_PUBLIC_API_URL` environment variable.
 
 ## Getting Started
 
@@ -45,10 +45,10 @@ By default the backend runs on `http://127.0.0.1:8000`.
 ### 2. Frontend
 
 All Next.js code now resides in the `frontend` directory.
-Create a `.env.local` file inside `frontend` (or copy from `frontend/.env.example`) and set `BACKEND_URL` to the URL where the Django server is running:
+Create a `.env.local` file inside `frontend` (or copy from `frontend/.env.example`) and set `NEXT_PUBLIC_API_URL` to the URL where the Django server is running:
 
 ```
-BACKEND_URL=http://localhost:8000
+NEXT_PUBLIC_API_URL=http://localhost:8000
 ```
 
 Then install dependencies and start the Next.js app from within `frontend`:

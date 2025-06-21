@@ -75,8 +75,8 @@ export function SouthernARIMAChart({ reservoir }: { reservoir: string }) {
     const fetchData = async () => {
       try {
         const [histRes, forecastRes] = await Promise.all([
-          fetch(`/api/water-levels/southernwater?reservoir=${reservoir}`),
-          fetch(`/api/water-levels/southernwater/${reservoir}/ARIMA`),
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/water-levels/southernwater?reservoir=${reservoir}`),
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/water-levels/southernwater/${reservoir}/ARIMA`),
         ]);
         const [histData, forecastData] = await Promise.all([
           histRes.json(),

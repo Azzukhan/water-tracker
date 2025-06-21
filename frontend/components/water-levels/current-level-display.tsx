@@ -65,7 +65,7 @@ export function CurrentLevelDisplay({ region }: CurrentLevelDisplayProps) {
     const fetchData = async () => {
       try {
         if (region === "scotland") {
-          const res = await fetch("/api/water-levels/scottish-averages")
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/water-levels/scottish-averages`)
           const data = await res.json()
           if (Array.isArray(data) && data.length > 0) {
             const first = data.reduce((a: any, b: any) =>
