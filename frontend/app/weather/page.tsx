@@ -203,7 +203,7 @@ export default function WeatherPage() {
     searchTimeout.current = setTimeout(async () => {
       try {
         const response = await fetch(
-          `${API_BASE}/api/weather/geocode?q=${encodeURIComponent(searchQuery)}`
+          `${API_BASE}/api/weather/geocode?query=${encodeURIComponent(searchQuery)}`
         );
         const data = await response.json();
         setSearchResults(data.locations || []);
@@ -354,7 +354,7 @@ export default function WeatherPage() {
                         setSearchError(null);
                         try {
                           const response = await fetch(
-                            `${API_BASE}/api/weather/geocode?q=${encodeURIComponent(searchQuery)}`
+                            `${API_BASE}/api/weather/geocode?query=${encodeURIComponent(searchQuery)}`
                           );
                           const data = await response.json();
                           if (data.locations && data.locations.length > 0) {
@@ -380,7 +380,7 @@ export default function WeatherPage() {
                         setSearchError(null);
                         try {
                           const response = await fetch(
-                            `${API_BASE}/api/weather/geocode?q=${encodeURIComponent(searchQuery)}`
+                            `${API_BASE}/api/weather/geocode?query=${encodeURIComponent(searchQuery)}`
                           );
                           const data = await response.json();
                           if (data.locations && data.locations.length > 0) {
