@@ -1,1 +1,2 @@
-web: gunicorn --chdir backend uk_water_tracker.wsgi:application --bind 0.0.0.0:$PORT
+web: cd backend && gunicorn uk_water_project.wsgi --bind 0.0.0.0:8000
+release: cd frontend && npm install && npm run build && cd ../backend && python manage.py collectstatic --noinput
