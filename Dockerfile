@@ -8,7 +8,7 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 
 COPY backend ./
 
-# 2. Build frontend (React)
+# 2. Build frontend (Next.js)
 FROM node:20 AS frontend
 
 WORKDIR /frontend
@@ -26,7 +26,8 @@ WORKDIR /app
 COPY --from=backend /app /app
 
 # Copy React build into Django staticfiles
-COPY --from=frontend /frontend/build /app/static
+COPY --from=frontend /frontend/.next/static /app/static
+COPY --from=frontend /frontend/public /app/static
 
 # Collect Django static files
 RUN pip install --upgrade pip && pip install -r requirements.txt \
