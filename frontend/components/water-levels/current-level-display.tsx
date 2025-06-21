@@ -96,7 +96,7 @@ export function CurrentLevelDisplay({ region }: CurrentLevelDisplayProps) {
           }
         } else {
           const res = await fetch(
-            `/api/water-levels/scottish-regions?area=${encodeURIComponent(region)}`
+            `${process.env.NEXT_PUBLIC_API_URL}/api/water-levels/scottish-regions?area=${encodeURIComponent(region)}`
           )
           const data = await res.json()
           if (Array.isArray(data) && data.length > 0) {
