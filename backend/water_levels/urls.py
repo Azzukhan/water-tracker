@@ -22,7 +22,15 @@ router.register(r'southernwater-reservoirs', SouthernWaterReservoirLevelViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
+    # Legacy endpoint without the `-reservoirs` suffix
+    path(
+        'southernwater/',
+        SouthernWaterReservoirLevelViewSet.as_view({'get': 'list'}),
+        name='southernwater-data',
+    ),
     path('severn-trent-reservoirs/', SevernTrentReservoirLevelListView.as_view(), name='severn-trent-data'),
+    # Legacy endpoint without the `-reservoirs` suffix
+    path('severn-trent/', SevernTrentReservoirLevelListView.as_view(), name='severn-trent-data-legacy'),
     path('severn-trent/forecast/', SevernTrentForecastAPIView.as_view(), name='severn-trent-forecast'),
     path('severn-trent/<str:model>/', SevernTrentForecastAPIView.as_view(), name='severn-trent-forecast-model'),
     path('southernwater/<str:reservoir>/<str:model>/', SouthernWaterForecastAPIView.as_view(), name='southernwater-forecast-model'),
