@@ -1,0 +1,23 @@
+[phases.setup]
+nixPkgs = [
+  "python312",
+  "python312Packages.pip",
+  "nodejs_20",
+  "git"
+]
+
+[phases.install]
+cmds = [
+  "python3 -m ensurepip --upgrade",
+  "python3 -m pip install --upgrade pip",
+  "python3 -m pip install -r backend/requirements.txt",
+  "cd frontend && npm install --legacy-peer-deps && npm run build"
+]
+
+[phases.build]
+cmds = [
+  "cd backend && python3 manage.py collectstatic --noinput"
+]
+
+[start]
+cmd = "cd backend && gunicorn uk_water_tracker.wsgi --bind 0.0.0.0:8000"
