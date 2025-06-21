@@ -3,14 +3,14 @@ nixPkgs = ["python312", "nodejs_20"]
 
 [phases.build]
 cmds = [
-  "pip install --upgrade pip",
-  "pip install -r backend/requirements.txt",
+  "pip3 install --upgrade pip3",
+  "pip3 install -r backend/requirements.txt",
   "cd frontend && npm install --legacy-peer-deps && npm run build"
 ]
 
 [phases.release]
 cmds = [
-  "cd backend && python manage.py collectstatic --noinput"
+  "cd backend && python3 manage.py collectstatic --noinput"
 ]
 
 [start]
