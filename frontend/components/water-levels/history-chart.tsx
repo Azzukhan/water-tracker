@@ -58,7 +58,7 @@ export function HistoryChart() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/water-levels/severn-trent`)
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/water-levels/severn-trent-reservoirs/`)
         const json: RawEntry[] = await res.json()
         if (Array.isArray(json)) {
           const sorted = json

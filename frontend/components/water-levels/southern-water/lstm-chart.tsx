@@ -76,7 +76,7 @@ export function SouthernLSTMChart({ reservoir }: { reservoir: string }) {
     const fetchData = async () => {
       try {
         const [histRes, forecastRes] = await Promise.all([
-          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/water-levels/southernwater?reservoir=${reservoir}`),
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/water-levels/southernwater-reservoirs/?reservoir=${reservoir}`),
           fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/water-levels/southernwater/${reservoir}/LSTM`),
         ]);
         const [histData, forecastData] = await Promise.all([

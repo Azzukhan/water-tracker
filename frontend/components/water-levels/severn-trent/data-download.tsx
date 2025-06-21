@@ -20,7 +20,7 @@ export function SevernTrentDownload() {
   const [data, setData] = useState<Entry[]>([])
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/water-levels/severn-trent`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/water-levels/severn-trent-reservoirs/`)
       .then((res) => res.json())
       .then((d) => Array.isArray(d) && setData(d))
       .catch(() => setData([]))
