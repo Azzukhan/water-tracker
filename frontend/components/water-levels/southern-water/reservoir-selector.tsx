@@ -57,7 +57,7 @@ export function SouthernWaterReservoirSelector({
   const [filter, setFilter] = useState("");
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/water-levels/southernwater`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/water-levels/southernwater-reservoirs/`)
       .then((res) => res.json())
       .then((data: any[]) => {
         if (Array.isArray(data)) {
