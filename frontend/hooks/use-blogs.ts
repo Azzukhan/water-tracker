@@ -22,7 +22,7 @@ export function useBlogs(refreshIntervalMs: number = 10 * 60 * 1000) {
     async function load() {
       setLoading(true)
       try {
-        const res = await fetch(`${API_BASE}/api/blog/external`)
+        const res = await fetch(`${API_BASE}/api/blog/sample`)
         if (!res.ok) {
           throw new Error(`Status ${res.status}`)
         }
