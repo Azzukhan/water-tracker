@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import { API_BASE } from "@/lib/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -130,7 +131,7 @@ export default function WeatherPage() {
           const { latitude, longitude } = position.coords;
           try {
             const response = await fetch(
-              `${process.env.NEXT_PUBLIC_API_URL}/api/weather/geocode?latitude=${latitude}&longitude=${longitude}`
+              `${API_BASE}/api/weather/geocode?latitude=${latitude}&longitude=${longitude}`
             );
             const data = await response.json();
             if (data.locations && data.locations.length > 0) {
@@ -202,7 +203,7 @@ export default function WeatherPage() {
     searchTimeout.current = setTimeout(async () => {
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/weather/geocode?q=${encodeURIComponent(searchQuery)}`
+          `${API_BASE}/api/weather/geocode?q=${encodeURIComponent(searchQuery)}`
         );
         const data = await response.json();
         setSearchResults(data.locations || []);
@@ -220,7 +221,7 @@ export default function WeatherPage() {
     setError(null);
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/weather/unified/?latitude=${loc.lat}&longitude=${loc.lon}`
+        `${API_BASE}/api/weather/unified/?latitude=${loc.lat}&longitude=${loc.lon}`
       );
       if (!response.ok) throw new Error("Failed to fetch weather data");
       const data = await response.json();
@@ -353,7 +354,7 @@ export default function WeatherPage() {
                         setSearchError(null);
                         try {
                           const response = await fetch(
-                            `${process.env.NEXT_PUBLIC_API_URL}/api/weather/geocode?q=${encodeURIComponent(searchQuery)}`
+                            `${API_BASE}/api/weather/geocode?q=${encodeURIComponent(searchQuery)}`
                           );
                           const data = await response.json();
                           if (data.locations && data.locations.length > 0) {
@@ -379,7 +380,7 @@ export default function WeatherPage() {
                         setSearchError(null);
                         try {
                           const response = await fetch(
-                            `${process.env.NEXT_PUBLIC_API_URL}/api/weather/geocode?q=${encodeURIComponent(searchQuery)}`
+                            `${API_BASE}/api/weather/geocode?q=${encodeURIComponent(searchQuery)}`
                           );
                           const data = await response.json();
                           if (data.locations && data.locations.length > 0) {
@@ -440,7 +441,7 @@ export default function WeatherPage() {
                         const { latitude, longitude } = position.coords;
                         try {
                           const response = await fetch(
-                            `${process.env.NEXT_PUBLIC_API_URL}/api/weather/geocode?latitude=${latitude}&longitude=${longitude}`
+                            `${API_BASE}/api/weather/geocode?latitude=${latitude}&longitude=${longitude}`
                           );
                           const data = await response.json();
                           if (data.locations && data.locations.length > 0) {

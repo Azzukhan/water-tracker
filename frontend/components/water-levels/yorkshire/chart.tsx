@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { API_BASE } from "@/lib/api";
 import { Line } from "react-chartjs-2";
 import "chart.js/auto";
 
@@ -15,7 +16,7 @@ export function YorkshireReservoirChart() {
   const [dataPoints, setDataPoints] = useState<Entry[]>([]);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/water-levels/yorkshire/reservoir-data/`)
+    fetch(`${API_BASE}/api/water-levels/yorkshire/reservoir-data/`)
       .then((res) => res.json())
       .then((d: Entry[]) => Array.isArray(d) && setDataPoints(d.reverse()))
       .catch(() => setDataPoints([]));

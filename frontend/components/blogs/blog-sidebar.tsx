@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { API_BASE } from "@/lib/api"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -35,7 +36,7 @@ export function BlogSidebar({ posts, onSearch }: BlogSidebarProps) {
   const handleSubscribe = async () => {
     if (!email) return
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/newsletter`, {
+      const res = await fetch(`${API_BASE}/api/newsletter`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
@@ -50,7 +51,7 @@ export function BlogSidebar({ posts, onSearch }: BlogSidebarProps) {
 
   const handleStorySubmit = async () => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/stories`, {
+      const res = await fetch(`${API_BASE}/api/stories`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(story),

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { API_BASE } from "@/lib/api"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -55,8 +56,8 @@ export function RegionSelector({ selectedRegion, onSelect }: RegionSelectorProps
 
   useEffect(() => {
     Promise.all([
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/water-levels/scottish-averages`).then((res) => res.json()),
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/water-levels/scottish-regions`).then((res) => res.json()),
+      fetch(`${API_BASE}/api/water-levels/scottish-averages`).then((res) => res.json()),
+      fetch(`${API_BASE}/api/water-levels/scottish-regions`).then((res) => res.json()),
     ])
       .then(([avgData, regionalData]) => {
         const result: Region[] = []

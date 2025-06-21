@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { API_BASE } from "@/lib/api"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { TrendingUp, TrendingDown, Minus, Droplets, Calendar, AlertTriangle } from "lucide-react"
@@ -65,7 +66,7 @@ export function CurrentLevelDisplay({ region }: CurrentLevelDisplayProps) {
     const fetchData = async () => {
       try {
         if (region === "scotland") {
-          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/water-levels/scottish-averages`)
+          const res = await fetch(`${API_BASE}/api/water-levels/scottish-averages`)
           const data = await res.json()
           if (Array.isArray(data) && data.length > 0) {
             const first = data.reduce((a: any, b: any) =>
@@ -96,7 +97,7 @@ export function CurrentLevelDisplay({ region }: CurrentLevelDisplayProps) {
           }
         } else {
           const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/api/water-levels/scottish-regions?area=${encodeURIComponent(region)}`
+            `${API_BASE}/api/water-levels/scottish-regions?area=${encodeURIComponent(region)}`
           )
           const data = await res.json()
           if (Array.isArray(data) && data.length > 0) {

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { API_BASE } from "@/lib/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -73,8 +74,8 @@ export function YorkshireLSTMChart() {
     const fetchData = async () => {
       try {
         const [histRes, forecastRes] = await Promise.all([
-          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/water-levels/yorkshire/reservoir-data/`),
-          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/water-levels/yorkshire-predictions/`),
+          fetch(`${API_BASE}/api/water-levels/yorkshire/reservoir-data/`),
+          fetch(`${API_BASE}/api/water-levels/yorkshire-predictions/`),
         ]);
         const [histData, forecastData] = await Promise.all([
           histRes.json(),

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { API_BASE } from "@/lib/api"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
@@ -16,7 +17,7 @@ export function QuestionForm({ onSuccess }: { onSuccess?: () => void }) {
     e.preventDefault()
     setLoading(true)
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/support/question`, {
+      const res = await fetch(`${API_BASE}/api/support/question`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),

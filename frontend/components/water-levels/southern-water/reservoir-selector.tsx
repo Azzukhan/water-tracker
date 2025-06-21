@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { API_BASE } from "@/lib/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -57,7 +58,7 @@ export function SouthernWaterReservoirSelector({
   const [filter, setFilter] = useState("");
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/water-levels/southernwater-reservoirs/`)
+    fetch(`${API_BASE}/api/water-levels/southernwater-reservoirs/`)
       .then((res) => res.json())
       .then((data: any[]) => {
         if (Array.isArray(data)) {

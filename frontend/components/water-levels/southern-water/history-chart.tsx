@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
+import { API_BASE } from "@/lib/api"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -59,7 +60,7 @@ export function SouthernHistoryChart({ reservoir }: { reservoir: string }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/water-levels/southernwater-reservoirs/?reservoir=${reservoir}`)
+        const res = await fetch(`${API_BASE}/api/water-levels/southernwater-reservoirs/?reservoir=${reservoir}`)
         const json: RawEntry[] = await res.json()
         if (Array.isArray(json)) {
           const sorted = json

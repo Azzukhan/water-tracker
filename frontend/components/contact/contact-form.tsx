@@ -3,6 +3,7 @@
 import type React from "react"
 
 import { useState } from "react"
+import { API_BASE } from "@/lib/api"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -30,7 +31,7 @@ export function ContactForm() {
     setIsSubmitting(true)
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/support/request`, {
+      const res = await fetch(`${API_BASE}/api/support/request`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

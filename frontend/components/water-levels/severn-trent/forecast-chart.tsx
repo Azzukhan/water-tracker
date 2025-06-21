@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { API_BASE } from "@/lib/api"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   LineChart,
@@ -32,8 +33,8 @@ export function SevernTrentForecastChart() {
     const fetchData = async () => {
       try {
         const [arimaRes, lstmRes] = await Promise.all([
-          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/water-levels/severn-trent/ARIMA`),
-          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/water-levels/severn-trent/LSTM`),
+          fetch(`${API_BASE}/api/water-levels/severn-trent/ARIMA`),
+          fetch(`${API_BASE}/api/water-levels/severn-trent/LSTM`),
         ])
         const [arimaData, lstmData] = await Promise.all([
           arimaRes.json(),
