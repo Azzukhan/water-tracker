@@ -19,3 +19,4 @@ statsmodels==0.14.1
 celery==5.5.3
 tensorflow==2.19.0
 pdfplumber==0.11.7
+cffi>=1.16.0
