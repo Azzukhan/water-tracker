@@ -1,36 +1,36 @@
-# Step 1: Build backend dependencies
-FROM python:3.12-slim as backend
+# 1. Build backend (Python/Django)
+FROM python:3.12-slim AS backend
+
 WORKDIR /app
-COPY backend/requirements.txt ./
+
+COPY backend/requirements.txt .
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
-# Step 2: Copy backend source code
 COPY backend ./
 
-# Step 3: Build React frontend
-FROM node:20 as frontend
+# 2. Build frontend (React)
+FROM node:20 AS frontend
+
 WORKDIR /frontend
 COPY frontend/package*.json ./
 RUN npm install --legacy-peer-deps
 COPY frontend ./
 RUN npm run build
 
-# Step 4: Final image with everything
+# 3. Final stage: Collect everything and run
 FROM python:3.12-slim
+
 WORKDIR /app
 
-# Copy backend and its deps
+# Copy backend code and installed packages
 COPY --from=backend /app /app
 
-# Copy built React frontend to Django staticfiles directory
+# Copy React build into Django staticfiles
 COPY --from=frontend /frontend/build /app/static
 
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
-
-# Collect static files
-RUN pip install --upgrade pip && pip install -r requirements.txt && python manage.py collectstatic --noinput
+# Collect Django static files
+RUN pip install --upgrade pip && pip install -r requirements.txt \
+    && python manage.py collectstatic --noinput
 
 EXPOSE 8000
 
