@@ -8,15 +8,13 @@ nixPkgs = [
 
 [phases.install]
 cmds = [
-  "python3 -m ensurepip --upgrade",
-  "python3 -m pip install --upgrade pip",
-  "python3 -m pip install -r backend/requirements.txt",
-  "cd frontend && npm install --legacy-peer-deps && npm run build"
+  "cd frontend && npm install --legacy-peer-deps && npm run build",
+  "pip install -r backend/requirements.txt"
 ]
 
 [phases.build]
 cmds = [
-  "cd backend && python3 manage.py collectstatic --noinput"
+  "cd backend && python manage.py collectstatic --noinput"
 ]
 
 [start]
