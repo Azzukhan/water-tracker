@@ -1,11 +1,11 @@
 [phases.setup]
-nixPkgs = ["python312", "nodejs_20"]
+nixPkgs = ["python312Full", "nodejs_20"]
 
 [phases.build]
 cmds = [
-  "pip3 install --upgrade pip3",
-  "pip3 install -r backend/requirements.txt",
-  "cd frontend && npm install --legacy-peer-deps && npm run build"
+    "python3 -m pip install --upgrade pip",
+    "python3 -m pip install -r backend/requirements.txt",
+    "cd frontend && npm install --legacy-peer-deps && npm run build"
 ]
 
 [phases.release]
