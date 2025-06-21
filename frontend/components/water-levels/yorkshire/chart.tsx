@@ -15,7 +15,7 @@ export function YorkshireReservoirChart() {
   const [dataPoints, setDataPoints] = useState<Entry[]>([]);
 
   useEffect(() => {
-    fetch("/api/water-levels/yorkshire/reservoir-data/")
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/water-levels/yorkshire/reservoir-data/`)
       .then((res) => res.json())
       .then((d: Entry[]) => Array.isArray(d) && setDataPoints(d.reverse()))
       .catch(() => setDataPoints([]));

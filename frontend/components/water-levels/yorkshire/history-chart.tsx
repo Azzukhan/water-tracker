@@ -66,7 +66,7 @@ export function YorkshireHistoryChart() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch("/api/water-levels/yorkshire/reservoir-data/");
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/water-levels/yorkshire/reservoir-data/`);
         const json: RawEntry[] = await res.json();
         if (Array.isArray(json)) {
           const sorted = json

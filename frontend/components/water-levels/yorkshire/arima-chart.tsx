@@ -73,8 +73,8 @@ export function YorkshireARIMAChart() {
     const fetchData = async () => {
       try {
         const [histRes, forecastRes] = await Promise.all([
-          fetch("/api/water-levels/yorkshire/reservoir-data/"),
-          fetch("/api/water-levels/yorkshire-predictions/"),
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/water-levels/yorkshire/reservoir-data/`),
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/water-levels/yorkshire-predictions/`),
         ]);
         const [histData, forecastData] = await Promise.all([
           histRes.json(),

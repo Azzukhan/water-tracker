@@ -16,7 +16,7 @@ export function QuestionForm({ onSuccess }: { onSuccess?: () => void }) {
     e.preventDefault()
     setLoading(true)
     try {
-      const res = await fetch("/api/support/question", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/support/question`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),

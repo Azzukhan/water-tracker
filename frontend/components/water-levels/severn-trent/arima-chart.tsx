@@ -73,8 +73,8 @@ export function SevernTrentARIMAChart() {
     const fetchData = async () => {
       try {
         const [histRes, forecastRes] = await Promise.all([
-          fetch("/api/water-levels/severn-trent"),
-          fetch("/api/water-levels/severn-trent/ARIMA"),
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/water-levels/severn-trent`),
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/water-levels/severn-trent/ARIMA`),
         ]);
         const [histData, forecastData] = await Promise.all([
           histRes.json(),

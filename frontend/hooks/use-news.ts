@@ -20,10 +20,10 @@ export function useNews(refreshIntervalMs: number = 5 * 60 * 1000) {
       setLoading(true)
       try {
         const [alertsRes, floodsRes, waterRes, gdeltRes] = await Promise.all([
-          fetch("/api/news/alerts"),
-          fetch("/api/news/floods"),
-          fetch("/api/news/water"),
-          fetch("/api/news/gdelt"),
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/news/alerts`),
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/news/floods`),
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/news/water`),
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/news/gdelt`),
         ])
         const alertsData = await alertsRes.json()
         const floodsData = await floodsRes.json()

@@ -35,7 +35,7 @@ export function YorkshireCurrent() {
   const [stats, setStats] = useState({ highest: 0, lowest: 0, average: 0 })
 
   useEffect(() => {
-    fetch("/api/water-levels/yorkshire/reservoir-data/")
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/water-levels/yorkshire/reservoir-data/`)
       .then((res) => res.json())
       .then((d: Entry[]) => {
         if (Array.isArray(d) && d.length > 0) {
