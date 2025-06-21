@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { API_BASE } from "@/lib/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -75,8 +76,8 @@ export function SouthernARIMAChart({ reservoir }: { reservoir: string }) {
     const fetchData = async () => {
       try {
         const [histRes, forecastRes] = await Promise.all([
-          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/water-levels/southernwater-reservoirs/?reservoir=${reservoir}`),
-          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/water-levels/southernwater/${reservoir}/ARIMA`),
+          fetch(`${API_BASE}/api/water-levels/southernwater-reservoirs/?reservoir=${reservoir}`),
+          fetch(`${API_BASE}/api/water-levels/southernwater/${reservoir}/ARIMA`),
         ]);
         const [histData, forecastData] = await Promise.all([
           histRes.json(),

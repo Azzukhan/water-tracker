@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { API_BASE } from "@/lib/api"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, TrendingUp, Shield, Zap } from "lucide-react"
 import Link from "next/link"
@@ -9,7 +10,7 @@ export function HeroSection() {
   const [scotlandLevel, setScotlandLevel] = useState<number | null>(null)
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/water-levels/scottish-averages`)
+    fetch(`${API_BASE}/api/water-levels/scottish-averages`)
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {

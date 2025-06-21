@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { API_BASE } from "@/lib/api"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import {
@@ -20,7 +21,7 @@ export function SevernTrentDownload() {
   const [data, setData] = useState<Entry[]>([])
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/water-levels/severn-trent-reservoirs/`)
+    fetch(`${API_BASE}/api/water-levels/severn-trent-reservoirs/`)
       .then((res) => res.json())
       .then((d) => Array.isArray(d) && setData(d))
       .catch(() => setData([]))

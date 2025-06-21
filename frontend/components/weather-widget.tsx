@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { API_BASE } from "@/lib/api";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -38,7 +39,7 @@ export default function WeatherWidget() {
 
     function fetchWeather(lat: number, lon: number) {
       setLoading(true);
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/weather/unified/?latitude=${lat}&longitude=${lon}`)
+      fetch(`${API_BASE}/api/weather/unified/?latitude=${lat}&longitude=${lon}`)
         .then((res) => {
           if (!res.ok) throw new Error("Failed to fetch weather");
           return res.json();

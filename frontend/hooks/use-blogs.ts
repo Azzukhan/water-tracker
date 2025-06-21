@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { API_BASE } from '@/lib/api'
 
 export interface BlogItem {
   title: string
@@ -21,7 +22,7 @@ export function useBlogs(refreshIntervalMs: number = 10 * 60 * 1000) {
     async function load() {
       setLoading(true)
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/blog/external`)
+        const res = await fetch(`${API_BASE}/api/blog/external`)
         if (!res.ok) {
           throw new Error(`Status ${res.status}`)
         }
