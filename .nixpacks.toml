@@ -1,23 +1,21 @@
 [phases.setup]
 nixPkgs = [
-  "python312",        # Use your version!
-  "nodejs_20",        # Or another Node.js version if needed
+  "python312",
+  "python312Packages.pip",
+  "nodejs_20",
   "git"
 ]
 
 [phases.install]
 cmds = [
-  # Install Python deps
   "python3 -m ensurepip --upgrade",
   "python3 -m pip install --upgrade pip",
   "python3 -m pip install -r backend/requirements.txt",
-  # Install Node deps & build React
   "cd frontend && npm install --legacy-peer-deps && npm run build"
 ]
 
 [phases.build]
 cmds = [
-  # Collect Django static files
   "cd backend && python3 manage.py collectstatic --noinput"
 ]
 
