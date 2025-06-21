@@ -411,9 +411,9 @@ export default function WeatherPage() {
                     {searchResults.length === 0 && !searchLoading ? (
                       <div className="p-2 text-gray-500">No results found.</div>
                     ) : (
-                      searchResults.map((loc) => (
+                      searchResults.map((loc, idx) => (
                         <div
-                          key={`${loc.lat}-${loc.lon}`}
+                          key={`${loc.lat}-${loc.lon}-${idx}`}
                           className="p-2 hover:bg-gray-100 cursor-pointer"
                           onClick={() => {
                             setLocation(loc);
