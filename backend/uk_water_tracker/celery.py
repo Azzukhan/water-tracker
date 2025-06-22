@@ -46,9 +46,11 @@ app.conf.beat_schedule = {
 }
 
 # Configure Celery to use Redis
+broker_url = os.environ.get('CELERY_BROKER_URL', 'redis://localhost:6379/0')
+
 app.conf.update(
-    broker_url='redis://localhost:6379/0',
-    result_backend='redis://localhost:6379/0',
+    broker_url=broker_url,
+    result_backend=os.environ.get('CELERY_RESULT_BACKEND', broker_url),
     broker_transport='redis',
     broker_connection_retry_on_startup=True,
     broker_transport_options={
