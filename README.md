@@ -40,6 +40,25 @@ backend automatically:
 No manual intervention is required as long as the Celery worker and beat
 processes are running.
 
+### Deploying Celery on Railway
+
+To run scheduled tasks in production, provision a Redis instance in
+Railway and expose its URL as `CELERY_BROKER_URL`. Then create a
+separate service using the same repository with the start command:
+
+```
+celery -A uk_water_tracker worker --loglevel=info
+```
+
+If you also need periodic tasks, add another service with:
+
+```
+celery -A uk_water_tracker beat --loglevel=info
+```
+
+Make sure all environment variables used by Django are copied to the new
+service so the worker can access the project settings.
+
 By default the backend runs on `http://127.0.0.1:8000`.
 
 ### 2. Frontend
