@@ -1,5 +1,7 @@
 from rest_framework import viewsets, generics
 from django_filters.rest_framework import DjangoFilterBackend
+
+from .filters import GroundwaterPredictionFilter
 from rest_framework.response import Response
 
 from .utils import fetch_scottish_water_resource_levels
@@ -138,7 +140,7 @@ class GroundwaterPredictionViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = GroundwaterPrediction.objects.all().order_by("date")
     serializer_class = GroundwaterPredictionSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ["region", "model_type", "date"]
+    filterset_class = GroundwaterPredictionFilter
     pagination_class = None
 
 
