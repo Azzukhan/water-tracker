@@ -13,6 +13,8 @@ from .models import (
     YorkshireReservoirData,
     SouthernWaterReservoirLevel,
     SouthernWaterReservoirForecast,
+    GroundwaterStation,
+    GroundwaterLevel,
 )
 from .serializers import (
     ScottishWaterAverageLevelSerializer,
@@ -24,6 +26,8 @@ from .serializers import (
     YorkshireReservoirSerializer,
     SouthernWaterReservoirLevelSerializer,
     SouthernWaterForecastSerializer,
+    GroundwaterStationSerializer,
+    GroundwaterLevelSerializer,
 )
 
 
@@ -112,3 +116,30 @@ class SouthernWaterForecastAPIView(generics.ListAPIView):
                 reservoir=reservoir, model_type=model_type
             ).order_by("date")
         )
+
+
+class GroundwaterStationViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = GroundwaterStation.objects.all()
+    serializer_class = GroundwaterStationSerializer
+    pagination_class = None
+
+
+class GroundwaterRegionSummaryAPIView(generics.GenericAPIView):
+    """Return average latest groundwater level by region and overall."""
+    serializer_class = GroundwaterLevelSerializer
+
+    def get(self, request, *args, **kwargs):
+        data = {}
+        overall_values = []
+        for region in ["north", "south", "east", "west"]:
+            values = []
+            stations = GroundwaterStation.objects.filter(region=region)
+            for s in stations:
+                level = s.levels.order_by("-date").first()
+                if level:
+                    values.append(level.value)
+                    overall_values.append(level.value)
+            if values:
+                data[region] = sum(values) / len(values)
+        overall = sum(overall_values) / len(overall_values) if overall_values else None
+        return Response({"overall": overall, "regions": data})
