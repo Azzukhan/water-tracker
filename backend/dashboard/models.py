@@ -14,6 +14,9 @@ class DashboardStat(models.Model):
     def __str__(self):
         return f"{self.name}: {self.value} {self.unit}"
 
+    class Meta:
+        ordering = ["-timestamp"]
+
 class AnalyticsData(models.Model):
     """Model for storing time-series analytics data"""
     metric = models.CharField(max_length=100)
