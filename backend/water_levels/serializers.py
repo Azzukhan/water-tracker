@@ -11,6 +11,7 @@ from .models import (
     SouthernWaterReservoirForecast,
     GroundwaterStation,
     GroundwaterLevel,
+    GroundwaterPrediction,
 )
 
 
@@ -89,4 +90,10 @@ class GroundwaterStationSerializer(serializers.ModelSerializer):
 class GroundwaterLevelSerializer(serializers.ModelSerializer):
     class Meta:
         model = GroundwaterLevel
+        fields = "__all__"
+
+
+class GroundwaterPredictionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GroundwaterPrediction
         fields = "__all__"

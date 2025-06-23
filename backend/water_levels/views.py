@@ -15,6 +15,7 @@ from .models import (
     SouthernWaterReservoirForecast,
     GroundwaterStation,
     GroundwaterLevel,
+    GroundwaterPrediction,
 )
 from .serializers import (
     ScottishWaterAverageLevelSerializer,
@@ -28,6 +29,7 @@ from .serializers import (
     SouthernWaterForecastSerializer,
     GroundwaterStationSerializer,
     GroundwaterLevelSerializer,
+    GroundwaterPredictionSerializer,
 )
 
 
@@ -129,6 +131,14 @@ class GroundwaterLevelViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = GroundwaterLevelSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["station", "station__station_id", "date"]
+    pagination_class = None
+
+
+class GroundwaterPredictionViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = GroundwaterPrediction.objects.all().order_by("date")
+    serializer_class = GroundwaterPredictionSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["region", "model_type", "date"]
     pagination_class = None
 
 

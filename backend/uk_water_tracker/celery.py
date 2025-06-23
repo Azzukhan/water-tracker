@@ -47,6 +47,10 @@ app.conf.beat_schedule = {
         'task': 'water_levels.tasks.fetch_current_groundwater_levels',
         'schedule': crontab(minute='*/15'),
     },
+    'weekly-groundwater-predictions': {
+        'task': 'water_levels.tasks.train_groundwater_prediction_models',
+        'schedule': crontab(day_of_week=0, hour=3, minute=0),
+    },
 }
 
 # Configure Celery to use Redis

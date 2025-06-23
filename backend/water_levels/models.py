@@ -187,3 +187,16 @@ class GroundwaterLevel(models.Model):
         unique_together = ("station", "date")
 
 
+class GroundwaterPrediction(models.Model):
+    """Predicted groundwater levels for each UK region."""
+
+    region = models.CharField(max_length=10)
+    model_type = models.CharField(max_length=20)
+    date = models.DateField()
+    predicted_value = models.FloatField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("region", "model_type", "date")
+
+
