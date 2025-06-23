@@ -373,7 +373,7 @@ def generate_southern_regression_forecast():
         period = 52
         df["sin_t"] = np.sin(2 * np.pi * df["t"] / period)
         df["cos_t"] = np.cos(2 * np.pi * df["t"] / period)
-        X = sm.add_constant(df[["t", "sin_t", "cos_t"]])
+        X = sm.add_constant(df[["t", "sin_t", "cos_t"]], has_constant="add")
         model = sm.OLS(df["current_level"], X).fit()
 
         last_t = df["t"].iloc[-1]
@@ -382,7 +382,10 @@ def generate_southern_regression_forecast():
             t = last_t + i
             sin_t = np.sin(2 * np.pi * t / period)
             cos_t = np.cos(2 * np.pi * t / period)
-            X_new = sm.add_constant(pd.DataFrame({"t": [t], "sin_t": [sin_t], "cos_t": [cos_t]}))
+            X_new = sm.add_constant(
+                pd.DataFrame({"t": [t], "sin_t": [sin_t], "cos_t": [cos_t]}),
+                has_constant="add",
+            )
             pred = model.predict(X_new)[0]
             target = last_date + timedelta(weeks=i)
             SouthernWaterReservoirForecast.objects.update_or_create(
