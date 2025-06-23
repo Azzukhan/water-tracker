@@ -1,5 +1,6 @@
 import datetime
 import pytest
+from django.utils import timezone
 from weather.models import WeatherStation, CurrentWeather, HourlyForecast, DailyForecast
 
 @pytest.mark.django_db
@@ -18,7 +19,7 @@ def test_current_weather_list(api_client):
 @pytest.mark.django_db
 def test_hourly_forecast_list(api_client):
     station = WeatherStation.objects.create(name='S3', location='Loc', latitude=1.0, longitude=1.0)
-    HourlyForecast.objects.create(station=station, time=datetime.datetime.now(), temperature=10)
+    HourlyForecast.objects.create(station=station, time=timezone.now(), temperature=10)
     resp = api_client.get('/api/weather/hourly/')
     assert resp.status_code == 200
 

@@ -11,6 +11,7 @@ class BlogCategory(models.Model):
     
     class Meta:
         verbose_name_plural = "Blog Categories"
+        ordering = ["name"]
     
     def __str__(self):
         return self.name

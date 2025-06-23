@@ -278,7 +278,7 @@ class GDELTNewsAPIView(APIView):
 
     def get(self, request):
         query = request.query_params.get("q", self.DEFAULT_QUERY)
-        cache_key = f"gdelt_news_{query}"
+        cache_key = f"gdelt_news_{requests.utils.quote(query)}"
         cached = cache.get(cache_key)
         if cached:
             return Response(cached)
