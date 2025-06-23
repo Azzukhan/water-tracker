@@ -599,7 +599,7 @@ def train_groundwater_prediction_models():
                 region=region,
                 model_type="ARIMA",
                 date=pred_date,
-                defaults={"predicted_value": float(arima_preds[i])},
+                defaults={"predicted_value": float(arima_preds.iloc[i])},
             )
             GroundwaterPrediction.objects.update_or_create(
                 region=region,
