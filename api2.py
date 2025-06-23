@@ -9,7 +9,7 @@ stations_url = "https://environment.data.gov.uk/hydrology/id/stations"
 readings_url = "https://environment.data.gov.uk/hydrology/data/readings"
 
 # Date range for 2 years
-current_date = datetime(2025, 6, 20, 1, 15)  # Current time: 01:15 AM BST, June 20, 2025
+current_date = datetime(2025, 6, 23, 13, 14)  # Current time: 01:14 PM BST, June 23, 2025
 start_date = (current_date - timedelta(days=2*365)).strftime("%Y-%m-%d")
 end_date = current_date.strftime("%Y-%m-%d")
 
@@ -37,26 +37,29 @@ try:
             measure_id = measure["@id"]
             readings_params = {
                 "measure": measure_id,
-                "startdate": start_date,
-                "enddate": end_date,
-                "_limit": 10000  # Adjust if pagination is needed
+                "_limit": 10000  # Fetch all available data
             }
             readings_response = requests.get(readings_url, params=readings_params, headers={"Accept": "application/json"}, timeout=10)
             readings_response.raise_for_status()
 
             # Parse the JSON response
-            readings_data = readings_response.json()
-            items = readings_data.get("items", [])
-
-            # Process all reliable measurements in the date range
-            for item in items:
-                if item.get("value") is not None and item.get("quality") != "Missing":
-                    all_readings.append({
-                        "station_name": station_name,
-                        "date": item.get("dateTime") or item.get("date"),
-                        "value": item["value"],
-                        "quality": item.get("quality", "Unknown")
-                    })
+            try:
+                readings_data = readings_response.json()
+                items = readings_data.get("items", [])
+                if items:
+                    for item in items:
+                        item_date = datetime.strptime(item.get("dateTime") or item.get("date"), "%Y-%m-%dT%H:%M:%S" if "T" in (item.get("dateTime") or "") else "%Y-%m-%d")
+                        if start_date <= item_date.strftime("%Y-%m-%d") <= end_date and item.get("value") is not None and item.get("quality") != "Missing":
+                            all_readings.append({
+                                "station_name": station_name,
+                                "date": item.get("dateTime") or item.get("date"),
+                                "value": item["value"],
+                                "quality": item.get("quality", "Unknown")
+                            })
+                else:
+                    print(f"No data for measure {measure_id}")
+            except json.JSONDecodeError:
+                print(f"JSON parsing error for measure {measure_id}: {readings_response.text[:200]}...")
 
     # Sort by date for consistency
     all_readings.sort(key=lambda x: datetime.strptime(x["date"], "%Y-%m-%dT%H:%M:%S" if "T" in x["date"] else "%Y-%m-%d"))
