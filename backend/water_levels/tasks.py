@@ -11,6 +11,8 @@ from statsmodels.tsa.arima.model import ARIMA
 from celery import shared_task
 from datetime import timedelta
 from ml.lstm_model import train_lstm
+from sklearn.linear_model import LinearRegression
+import numpy as np
 
 if __package__ in (None, ""):
     # Allow running this module as a standalone script for quick testing
@@ -530,3 +532,85 @@ def fetch_current_groundwater_levels():
                     date=dt,
                     defaults={"value": value, "quality": latest.get("quality", "Unknown")},
                 )
+
+
+def get_region_timeseries(region):
+    station_ids = GroundwaterStation.objects.filter(region=region).values_list("id", flat=True)
+    levels = GroundwaterLevel.objects.filter(station_id__in=station_ids).values("date", "value")
+    df = pd.DataFrame(list(levels))
+    if df.empty:
+        return pd.Series(dtype=float)
+    df["date"] = pd.to_datetime(df["date"])
+    df = df.groupby("date")["value"].mean().asfreq("W")
+    return df.sort_index()
+
+
+def predict_arima(df):
+    model = ARIMA(df, order=(2, 1, 2))
+    fitted = model.fit()
+    return fitted.forecast(steps=16)
+
+
+def predict_regression(df):
+    series = df.dropna().reset_index()
+    series["t"] = np.arange(len(series))
+    period = 52
+    X = np.column_stack(
+        [
+            np.ones(len(series)),
+            series["t"],
+            np.sin(2 * np.pi * series["t"] / period),
+            np.cos(2 * np.pi * series["t"] / period),
+        ]
+    )
+    model = LinearRegression().fit(X, series["value"])
+    preds = []
+    last_t = series["t"].iloc[-1]
+    for i in range(1, 17):
+        t = last_t + i
+        xt = np.array([[1, t, np.sin(2 * np.pi * t / period), np.cos(2 * np.pi * t / period)]])
+        preds.append(model.predict(xt)[0])
+    return preds
+
+
+def predict_lstm(df):
+    lstm_df = df.dropna().reset_index().rename(columns={"value": "percentage"})
+    return train_lstm(lstm_df, steps=16)
+
+
+@shared_task
+def train_groundwater_prediction_models():
+    from .models import GroundwaterPrediction
+
+    for region in ["north", "south", "east", "west"]:
+        series = get_region_timeseries(region)
+        if len(series.dropna()) < 32:
+            continue
+
+        last_date = series.index[-1]
+
+        arima_preds = predict_arima(series)
+        lstm_preds = predict_lstm(series)
+        reg_preds = predict_regression(series)
+
+        for i in range(16):
+            pred_date = last_date + timedelta(weeks=i + 1)
+            GroundwaterPrediction.objects.update_or_create(
+                region=region,
+                model_type="ARIMA",
+                date=pred_date,
+                defaults={"predicted_value": float(arima_preds[i])},
+            )
+            GroundwaterPrediction.objects.update_or_create(
+                region=region,
+                model_type="LSTM",
+                date=pred_date,
+                defaults={"predicted_value": float(lstm_preds[i])},
+            )
+            GroundwaterPrediction.objects.update_or_create(
+                region=region,
+                model_type="REGRESSION",
+                date=pred_date,
+                defaults={"predicted_value": float(reg_preds[i])},
+            )
+

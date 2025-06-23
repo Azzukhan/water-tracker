@@ -11,6 +11,7 @@ from .models import (
     SouthernWaterReservoirLevel,
     GroundwaterStation,
     GroundwaterLevel,
+    GroundwaterPrediction,
 )
 
 
@@ -56,3 +57,4 @@ admin.site.register(SouthernWaterReservoirLevel)
 admin.site.register(SouthernWaterReservoirForecast)
 admin.site.register(GroundwaterStation)
 admin.site.register(GroundwaterLevel)
+admin.site.register(GroundwaterPrediction)
