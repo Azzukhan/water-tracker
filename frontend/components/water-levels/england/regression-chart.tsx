@@ -115,11 +115,9 @@ export function EnglandRegressionChart({ region }: { region: string }) {
       }
     };
     fetchData();
-    if (region === "north") {
-      fetchStationNames("north").then(setStations).catch(() => setStations([]));
-    } else {
-      setStations([]);
-    }
+    fetchStationNames(region)
+      .then(setStations)
+      .catch(() => setStations([]));
   }, [region]);
 
   return (
@@ -228,9 +226,11 @@ export function EnglandRegressionChart({ region }: { region: string }) {
             </div>
           </div>
         )}
-        {region === "north" && stations.length > 0 && (
+        {stations.length > 0 && (
           <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-            <h4 className="font-semibold mb-2">Stations in North Region</h4>
+            <h4 className="font-semibold mb-2">
+              Stations in {region.charAt(0).toUpperCase() + region.slice(1)} Region
+            </h4>
             <ul className="list-disc list-inside text-sm text-gray-700">
               {stations.map((s) => (
                 <li key={s}>{s}</li>
