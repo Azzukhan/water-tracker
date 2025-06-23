@@ -124,6 +124,14 @@ class GroundwaterStationViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = None
 
 
+class GroundwaterLevelViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = GroundwaterLevel.objects.all().order_by("-date")
+    serializer_class = GroundwaterLevelSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["station", "station__station_id", "date"]
+    pagination_class = None
+
+
 class GroundwaterRegionSummaryAPIView(generics.GenericAPIView):
     """Return average latest groundwater level by region and overall."""
     serializer_class = GroundwaterLevelSerializer

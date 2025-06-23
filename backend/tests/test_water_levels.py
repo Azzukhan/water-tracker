@@ -74,3 +74,11 @@ def test_groundwater_region_summary(api_client):
     GroundwaterLevel.objects.create(station=station, date=datetime.date(2024,1,1), value=10.0)
     resp = api_client.get('/api/water-levels/groundwater/summary/')
     assert resp.status_code == 200
+
+
+@pytest.mark.django_db
+def test_groundwater_levels_list(api_client):
+    station = GroundwaterStation.objects.create(station_id='s1', name='S1', region='north')
+    GroundwaterLevel.objects.create(station=station, date=datetime.date(2024,1,1), value=10.0)
+    resp = api_client.get('/api/water-levels/groundwater-levels/')
+    assert resp.status_code == 200
