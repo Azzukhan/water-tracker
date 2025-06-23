@@ -546,8 +546,11 @@ def get_region_timeseries(region):
 
 
 def predict_arima(df):
-    model = ARIMA(df, order=(2, 1, 2))
-    fitted = model.fit()
+    """Return 16-week ARIMA forecast, suppressing convergence warnings."""
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore", category=UserWarning)
+        model = ARIMA(df, order=(2, 1, 2))
+        fitted = model.fit()
     return fitted.forecast(steps=16)
 
 
@@ -613,4 +616,4 @@ def train_groundwater_prediction_models():
                 date=pred_date,
                 defaults={"predicted_value": float(reg_preds[i])},
             )
-
+    return "predictions updated"
