@@ -161,3 +161,16 @@ def fetch_scottish_water_history(limit: int = 5000, rate_limit: int = 2) -> int:
         time.sleep(rate_limit)
 
     return total_records
+
+
+def get_region(lat, lon):
+    """Determine coarse UK region based on latitude and longitude."""
+    if lat >= 53:
+        return "north"
+    elif lat <= 51:
+        return "south"
+    elif lon < -1:
+        return "west"
+    else:
+        return "east"
+

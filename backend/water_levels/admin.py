@@ -9,6 +9,8 @@ from .models import (
     YorkshireReservoirData,
     SouthernWaterReservoirForecast,
     SouthernWaterReservoirLevel,
+    GroundwaterStation,
+    GroundwaterLevel,
 )
 
 
@@ -52,3 +54,5 @@ admin.site.register(YorkshireWaterPrediction)
 admin.site.register(YorkshireReservoirData)
 admin.site.register(SouthernWaterReservoirLevel)
 admin.site.register(SouthernWaterReservoirForecast)
+admin.site.register(GroundwaterStation)
+admin.site.register(GroundwaterLevel)
