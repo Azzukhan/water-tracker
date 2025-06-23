@@ -56,7 +56,14 @@ class SevernTrentReservoirForecast(models.Model):
 
     date = models.DateField()
     predicted_percentage = models.FloatField()
-    model_type = models.CharField(max_length=10, choices=(("ARIMA", "ARIMA"), ("LSTM", "LSTM")))
+    model_type = models.CharField(
+        max_length=10,
+        choices=(
+            ("ARIMA", "ARIMA"),
+            ("LSTM", "LSTM"),
+            ("REGRESSION", "REGRESSION"),
+        ),
+    )
 
     class Meta:
         unique_together = ("date", "model_type")
@@ -87,7 +94,14 @@ class YorkshireWaterPrediction(models.Model):
     date = models.DateField()
     predicted_reservoir_percent = models.FloatField()
     predicted_demand_mld = models.FloatField()
-    model_type = models.CharField(max_length=10, choices=(("ARIMA", "ARIMA"), ("LSTM", "LSTM")))
+    model_type = models.CharField(
+        max_length=10,
+        choices=(
+            ("ARIMA", "ARIMA"),
+            ("LSTM", "LSTM"),
+            ("REGRESSION", "REGRESSION"),
+        ),
+    )
 
     class Meta:
         unique_together = ("date", "model_type")
@@ -136,7 +150,14 @@ class SouthernWaterReservoirForecast(models.Model):
     reservoir = models.CharField(max_length=50)
     date = models.DateField()
     predicted_level = models.FloatField()
-    model_type = models.CharField(max_length=10, choices=(("ARIMA", "ARIMA"), ("LSTM", "LSTM")))
+    model_type = models.CharField(
+        max_length=10,
+        choices=(
+            ("ARIMA", "ARIMA"),
+            ("LSTM", "LSTM"),
+            ("REGRESSION", "REGRESSION"),
+        ),
+    )
 
     class Meta:
         unique_together = ("reservoir", "date", "model_type")
