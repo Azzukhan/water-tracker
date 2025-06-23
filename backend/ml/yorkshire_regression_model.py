@@ -30,7 +30,10 @@ def generate_regression_forecast() -> None:
         t = last_t + i
         sin_t = np.sin(2 * np.pi * t / period)
         cos_t = np.cos(2 * np.pi * t / period)
-        X_new = sm.add_constant(pd.DataFrame({"t": [t], "sin_t": [sin_t], "cos_t": [cos_t]}))
+        X_new = sm.add_constant(
+            pd.DataFrame({"t": [t], "sin_t": [sin_t], "cos_t": [cos_t]}),
+            has_constant="add",
+        )
         pred = model.predict(X_new)[0]
         target_date = last_date + relativedelta(months=i)
         YorkshireWaterPrediction.objects.update_or_create(
