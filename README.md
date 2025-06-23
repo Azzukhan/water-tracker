@@ -80,3 +80,18 @@ npm run dev
 
 The frontend will be available at `http://localhost:3000`.
 For more details, visit [ukwatertracker.co.uk](https://ukwatertracker.co.uk).
+
+### 3. Running Tests
+
+To execute the backend test suite with **pytest**:
+
+```bash
+cd backend
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+pip install pytest pytest-django
+pytest
+```
+
+`pytest` will automatically apply migrations and run all tests defined in `backend/tests`.
