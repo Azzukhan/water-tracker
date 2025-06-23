@@ -4,6 +4,7 @@ import { YorkshireCurrent } from "@/components/water-levels/yorkshire/current";
 import { YorkshireReservoirChart } from "@/components/water-levels/yorkshire/chart";
 import { YorkshireARIMAChart } from "@/components/water-levels/yorkshire/arima-chart";
 import { YorkshireLSTMChart } from "@/components/water-levels/yorkshire/lstm-chart";
+import { YorkshireRegressionChart } from "@/components/water-levels/yorkshire/regression-chart";
 import { YorkshireHistoryChart } from "@/components/water-levels/yorkshire/history-chart";
 
 export default function YorkshirePage() {
@@ -21,6 +22,7 @@ export default function YorkshirePage() {
       <div className="space-y-6">
         <YorkshireARIMAChart />
         <YorkshireLSTMChart />
+        <YorkshireRegressionChart />
       </div>
     </div>
   );

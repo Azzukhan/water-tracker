@@ -11,15 +11,18 @@ import { SevernTrentDownload } from "@/components/water-levels/severn-trent/data
 import { SevernTrentCurrent } from "@/components/water-levels/severn-trent/current";
 import { SevernTrentARIMAChart } from "@/components/water-levels/severn-trent/arima-chart";
 import { SevernTrentLSTMChart } from "@/components/water-levels/severn-trent/lstm-chart";
+import { SevernTrentRegressionChart } from "@/components/water-levels/severn-trent/regression-chart";
 import { YorkshireCurrent } from "@/components/water-levels/yorkshire/current";
 import { YorkshireHistoryChart } from "@/components/water-levels/yorkshire/history-chart";
 import { YorkshireARIMAChart } from "@/components/water-levels/yorkshire/arima-chart";
 import { YorkshireLSTMChart } from "@/components/water-levels/yorkshire/lstm-chart";
+import { YorkshireRegressionChart } from "@/components/water-levels/yorkshire/regression-chart";
 import { SouthernWaterReservoirSelector } from "@/components/water-levels/southern-water/reservoir-selector";
 import { SouthernWaterCurrent } from "@/components/water-levels/southern-water/current";
 import { SouthernHistoryChart } from "@/components/water-levels/southern-water/history-chart";
 import { SouthernARIMAChart } from "@/components/water-levels/southern-water/arima-chart";
 import { SouthernLSTMChart } from "@/components/water-levels/southern-water/lstm-chart";
+import { SouthernRegressionChart } from "@/components/water-levels/southern-water/regression-chart";
 import { Button } from "@/components/ui/button";
 
 export default function WaterLevelsPage() {
@@ -98,6 +101,7 @@ export default function WaterLevelsPage() {
           <div className="space-y-6">
             <YorkshireARIMAChart />
             <YorkshireLSTMChart />
+            <YorkshireRegressionChart />
           </div>
         </>
       ) : agency === "southern_water" ? (
@@ -111,6 +115,7 @@ export default function WaterLevelsPage() {
           <div className="space-y-6">
             <SouthernARIMAChart reservoir={southernReservoir} />
             <SouthernLSTMChart reservoir={southernReservoir} />
+            <SouthernRegressionChart reservoir={southernReservoir} />
           </div>
         </>
       ) : (
@@ -120,6 +125,7 @@ export default function WaterLevelsPage() {
           <div className="space-y-6">
             <SevernTrentARIMAChart />
             <SevernTrentLSTMChart />
+            <SevernTrentRegressionChart />
           </div>
           <SevernTrentDownload />
         </>

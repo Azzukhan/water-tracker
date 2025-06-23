@@ -150,9 +150,52 @@ def generate_lstm_forecast():
 
 
 @shared_task
+def generate_regression_forecast():
+    """Generate simple sin/cos regression forecast for Severn Trent."""
+    from .models import SevernTrentReservoirLevel, SevernTrentReservoirForecast
+    import pandas as pd
+    import numpy as np
+    import statsmodels.api as sm
+    from datetime import timedelta
+
+    qs = SevernTrentReservoirLevel.objects.order_by("date")
+    if qs.count() < 12:
+        return "Insufficient data"
+
+    df = pd.DataFrame(qs.values("date", "percentage"))
+    df["date"] = pd.to_datetime(df["date"])
+    df = df.set_index("date").asfreq("W-MON")
+    df["percentage"] = df["percentage"].interpolate()
+
+    df["t"] = np.arange(len(df))
+    period = 52
+    df["sin_t"] = np.sin(2 * np.pi * df["t"] / period)
+    df["cos_t"] = np.cos(2 * np.pi * df["t"] / period)
+    X = sm.add_constant(df[["t", "sin_t", "cos_t"]])
+    model = sm.OLS(df["percentage"], X).fit()
+
+    last_t = df["t"].iloc[-1]
+    last_date = qs.last().date
+    for i in range(1, 5):
+        t = last_t + i
+        sin_t = np.sin(2 * np.pi * t / period)
+        cos_t = np.cos(2 * np.pi * t / period)
+        X_new = sm.add_constant(pd.DataFrame({"t": [t], "sin_t": [sin_t], "cos_t": [cos_t]}))
+        pred = model.predict(X_new)[0]
+        target = last_date + timedelta(weeks=i)
+        SevernTrentReservoirForecast.objects.update_or_create(
+            date=target,
+            model_type="REGRESSION",
+            defaults={"predicted_percentage": round(float(pred), 2)},
+        )
+    return "REGRESSION forecast complete"
+
+
+@shared_task
 def weekly_severn_trent_predictions():
     generate_arima_forecast.delay()
     generate_lstm_forecast.delay()
+    generate_regression_forecast.delay()
     return "scheduled"
 
 
@@ -166,15 +209,26 @@ def generate_yorkshire_arima_forecast():
 
 
 @shared_task
+def generate_yorkshire_regression_forecast():
+    """Generate regression-based forecast for Yorkshire Water."""
+    from ml.yorkshire_regression_model import generate_regression_forecast as _gen
+
+    _gen()
+    return "REGRESSION forecast complete"
+
+
+@shared_task
 def fetch_yorkshire_water_reports():
     from .scraper.yorkshire_pdf_scraper import scrape_site
     from ml.yorkshire_lstm_model import train_and_predict_yorkshire
     from ml.yorkshire_arima_model import generate_arima_forecast as _gen_arima
+    from ml.yorkshire_regression_model import generate_regression_forecast as _gen_reg
 
     inserted = scrape_site()
     if inserted:
         train_and_predict_yorkshire()
         _gen_arima()
+        _gen_reg()
     return "done"
 
 @shared_task
@@ -182,9 +236,11 @@ def run_yorkshire_lstm_prediction_task():
     """Generate monthly Yorkshire predictions using both models."""
     from ml.yorkshire_lstm_model import train_and_predict_yorkshire
     from ml.yorkshire_arima_model import generate_arima_forecast as _gen_arima
+    from ml.yorkshire_regression_model import generate_regression_forecast as _gen_reg
 
     train_and_predict_yorkshire()
     _gen_arima()
+    _gen_reg()
     return "predictions generated"
 
 @shared_task
@@ -291,6 +347,53 @@ def generate_southern_arima_forecast():
     return "arima"
 
 
+@shared_task
+def generate_southern_regression_forecast():
+    """Generate regression-based forecasts for Southern Water reservoirs."""
+    import pandas as pd
+    import numpy as np
+    import statsmodels.api as sm
+    qs = SouthernWaterReservoirLevel.objects.order_by("reservoir", "date")
+    if not qs.exists():
+        return "no data"
+
+    for reservoir in qs.values_list("reservoir", flat=True).distinct():
+        res_qs = qs.filter(reservoir=reservoir)
+        if res_qs.count() < 12:
+            continue
+
+        df = pd.DataFrame(res_qs.values("date", "current_level"))
+        df["date"] = pd.to_datetime(df["date"])
+        df = df.set_index("date").sort_index().resample("W").ffill()
+        if df["current_level"].isnull().all():
+            continue
+
+        df["current_level"] = df["current_level"].interpolate()
+        df["t"] = np.arange(len(df))
+        period = 52
+        df["sin_t"] = np.sin(2 * np.pi * df["t"] / period)
+        df["cos_t"] = np.cos(2 * np.pi * df["t"] / period)
+        X = sm.add_constant(df[["t", "sin_t", "cos_t"]])
+        model = sm.OLS(df["current_level"], X).fit()
+
+        last_t = df["t"].iloc[-1]
+        last_date = df.index[-1].date()
+        for i in range(1, 25):
+            t = last_t + i
+            sin_t = np.sin(2 * np.pi * t / period)
+            cos_t = np.cos(2 * np.pi * t / period)
+            X_new = sm.add_constant(pd.DataFrame({"t": [t], "sin_t": [sin_t], "cos_t": [cos_t]}))
+            pred = model.predict(X_new)[0]
+            target = last_date + timedelta(weeks=i)
+            SouthernWaterReservoirForecast.objects.update_or_create(
+                reservoir=reservoir,
+                date=target,
+                model_type="REGRESSION",
+                defaults={"predicted_level": round(float(pred), 2)},
+            )
+    return "regression"
+
+
 
 @shared_task
 def generate_southern_lstm_forecast():
@@ -329,4 +432,5 @@ def monthly_southernwater_predictions():
     fetch_southern_water_levels.delay()
     generate_southern_arima_forecast.delay()
     generate_southern_lstm_forecast.delay()
+    generate_southern_regression_forecast.delay()
     return "scheduled"
