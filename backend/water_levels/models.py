@@ -200,3 +200,18 @@ class GroundwaterPrediction(models.Model):
         unique_together = ("region", "model_type", "date")
 
 
+class GroundwaterPredictionAccuracy(models.Model):
+    """Store accuracy of groundwater predictions once actuals are available."""
+
+    region = models.CharField(max_length=10)
+    date = models.DateField()
+    model_type = models.CharField(max_length=20)
+    predicted_value = models.FloatField()
+    actual_value = models.FloatField(null=True, blank=True)
+    percentage_error = models.FloatField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("region", "model_type", "date")
+
+

@@ -13,6 +13,7 @@ from .views import (
     GroundwaterStationViewSet,
     GroundwaterLevelViewSet,
     GroundwaterPredictionViewSet,
+    GroundwaterPredictionAccuracyViewSet,
     GroundwaterRegionSummaryAPIView,
 )
 
@@ -26,6 +27,7 @@ router.register(r'southernwater-reservoirs', SouthernWaterReservoirLevelViewSet)
 router.register(r'groundwater-stations', GroundwaterStationViewSet)
 router.register(r'groundwater-levels', GroundwaterLevelViewSet)
 router.register(r'groundwater-predictions', GroundwaterPredictionViewSet)
+router.register(r'groundwater-prediction-accuracy', GroundwaterPredictionAccuracyViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),

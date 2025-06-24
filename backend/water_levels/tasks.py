@@ -617,3 +617,41 @@ def train_groundwater_prediction_models():
                 defaults={"predicted_value": float(reg_preds[i])},
             )
     return "predictions updated"
+
+
+@shared_task
+def calculate_prediction_accuracy():
+    """Compare predictions with actual groundwater levels and store accuracy."""
+    from django.db.models import Avg
+    from .models import (
+        GroundwaterPrediction,
+        GroundwaterLevel,
+        GroundwaterPredictionAccuracy,
+    )
+
+    today = datetime.today().date()
+
+    predictions = GroundwaterPrediction.objects.filter(date__lte=today)
+    for pred in predictions:
+        actual = GroundwaterLevel.objects.filter(
+            station__region=pred.region, date=pred.date
+        ).aggregate(avg_value=Avg("value"))
+
+        actual_value = actual["avg_value"]
+        if actual_value is not None:
+            error = abs((actual_value - pred.predicted_value) / actual_value) * 100
+            GroundwaterPredictionAccuracy.objects.update_or_create(
+                region=pred.region,
+                date=pred.date,
+                model_type=pred.model_type,
+                defaults={
+                    "predicted_value": pred.predicted_value,
+                    "actual_value": actual_value,
+                    "percentage_error": round(error, 2),
+                },
+            )
+        else:
+            print(
+                f"Actual data not available for {pred.region} {pred.date} ({pred.model_type})"
+            )
+    return "accuracy updated"

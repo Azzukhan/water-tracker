@@ -13,6 +13,7 @@ from water_levels.models import (
     GroundwaterStation,
     GroundwaterLevel,
     GroundwaterPrediction,
+    GroundwaterPredictionAccuracy,
 )
 
 @pytest.mark.django_db
@@ -94,4 +95,14 @@ def test_groundwater_predictions(api_client):
         predicted_value=12.3,
     )
     resp = api_client.get('/api/water-levels/groundwater-predictions/')
+    assert resp.status_code == 200
+
+
+@pytest.mark.django_db
+def test_groundwater_prediction_accuracy(api_client):
+    station = GroundwaterStation.objects.create(station_id='s1', name='S1', region='north')
+    GroundwaterLevel.objects.create(station=station, date=datetime.date(2024,1,8), value=10.0)
+    GroundwaterPrediction.objects.create(region='north', model_type='ARIMA', date=datetime.date(2024,1,8), predicted_value=12.0)
+    GroundwaterPredictionAccuracy.objects.create(region='north', model_type='ARIMA', date=datetime.date(2024,1,8), predicted_value=12.0, actual_value=10.0, percentage_error=20.0)
+    resp = api_client.get('/api/water-levels/groundwater-prediction-accuracy/')
     assert resp.status_code == 200
