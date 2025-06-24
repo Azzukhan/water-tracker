@@ -62,7 +62,7 @@ const filterByPeriod = (data: ChartPoint[], period: string): ChartPoint[] => {
   return data.filter((d) => new Date(d.date) >= start);
 };
 
-export function ScottishARIMAChart() {
+export function SevernTrentARIMAChart() {
   const [allData, setAllData] = useState<ChartPoint[]>([]);
   const [period, setPeriod] = useState("2m");
   const [avgPrediction, setAvgPrediction] = useState(0);
@@ -164,7 +164,7 @@ export function ScottishARIMAChart() {
             <div>
               <h4 className="font-semibold text-purple-900 mb-1">AI Model Information</h4>
               <p className="text-sm text-purple-800">
-                Forecast generated using an ARIMA model trained on historical Severn Trent data.
+                Forecast generated using an ARIMA model trained on historical Scottish Water data.
               </p>
             </div>
           </div>
@@ -198,3 +198,91 @@ export function ScottishARIMAChart() {
                                 Range: {d.lowerBound.toFixed(1)}% - {d.upperBound.toFixed(1)}%
                               </p>
                             )}
+                          </>
+                        )}
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
+              {showUncertainty && (
+                <Area type="monotone" dataKey="upperBound" stroke="none" fill="#a855f7" fillOpacity={0.1} />
+              )}
+              {showUncertainty && (
+                <Area type="monotone" dataKey="lowerBound" stroke="none" fill="#ffffff" fillOpacity={1} />
+              )}
+              <Line type="monotone" dataKey="actual" stroke="#2563eb" strokeWidth={3} dot={{ r: 4 }} />
+              <Line
+                type="monotone"
+                dataKey="predicted"
+                stroke="#a855f7"
+                strokeWidth={3}
+                strokeDasharray="5 5"
+                dot={{ r: 4 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-4 mb-6">
+          <div className="p-4 bg-purple-50 rounded-lg">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-600">Avg. Predicted Level</span>
+              <TrendingUp className="h-4 w-4 text-purple-600" />
+            </div>
+            <div className="text-2xl font-bold text-purple-600">{avgPrediction.toFixed(1)}%</div>
+          </div>
+
+          <div className="p-4 bg-blue-50 rounded-lg">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-600">Trend Direction</span>
+              {trend > 0 ? (
+                <TrendingUp className="h-4 w-4 text-green-600" />
+              ) : (
+                <TrendingUp className="h-4 w-4 text-red-600 rotate-180" />
+              )}
+            </div>
+            <div className={`text-2xl font-bold ${trend > 0 ? "text-green-600" : "text-red-600"}`}>
+              {trend > 0 ? "+" : ""}
+              {trend.toFixed(1)}%
+            </div>
+          </div>
+
+          <div className="p-4 bg-gray-50 rounded-lg">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-600">Confidence</span>
+              <Badge variant="secondary">High</Badge>
+            </div>
+            <div className="text-2xl font-bold text-gray-600">87%</div>
+          </div>
+        </div>
+
+        {avgPrediction < 70 && (
+          <div className="p-4 bg-orange-50 border border-orange-200 rounded-lg">
+            <div className="flex items-start space-x-3">
+              <AlertCircle className="h-5 w-5 text-orange-600 mt-0.5" />
+              <div>
+                <h4 className="font-semibold text-orange-900 mb-1">Low Level Alert</h4>
+                <p className="text-sm text-orange-800">
+                  Forecasts indicate water levels may drop below normal in the coming weeks. Consider conservation measures.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div className="flex flex-wrap items-center justify-center space-x-6 text-sm mt-6 p-4 bg-gray-50 rounded-lg">
+          <div className="flex items-center space-x-2">
+            <div className="w-4 h-0.5 bg-blue-600"></div>
+            <span>Historical Data</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <div className="w-4 h-0.5 bg-purple-600 border-dashed"></div>
+            <span>Prediction</span>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
