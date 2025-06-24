@@ -62,7 +62,7 @@ const filterByPeriod = (data: ChartPoint[], period: string): ChartPoint[] => {
   return data.filter((d) => new Date(d.date) >= start);
 };
 
-export function SevernTrentARIMAChart() {
+export function ScottishARIMAChart() {
   const [allData, setAllData] = useState<ChartPoint[]>([]);
   const [period, setPeriod] = useState("2m");
   const [avgPrediction, setAvgPrediction] = useState(0);
