@@ -11,6 +11,10 @@ import { ScottishHistoryChart } from "@/components/water-levels/scotland/history
 import { ScottishARIMAChart } from "@/components/water-levels/scotland/arima-chart";
 import { ScottishLSTMChart } from "@/components/water-levels/scotland/lstm-chart";
 import { ScottishRegressionChart } from "@/components/water-levels/scotland/regression-chart";
+import { ScottishRegionalHistoryChart } from "@/components/water-levels/scotland/regional/history-chart";
+import { ScottishRegionalARIMAChart } from "@/components/water-levels/scotland/regional/arima-chart";
+import { ScottishRegionalLSTMChart } from "@/components/water-levels/scotland/regional/lstm-chart";
+import { ScottishRegionalRegressionChart } from "@/components/water-levels/scotland/regional/regression-chart";
 import { SevernTrentDownload } from "@/components/water-levels/severn-trent/data-download";
 import { SevernTrentCurrent } from "@/components/water-levels/severn-trent/current";
 import { SevernTrentARIMAChart } from "@/components/water-levels/severn-trent/arima-chart";
@@ -106,12 +110,25 @@ export default function WaterLevelsPage() {
             onSelect={setSelectedRegion}
           />
           <CurrentLevelDisplay region={selectedRegion} />
-          <ScottishHistoryChart />
-          <div className="space-y-6">
-            <ScottishARIMAChart />
-            <ScottishLSTMChart />
-            <ScottishRegressionChart />
-          </div>
+          {selectedRegion === "scotland" ? (
+            <>
+              <ScottishHistoryChart />
+              <div className="space-y-6">
+                <ScottishARIMAChart />
+                <ScottishLSTMChart />
+                <ScottishRegressionChart />
+              </div>
+            </>
+          ) : (
+            <>
+              <ScottishRegionalHistoryChart area={selectedRegion} />
+              <div className="space-y-6">
+                <ScottishRegionalARIMAChart area={selectedRegion} />
+                <ScottishRegionalLSTMChart area={selectedRegion} />
+                <ScottishRegionalRegressionChart area={selectedRegion} />
+              </div>
+            </>
+          )}
           <DataSources />
           <ScottishAverageTables />
         </>

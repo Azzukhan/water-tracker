@@ -16,6 +16,7 @@ from .models import (
     YorkshireReservoirData,
     SouthernWaterReservoirLevel,
     SouthernWaterReservoirForecast,
+    ScottishWaterRegionalForecast,
     GroundwaterStation,
     GroundwaterLevel,
     GroundwaterPrediction,
@@ -36,6 +37,7 @@ from .serializers import (
     YorkshireReservoirSerializer,
     SouthernWaterReservoirLevelSerializer,
     SouthernWaterForecastSerializer,
+    ScottishWaterRegionalForecastSerializer,
     GroundwaterStationSerializer,
     GroundwaterLevelSerializer,
     GroundwaterPredictionSerializer,
@@ -83,10 +85,21 @@ class ScottishWaterForecastAPIView(generics.ListAPIView):
 
     def get_queryset(self):
         model_type = self.kwargs.get("model", "ARIMA").upper()
-        return (
-            ScottishWaterForecast.objects.filter(model_type=model_type)
-            .order_by("date")
+        return ScottishWaterForecast.objects.filter(model_type=model_type).order_by(
+            "date"
         )
+
+
+class ScottishRegionalForecastAPIView(generics.ListAPIView):
+    serializer_class = ScottishWaterRegionalForecastSerializer
+    pagination_class = None
+
+    def get_queryset(self):
+        area = self.kwargs.get("area")
+        model_type = self.kwargs.get("model", "ARIMA").upper()
+        return ScottishWaterRegionalForecast.objects.filter(
+            area=area, model_type=model_type
+        ).order_by("date")
 
 
 class SevernTrentReservoirLevelListView(generics.ListAPIView):
@@ -101,28 +114,28 @@ class SevernTrentForecastAPIView(generics.ListAPIView):
 
     def get_queryset(self):
         model_type = self.kwargs.get("model", "ARIMA").upper()
-        return (
-            SevernTrentReservoirForecast.objects.filter(model_type=model_type)
-            .order_by("date")
-        )
+        return SevernTrentReservoirForecast.objects.filter(
+            model_type=model_type
+        ).order_by("date")
 
 
 class YorkshireWaterReportViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = YorkshireWaterReport.objects.order_by('-report_month')
+    queryset = YorkshireWaterReport.objects.order_by("-report_month")
     serializer_class = YorkshireWaterReportSerializer
     pagination_class = None
 
 
 class YorkshireWaterPredictionViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = YorkshireWaterPrediction.objects.order_by('date')
+    queryset = YorkshireWaterPrediction.objects.order_by("date")
     serializer_class = YorkshireWaterPredictionSerializer
     pagination_class = None
 
 
 class YorkshireReservoirDataViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = YorkshireReservoirData.objects.order_by('-report_date')
+    queryset = YorkshireReservoirData.objects.order_by("-report_date")
     serializer_class = YorkshireReservoirSerializer
     pagination_class = None
+
 
 class SouthernWaterReservoirLevelViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = SouthernWaterReservoirLevel.objects.all()
@@ -139,11 +152,9 @@ class SouthernWaterForecastAPIView(generics.ListAPIView):
     def get_queryset(self):
         reservoir = self.kwargs.get("reservoir")
         model_type = self.kwargs.get("model", "ARIMA").upper()
-        return (
-            SouthernWaterReservoirForecast.objects.filter(
-                reservoir=reservoir, model_type=model_type
-            ).order_by("date")
-        )
+        return SouthernWaterReservoirForecast.objects.filter(
+            reservoir=reservoir, model_type=model_type
+        ).order_by("date")
 
 
 class GroundwaterStationViewSet(viewsets.ReadOnlyModelViewSet):
@@ -210,6 +221,7 @@ class ScottishWaterPredictionAccuracyViewSet(viewsets.ReadOnlyModelViewSet):
 
 class GroundwaterRegionSummaryAPIView(generics.GenericAPIView):
     """Return average latest groundwater level by region and overall."""
+
     serializer_class = GroundwaterLevelSerializer
 
     def get(self, request, *args, **kwargs):
