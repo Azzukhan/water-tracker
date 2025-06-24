@@ -31,7 +31,7 @@ interface HistoricalEntry {
 
 interface ForecastEntry {
   date: string;
-  predicted_percentage: number;
+  predicted_level: number;
 }
 
 interface ChartPoint {
@@ -98,9 +98,9 @@ export function ScottishRegionalARIMAChart({ area }: { area: string }) {
             map.set(e.date, {
               date: e.date,
               actual: null,
-              predicted: e.predicted_percentage,
-              upperBound: Math.min(e.predicted_percentage + 5, 100),
-              lowerBound: Math.max(e.predicted_percentage - 5, 0),
+              predicted: e.predicted_level,
+              upperBound: Math.min(e.predicted_level + 5, 100),
+              lowerBound: Math.max(e.predicted_level - 5, 0),
               displayDate: new Date(e.date).toLocaleDateString("en-GB", {
                 month: "short",
                 day: "numeric",
@@ -114,12 +114,12 @@ export function ScottishRegionalARIMAChart({ area }: { area: string }) {
 
           if (forecastData.length) {
             const avg =
-              forecastData.reduce((s, d) => s + d.predicted_percentage, 0) /
+              forecastData.reduce((s, d) => s + d.predicted_level, 0) /
               forecastData.length;
             setAvgPrediction(avg);
             const tr =
-              forecastData[forecastData.length - 1].predicted_percentage -
-              forecastData[0].predicted_percentage;
+              forecastData[forecastData.length - 1].predicted_level -
+              forecastData[0].predicted_level;
             setTrend(tr);
           }
         }

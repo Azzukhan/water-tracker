@@ -75,7 +75,7 @@ export function ScottishRegressionChart() {
       try {
         const [histRes, forecastRes] = await Promise.all([
           fetch(`${API_BASE}/api/water-levels/scottish-averages/`),
-          fetch(`${API_BASE}/api/water-levels/scottishwater/REGRESSION`),
+          fetch(`${API_BASE}/api/water-levels/scottishwater/REGRESSION/`),
         ]);
         const [histData, forecastData] = await Promise.all([
           histRes.json(),
