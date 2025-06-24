@@ -218,7 +218,7 @@ def generate_scottish_regional_forecasts():
                 area=area,
                 date=target,
                 model_type="ARIMA",
-                defaults={"predicted_value": round(float(arima_preds[i]), 2)},
+                defaults={"predicted_value": round(float(arima_preds.iloc[i]), 2)},
             )
             ScottishWaterPredictionAccuracy.objects.update_or_create(
                 area=area,
@@ -237,7 +237,7 @@ def generate_scottish_regional_forecasts():
                 area=area,
                 date=target,
                 model_type="ARIMA",
-                defaults={"predicted_level": round(float(arima_preds[i]), 2)},
+                defaults={"predicted_level": round(float(arima_preds.iloc[i]), 2)},
             )
             ScottishWaterRegionalForecast.objects.update_or_create(
                 area=area,
