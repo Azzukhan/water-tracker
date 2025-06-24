@@ -75,7 +75,7 @@ export function ScottishARIMAChart() {
       try {
         const [histRes, forecastRes] = await Promise.all([
           fetch(`${API_BASE}/api/water-levels/scottish-averages/`),
-          fetch(`${API_BASE}/api/water-levels/scottishwater/ARIMA`),
+          fetch(`${API_BASE}/api/water-levels/scottishwater/ARIMA/`),
         ]);
         const [histData, forecastData] = await Promise.all([
           histRes.json(),
