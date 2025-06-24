@@ -655,3 +655,117 @@ def calculate_prediction_accuracy():
                 f"Actual data not available for {pred.region} {pred.date} ({pred.model_type})"
             )
     return "accuracy updated"
+
+
+@shared_task
+def calculate_severn_trent_accuracy():
+    """Calculate accuracy of Severn Trent reservoir forecasts."""
+    from .models import (
+        SevernTrentReservoirForecast,
+        SevernTrentReservoirLevel,
+        SevernTrentForecastAccuracy,
+    )
+
+    today = datetime.today().date()
+    forecasts = SevernTrentReservoirForecast.objects.filter(date__lte=today)
+    for f in forecasts:
+        actual = SevernTrentReservoirLevel.objects.filter(date=f.date).first()
+        if actual:
+            error = abs((actual.percentage - f.predicted_percentage) / actual.percentage) * 100
+            SevernTrentForecastAccuracy.objects.update_or_create(
+                date=f.date,
+                model_type=f.model_type,
+                defaults={
+                    "predicted_percentage": f.predicted_percentage,
+                    "actual_percentage": actual.percentage,
+                    "percentage_error": round(error, 2),
+                },
+            )
+        else:
+            print(f"Actual data missing for {f.date} {f.model_type}")
+    return "severn accuracy updated"
+
+
+@shared_task
+def calculate_yorkshire_accuracy():
+    """Calculate accuracy of Yorkshire Water predictions."""
+    from .models import (
+        YorkshireWaterPrediction,
+        YorkshireWaterReport,
+        YorkshireWaterPredictionAccuracy,
+    )
+
+    today = datetime.today().date()
+    preds = YorkshireWaterPrediction.objects.filter(date__lte=today)
+    for p in preds:
+        report = YorkshireWaterReport.objects.filter(report_month=p.date).first()
+        if report:
+            res_error = abs((report.reservoir_percent - p.predicted_reservoir_percent) / report.reservoir_percent) * 100 if report.reservoir_percent else None
+            dem_error = None
+            if report.demand_megalitres_per_day:
+                dem_error = abs((report.demand_megalitres_per_day - p.predicted_demand_mld) / report.demand_megalitres_per_day) * 100
+            YorkshireWaterPredictionAccuracy.objects.update_or_create(
+                date=p.date,
+                model_type=p.model_type,
+                defaults={
+                    "predicted_reservoir_percent": p.predicted_reservoir_percent,
+                    "actual_reservoir_percent": report.reservoir_percent,
+                    "reservoir_error": round(res_error, 2) if res_error is not None else None,
+                    "predicted_demand_mld": p.predicted_demand_mld,
+                    "actual_demand_mld": report.demand_megalitres_per_day,
+                    "demand_error": round(dem_error, 2) if dem_error is not None else None,
+                },
+            )
+        else:
+            print(f"No report for {p.date}")
+    return "yorkshire accuracy updated"
+
+
+@shared_task
+def calculate_southernwater_accuracy():
+    """Calculate accuracy of Southern Water forecasts."""
+    from .models import (
+        SouthernWaterReservoirForecast,
+        SouthernWaterReservoirLevel,
+        SouthernWaterForecastAccuracy,
+    )
+
+    today = datetime.today().date()
+    forecasts = SouthernWaterReservoirForecast.objects.filter(date__lte=today)
+    for f in forecasts:
+        actual = SouthernWaterReservoirLevel.objects.filter(reservoir=f.reservoir, date=f.date).first()
+        if actual:
+            error = abs((actual.current_level - f.predicted_level) / actual.current_level) * 100
+            SouthernWaterForecastAccuracy.objects.update_or_create(
+                reservoir=f.reservoir,
+                date=f.date,
+                model_type=f.model_type,
+                defaults={
+                    "predicted_level": f.predicted_level,
+                    "actual_level": actual.current_level,
+                    "percentage_error": round(error, 2),
+                },
+            )
+        else:
+            print(f"Actual data missing for {f.reservoir} {f.date} {f.model_type}")
+    return "southern accuracy updated"
+
+
+@shared_task
+def calculate_scottishwater_accuracy():
+    """Placeholder accuracy calculation for Scottish Water predictions."""
+    from .models import (
+        ScottishWaterPredictionAccuracy,
+        ScottishWaterRegionalLevel,
+    )
+    # This assumes predictions exist in ScottishWaterPredictionAccuracy model
+    today = datetime.today().date()
+    records = ScottishWaterPredictionAccuracy.objects.filter(date__lte=today)
+    for rec in records:
+        actual = ScottishWaterRegionalLevel.objects.filter(area=rec.area, date=rec.date).first()
+        if actual and rec.predicted_value:
+            error = abs((actual.current - rec.predicted_value) / actual.current) * 100
+            rec.actual_value = actual.current
+            rec.percentage_error = round(error, 2)
+            rec.save()
+    return "scottish accuracy updated"

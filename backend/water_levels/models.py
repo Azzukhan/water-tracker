@@ -215,3 +215,68 @@ class GroundwaterPredictionAccuracy(models.Model):
         unique_together = ("region", "model_type", "date")
 
 
+
+
+class SevernTrentForecastAccuracy(models.Model):
+    """Accuracy of Severn Trent reservoir forecasts."""
+
+    date = models.DateField()
+    model_type = models.CharField(max_length=10)
+    predicted_percentage = models.FloatField()
+    actual_percentage = models.FloatField(null=True, blank=True)
+    percentage_error = models.FloatField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("date", "model_type")
+        ordering = ["-date"]
+
+
+class YorkshireWaterPredictionAccuracy(models.Model):
+    """Accuracy of Yorkshire Water predictions."""
+
+    date = models.DateField()
+    model_type = models.CharField(max_length=10)
+    predicted_reservoir_percent = models.FloatField()
+    actual_reservoir_percent = models.FloatField(null=True, blank=True)
+    reservoir_error = models.FloatField(null=True, blank=True)
+    predicted_demand_mld = models.FloatField()
+    actual_demand_mld = models.FloatField(null=True, blank=True)
+    demand_error = models.FloatField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("date", "model_type")
+        ordering = ["-date"]
+
+
+class SouthernWaterForecastAccuracy(models.Model):
+    """Accuracy of Southern Water reservoir forecasts."""
+
+    reservoir = models.CharField(max_length=50)
+    date = models.DateField()
+    model_type = models.CharField(max_length=10)
+    predicted_level = models.FloatField()
+    actual_level = models.FloatField(null=True, blank=True)
+    percentage_error = models.FloatField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("reservoir", "date", "model_type")
+        ordering = ["reservoir", "-date"]
+
+
+class ScottishWaterPredictionAccuracy(models.Model):
+    """Accuracy of Scottish Water predictions (placeholder)."""
+
+    area = models.CharField(max_length=100)
+    date = models.DateField()
+    model_type = models.CharField(max_length=10)
+    predicted_value = models.FloatField()
+    actual_value = models.FloatField(null=True, blank=True)
+    percentage_error = models.FloatField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("area", "date", "model_type")
+        ordering = ["area", "-date"]

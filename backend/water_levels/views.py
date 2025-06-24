@@ -19,6 +19,10 @@ from .models import (
     GroundwaterLevel,
     GroundwaterPrediction,
     GroundwaterPredictionAccuracy,
+    SevernTrentForecastAccuracy,
+    YorkshireWaterPredictionAccuracy,
+    SouthernWaterForecastAccuracy,
+    ScottishWaterPredictionAccuracy,
 )
 from .serializers import (
     ScottishWaterAverageLevelSerializer,
@@ -34,6 +38,10 @@ from .serializers import (
     GroundwaterLevelSerializer,
     GroundwaterPredictionSerializer,
     GroundwaterPredictionAccuracySerializer,
+    SevernTrentForecastAccuracySerializer,
+    YorkshireWaterPredictionAccuracySerializer,
+    SouthernWaterForecastAccuracySerializer,
+    ScottishWaterPredictionAccuracySerializer,
 )
 
 
@@ -151,6 +159,38 @@ class GroundwaterPredictionAccuracyViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = GroundwaterPredictionAccuracySerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["region", "model_type", "date"]
+    pagination_class = None
+
+
+class SevernTrentForecastAccuracyViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = SevernTrentForecastAccuracy.objects.all().order_by("-date")
+    serializer_class = SevernTrentForecastAccuracySerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["model_type", "date"]
+    pagination_class = None
+
+
+class YorkshireWaterPredictionAccuracyViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = YorkshireWaterPredictionAccuracy.objects.all().order_by("-date")
+    serializer_class = YorkshireWaterPredictionAccuracySerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["model_type", "date"]
+    pagination_class = None
+
+
+class SouthernWaterForecastAccuracyViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = SouthernWaterForecastAccuracy.objects.all().order_by("-date")
+    serializer_class = SouthernWaterForecastAccuracySerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["reservoir", "model_type", "date"]
+    pagination_class = None
+
+
+class ScottishWaterPredictionAccuracyViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = ScottishWaterPredictionAccuracy.objects.all().order_by("-date")
+    serializer_class = ScottishWaterPredictionAccuracySerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["area", "model_type", "date"]
     pagination_class = None
 
 
