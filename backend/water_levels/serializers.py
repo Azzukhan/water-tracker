@@ -13,6 +13,10 @@ from .models import (
     GroundwaterLevel,
     GroundwaterPrediction,
     GroundwaterPredictionAccuracy,
+    SevernTrentForecastAccuracy,
+    YorkshireWaterPredictionAccuracy,
+    SouthernWaterForecastAccuracy,
+    ScottishWaterPredictionAccuracy,
 )
 
 
@@ -103,4 +107,28 @@ class GroundwaterPredictionSerializer(serializers.ModelSerializer):
 class GroundwaterPredictionAccuracySerializer(serializers.ModelSerializer):
     class Meta:
         model = GroundwaterPredictionAccuracy
+        fields = "__all__"
+
+
+class SevernTrentForecastAccuracySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SevernTrentForecastAccuracy
+        fields = "__all__"
+
+
+class YorkshireWaterPredictionAccuracySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = YorkshireWaterPredictionAccuracy
+        fields = "__all__"
+
+
+class SouthernWaterForecastAccuracySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SouthernWaterForecastAccuracy
+        fields = "__all__"
+
+
+class ScottishWaterPredictionAccuracySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ScottishWaterPredictionAccuracy
         fields = "__all__"

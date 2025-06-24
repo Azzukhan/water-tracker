@@ -14,6 +14,10 @@ from .views import (
     GroundwaterLevelViewSet,
     GroundwaterPredictionViewSet,
     GroundwaterPredictionAccuracyViewSet,
+    SevernTrentForecastAccuracyViewSet,
+    YorkshireWaterPredictionAccuracyViewSet,
+    SouthernWaterForecastAccuracyViewSet,
+    ScottishWaterPredictionAccuracyViewSet,
     GroundwaterRegionSummaryAPIView,
 )
 
@@ -28,6 +32,10 @@ router.register(r'groundwater-stations', GroundwaterStationViewSet)
 router.register(r'groundwater-levels', GroundwaterLevelViewSet)
 router.register(r'groundwater-predictions', GroundwaterPredictionViewSet)
 router.register(r'groundwater-prediction-accuracy', GroundwaterPredictionAccuracyViewSet)
+router.register(r'severn-trent-prediction-accuracy', SevernTrentForecastAccuracyViewSet)
+router.register(r'yorkshire-prediction-accuracy', YorkshireWaterPredictionAccuracyViewSet)
+router.register(r'southernwater-prediction-accuracy', SouthernWaterForecastAccuracyViewSet)
+router.register(r'scottishwater-prediction-accuracy', ScottishWaterPredictionAccuracyViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),

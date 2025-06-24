@@ -55,6 +55,22 @@ app.conf.beat_schedule = {
         'task': 'water_levels.tasks.calculate_prediction_accuracy',
         'schedule': crontab(day_of_week=0, hour=6, minute=0),
     },
+    'weekly-severn-trent-accuracy': {
+        'task': 'water_levels.tasks.calculate_severn_trent_accuracy',
+        'schedule': crontab(day_of_week='wed', hour=11, minute=0),
+    },
+    'monthly-yorkshire-accuracy': {
+        'task': 'water_levels.tasks.calculate_yorkshire_accuracy',
+        'schedule': crontab(day_of_month=1, hour=12, minute=0),
+    },
+    'monthly-southernwater-accuracy': {
+        'task': 'water_levels.tasks.calculate_southernwater_accuracy',
+        'schedule': crontab(day_of_month=1, hour=13, minute=0),
+    },
+    'weekly-scottishwater-accuracy': {
+        'task': 'water_levels.tasks.calculate_scottishwater_accuracy',
+        'schedule': crontab(day_of_week='wed', hour=7, minute=0),
+    },
 }
 
 # Configure Celery to use Redis
