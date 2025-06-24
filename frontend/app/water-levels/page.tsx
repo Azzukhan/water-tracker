@@ -7,6 +7,10 @@ import { HistoryChart } from "@/components/water-levels/history-chart";
 import { PredictionChart } from "@/components/water-levels/prediction-chart";
 import { DataSources } from "@/components/water-levels/data-sources";
 import { ScottishAverageTables } from "@/components/water-levels/scottish-average-tables";
+import { ScottishHistoryChart } from "@/components/water-levels/scotland/history-chart";
+import { ScottishARIMAChart } from "@/components/water-levels/scotland/arima-chart";
+import { ScottishLSTMChart } from "@/components/water-levels/scotland/lstm-chart";
+import { ScottishRegressionChart } from "@/components/water-levels/scotland/regression-chart";
 import { SevernTrentDownload } from "@/components/water-levels/severn-trent/data-download";
 import { SevernTrentCurrent } from "@/components/water-levels/severn-trent/current";
 import { SevernTrentARIMAChart } from "@/components/water-levels/severn-trent/arima-chart";
@@ -102,8 +106,12 @@ export default function WaterLevelsPage() {
             onSelect={setSelectedRegion}
           />
           <CurrentLevelDisplay region={selectedRegion} />
-          <HistoryChart />
-          <PredictionChart />
+          <ScottishHistoryChart />
+          <div className="space-y-6">
+            <ScottishARIMAChart />
+            <ScottishLSTMChart />
+            <ScottishRegressionChart />
+          </div>
           <DataSources />
           <ScottishAverageTables />
         </>

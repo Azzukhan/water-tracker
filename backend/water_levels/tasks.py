@@ -46,6 +46,118 @@ def update_scottish_resources():
 
 
 @shared_task
+def generate_scottish_arima_forecast():
+    """Generate 4-week ARIMA forecast for Scottish Water average levels."""
+    from .models import ScottishWaterAverageLevel, ScottishWaterForecast
+    import pandas as pd
+    from statsmodels.tsa.arima.model import ARIMA
+    from datetime import timedelta
+
+    qs = ScottishWaterAverageLevel.objects.order_by("date")
+    if qs.count() < 12:
+        return "Insufficient data"
+
+    df = pd.DataFrame(qs.values("date", "current"))
+    df["date"] = pd.to_datetime(df["date"])
+    df = df.set_index("date").asfreq("W")
+    df["current"] = df["current"].interpolate()
+
+    model = ARIMA(df["current"], order=(2, 1, 2))
+    model_fit = model.fit()
+    forecast = model_fit.forecast(steps=4)
+
+    last_date = qs.last().date
+    for i, value in enumerate(forecast):
+        target_date = last_date + timedelta(weeks=i + 1)
+        ScottishWaterForecast.objects.update_or_create(
+            date=target_date,
+            model_type="ARIMA",
+            defaults={"predicted_percentage": round(float(value), 2)},
+        )
+    return "ARIMA forecast complete"
+
+
+@shared_task
+def generate_scottish_lstm_forecast():
+    """Generate 4-week LSTM forecast for Scottish Water average levels."""
+    from .models import ScottishWaterAverageLevel, ScottishWaterForecast
+    from ml.lstm_model import train_lstm
+    import pandas as pd
+    from datetime import timedelta
+
+    qs = ScottishWaterAverageLevel.objects.order_by("date")
+    if qs.count() < 30:
+        return "Not enough data"
+
+    df = pd.DataFrame(qs.values("date", "current"))
+    df = df.rename(columns={"current": "percentage"})
+    preds = train_lstm(df, steps=4)
+    last_date = qs.last().date
+
+    for i, val in enumerate(preds):
+        target = last_date + timedelta(weeks=i + 1)
+        ScottishWaterForecast.objects.update_or_create(
+            date=target,
+            model_type="LSTM",
+            defaults={"predicted_percentage": round(float(val), 2)},
+        )
+    return "LSTM forecast complete"
+
+
+@shared_task
+def generate_scottish_regression_forecast():
+    """Generate regression-based forecast for Scottish Water average levels."""
+    from .models import ScottishWaterAverageLevel, ScottishWaterForecast
+    import pandas as pd
+    import numpy as np
+    import statsmodels.api as sm
+    from datetime import timedelta
+
+    qs = ScottishWaterAverageLevel.objects.order_by("date")
+    if qs.count() < 12:
+        return "Insufficient data"
+
+    df = pd.DataFrame(qs.values("date", "current"))
+    df["date"] = pd.to_datetime(df["date"])
+    df = df.set_index("date").asfreq("W")
+    df["current"] = df["current"].interpolate()
+
+    df["t"] = np.arange(len(df))
+    period = 52
+    df["sin_t"] = np.sin(2 * np.pi * df["t"] / period)
+    df["cos_t"] = np.cos(2 * np.pi * df["t"] / period)
+    X = sm.add_constant(df[["t", "sin_t", "cos_t"]])
+    model = sm.OLS(df["current"], X).fit()
+
+    last_t = df["t"].iloc[-1]
+    last_date = qs.last().date
+    for i in range(1, 5):
+        t = last_t + i
+        sin_t = np.sin(2 * np.pi * t / period)
+        cos_t = np.cos(2 * np.pi * t / period)
+        X_new = sm.add_constant(
+            pd.DataFrame({"t": [t], "sin_t": [sin_t], "cos_t": [cos_t]}),
+            has_constant="add",
+        )
+        pred = model.predict(X_new)[0]
+        target = last_date + timedelta(weeks=i)
+        ScottishWaterForecast.objects.update_or_create(
+            date=target,
+            model_type="REGRESSION",
+            defaults={"predicted_percentage": round(float(pred), 2)},
+        )
+    return "REGRESSION forecast complete"
+
+
+@shared_task
+def weekly_scottish_predictions():
+    generate_scottish_arima_forecast.delay()
+    generate_scottish_lstm_forecast.delay()
+    generate_scottish_regression_forecast.delay()
+    return "scheduled"
+
+
+@shared_task
 def fetch_severn_trent_reservoir_data():
     """
     Celery task to scrape Severn Trent reservoir level data and save into DB.

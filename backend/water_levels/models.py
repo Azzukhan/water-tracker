@@ -37,6 +37,28 @@ class ScottishWaterRegionalLevel(models.Model):
         return f"{self.area} {self.date} - {self.current}%"
 
 
+class ScottishWaterForecast(models.Model):
+    """Forecasted Scotland-wide average water level."""
+
+    date = models.DateField()
+    predicted_percentage = models.FloatField()
+    model_type = models.CharField(
+        max_length=10,
+        choices=(
+            ("ARIMA", "ARIMA"),
+            ("LSTM", "LSTM"),
+            ("REGRESSION", "REGRESSION"),
+        ),
+    )
+
+    class Meta:
+        unique_together = ("date", "model_type")
+        ordering = ["date"]
+
+    def __str__(self) -> str:  # pragma: no cover - simple representation
+        return f"{self.date} {self.model_type}: {self.predicted_percentage}%"
+
+
 class SevernTrentReservoirLevel(models.Model):
     """Weekly reservoir levels reported by Severn Trent Water."""
 
