@@ -26,7 +26,7 @@ import { Info, TrendingUp, AlertCircle } from "lucide-react";
 
 interface HistoricalEntry {
   date: string;
-  percentage: number;
+  current: number;
 }
 
 interface ForecastEntry {
@@ -86,7 +86,7 @@ export function ScottishRegionalLSTMChart({ area }: { area: string }) {
           histData.forEach((e: HistoricalEntry) => {
             map.set(e.date, {
               date: e.date,
-              actual: e.percentage,
+              actual: e.current,
               predicted: null,
               displayDate: new Date(e.date).toLocaleDateString("en-GB", {
                 month: "short",
