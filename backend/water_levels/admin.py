@@ -17,6 +17,7 @@ from .models import (
     YorkshireWaterPredictionAccuracy,
     SouthernWaterForecastAccuracy,
     ScottishWaterPredictionAccuracy,
+    ScottishWaterForecast,
 )
 
 
@@ -68,3 +69,4 @@ admin.site.register(SevernTrentForecastAccuracy)
 admin.site.register(YorkshireWaterPredictionAccuracy)
 admin.site.register(SouthernWaterForecastAccuracy)
 admin.site.register(ScottishWaterPredictionAccuracy)
+admin.site.register(ScottishWaterForecast)
