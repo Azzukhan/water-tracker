@@ -59,6 +59,29 @@ class ScottishWaterForecast(models.Model):
         return f"{self.date} {self.model_type}: {self.predicted_percentage}%"
 
 
+class ScottishWaterRegionalForecast(models.Model):
+    """Forecasted water levels for each Scottish Water region."""
+
+    area = models.CharField(max_length=100)
+    date = models.DateField()
+    predicted_level = models.FloatField()
+    model_type = models.CharField(
+        max_length=10,
+        choices=(
+            ("ARIMA", "ARIMA"),
+            ("LSTM", "LSTM"),
+            ("REGRESSION", "REGRESSION"),
+        ),
+    )
+
+    class Meta:
+        unique_together = ("area", "date", "model_type")
+        ordering = ["area", "date"]
+
+    def __str__(self) -> str:  # pragma: no cover - simple representation
+        return f"{self.area} {self.date} {self.model_type}: {self.predicted_level}%"
+
+
 class SevernTrentReservoirLevel(models.Model):
     """Weekly reservoir levels reported by Severn Trent Water."""
 
@@ -147,6 +170,7 @@ class YorkshireReservoirData(models.Model):
     def __str__(self) -> str:  # pragma: no cover
         return f"{self.report_date}: {self.reservoir_level}%"
 
+
 class SouthernWaterReservoirLevel(models.Model):
     """Weekly reservoir levels for Southern Water reservoirs."""
 
@@ -186,7 +210,10 @@ class SouthernWaterReservoirForecast(models.Model):
         ordering = ["reservoir", "date"]
 
     def __str__(self) -> str:  # pragma: no cover
-        return f"{self.reservoir} {self.date} {self.model_type}: {self.predicted_level}%"
+        return (
+            f"{self.reservoir} {self.date} {self.model_type}: {self.predicted_level}%"
+        )
+
 
 class GroundwaterStation(models.Model):
     station_id = models.CharField(max_length=50, unique=True)
@@ -200,7 +227,9 @@ class GroundwaterStation(models.Model):
 
 
 class GroundwaterLevel(models.Model):
-    station = models.ForeignKey(GroundwaterStation, on_delete=models.CASCADE, related_name="levels")
+    station = models.ForeignKey(
+        GroundwaterStation, on_delete=models.CASCADE, related_name="levels"
+    )
     date = models.DateField()
     value = models.FloatField()
     quality = models.CharField(max_length=50, default="Unknown")
@@ -235,8 +264,6 @@ class GroundwaterPredictionAccuracy(models.Model):
 
     class Meta:
         unique_together = ("region", "model_type", "date")
-
-
 
 
 class SevernTrentForecastAccuracy(models.Model):

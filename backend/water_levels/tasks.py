@@ -162,17 +162,18 @@ def weekly_scottish_predictions():
 @shared_task
 def generate_scottish_regional_forecasts():
     """Generate forecasts for each Scottish Water region."""
-    from .models import ScottishWaterRegionalLevel, ScottishWaterPredictionAccuracy
+    from .models import (
+        ScottishWaterRegionalLevel,
+        ScottishWaterPredictionAccuracy,
+        ScottishWaterRegionalForecast,
+    )
     import pandas as pd
     import numpy as np
     import statsmodels.api as sm
     from statsmodels.tsa.arima.model import ARIMA
     from datetime import timedelta
 
-    areas = (
-        ScottishWaterRegionalLevel.objects.values_list("area", flat=True)
-        .distinct()
-    )
+    areas = ScottishWaterRegionalLevel.objects.values_list("area", flat=True).distinct()
 
     for area in areas:
         qs = ScottishWaterRegionalLevel.objects.filter(area=area).order_by("date")
@@ -232,6 +233,25 @@ def generate_scottish_regional_forecasts():
                 defaults={"predicted_value": round(float(reg_preds[i]), 2)},
             )
 
+            ScottishWaterRegionalForecast.objects.update_or_create(
+                area=area,
+                date=target,
+                model_type="ARIMA",
+                defaults={"predicted_level": round(float(arima_preds[i]), 2)},
+            )
+            ScottishWaterRegionalForecast.objects.update_or_create(
+                area=area,
+                date=target,
+                model_type="LSTM",
+                defaults={"predicted_level": round(float(lstm_preds[i]), 2)},
+            )
+            ScottishWaterRegionalForecast.objects.update_or_create(
+                area=area,
+                date=target,
+                model_type="REGRESSION",
+                defaults={"predicted_level": round(float(reg_preds[i]), 2)},
+            )
+
     return "regional forecasts complete"
 
 
@@ -248,7 +268,7 @@ def fetch_severn_trent_reservoir_data():
     from water_levels.models import SevernTrentReservoirLevel
 
     def clean_date(date_str):
-        return re.sub(r'(\d+)(st|nd|rd|th)', r'\1', date_str)
+        return re.sub(r"(\d+)(st|nd|rd|th)", r"\1", date_str)
 
     print("🔍 [TASK] Fetching Severn Trent reservoir data...")
     url = url = "https://www.stwater.co.uk/about-us/reservoir-levels/"
@@ -279,7 +299,7 @@ def fetch_severn_trent_reservoir_data():
 
         print(f"✅ Task completed: {count} entries saved/updated.")
         return f"{count} records updated."
-    
+
     except Exception as e:
         print(f"❌ Failed to fetch Severn Trent data: {e}")
         return "Error"
@@ -426,6 +446,7 @@ def fetch_yorkshire_water_reports():
         _gen_reg()
     return "done"
 
+
 @shared_task
 def run_yorkshire_lstm_prediction_task():
     """Generate monthly Yorkshire predictions using both models."""
@@ -437,6 +458,7 @@ def run_yorkshire_lstm_prediction_task():
     _gen_arima()
     _gen_reg()
     return "predictions generated"
+
 
 @shared_task
 def fetch_southern_water_levels():
@@ -466,8 +488,10 @@ def fetch_southern_water_levels():
             current = row["actual"]
             avg = row["average"]
             diff = round(current - avg, 2)
-            change_week = round(current - df.loc[j-1, "actual"], 2) if j > 0 else 0.0
-            change_month = round(current - df.loc[j-4, "actual"], 2) if j >= 4 else 0.0
+            change_week = round(current - df.loc[j - 1, "actual"], 2) if j > 0 else 0.0
+            change_month = (
+                round(current - df.loc[j - 4, "actual"], 2) if j >= 4 else 0.0
+            )
 
             SouthernWaterReservoirLevel.objects.update_or_create(
                 reservoir=name,
@@ -521,7 +545,7 @@ def generate_southern_arima_forecast():
             continue
 
         try:
-            model = ARIMA(df["current_level"], order=(2,1,2))
+            model = ARIMA(df["current_level"], order=(2, 1, 2))
             fit = model.fit()
             # Predict the next 6 months (approx. 24 weeks)
             forecast = fit.forecast(steps=24)
@@ -531,14 +555,16 @@ def generate_southern_arima_forecast():
 
         last_date = df.index[-1].date()
         for i, val in enumerate(forecast):
-            target = last_date + timedelta(weeks=i+1)
+            target = last_date + timedelta(weeks=i + 1)
             SouthernWaterReservoirForecast.objects.update_or_create(
                 reservoir=reservoir,
                 date=target,
                 model_type="ARIMA",
-                defaults={"predicted_level": round(float(val),2)},
+                defaults={"predicted_level": round(float(val), 2)},
             )
-        print(f"ARIMA forecast for {reservoir}: {[round(float(x),2) for x in forecast]}")
+        print(
+            f"ARIMA forecast for {reservoir}: {[round(float(x),2) for x in forecast]}"
+        )
     return "arima"
 
 
@@ -548,6 +574,7 @@ def generate_southern_regression_forecast():
     import pandas as pd
     import numpy as np
     import statsmodels.api as sm
+
     qs = SouthernWaterReservoirLevel.objects.order_by("reservoir", "date")
     if not qs.exists():
         return "no data"
@@ -592,7 +619,6 @@ def generate_southern_regression_forecast():
     return "regression"
 
 
-
 @shared_task
 def generate_southern_lstm_forecast():
     """
@@ -616,7 +642,7 @@ def generate_southern_lstm_forecast():
 
         last_date = res_qs.last().date
         for i, val in enumerate(preds):
-            target = last_date + timedelta(weeks=i+1)
+            target = last_date + timedelta(weeks=i + 1)
             SouthernWaterReservoirForecast.objects.update_or_create(
                 reservoir=reservoir,
                 date=target,
@@ -624,6 +650,7 @@ def generate_southern_lstm_forecast():
                 defaults={"predicted_level": round(float(val), 2)},
             )
     return "lstm"
+
 
 @shared_task
 def monthly_southernwater_predictions():
@@ -633,14 +660,18 @@ def monthly_southernwater_predictions():
     generate_southern_regression_forecast.delay()
     return "scheduled"
 
+
 from .models import GroundwaterStation, GroundwaterLevel
 from .utils import get_region
+
 
 @shared_task
 def import_historical_groundwater_levels():
     stations_url = "https://environment.data.gov.uk/hydrology/id/stations"
     params = {"observedProperty": "groundwaterLevel"}
-    response = requests.get(stations_url, params=params, headers={"Accept": "application/json"})
+    response = requests.get(
+        stations_url, params=params, headers={"Accept": "application/json"}
+    )
     response.raise_for_status()
     data = response.json()
 
@@ -653,18 +684,30 @@ def import_historical_groundwater_levels():
 
         station, _ = GroundwaterStation.objects.get_or_create(
             station_id=station_id,
-            defaults={"name": name, "region": region, "latitude": lat, "longitude": lon},
+            defaults={
+                "name": name,
+                "region": region,
+                "latitude": lat,
+                "longitude": lon,
+            },
         )
 
         measures_url = f"https://environment.data.gov.uk/hydrology/id/measures?station={station_id}"
-        measures_response = requests.get(measures_url, headers={"Accept": "application/json"}, timeout=10)
+        measures_response = requests.get(
+            measures_url, headers={"Accept": "application/json"}, timeout=10
+        )
         measures = measures_response.json().get("items", [])
 
         for measure in measures:
             measure_id = measure["@id"]
             readings_url = "https://environment.data.gov.uk/hydrology/data/readings"
             readings_params = {"measure": measure_id, "_limit": 10000}
-            readings_response = requests.get(readings_url, params=readings_params, headers={"Accept": "application/json"}, timeout=10)
+            readings_response = requests.get(
+                readings_url,
+                params=readings_params,
+                headers={"Accept": "application/json"},
+                timeout=10,
+            )
             readings = readings_response.json().get("items", [])
 
             for r in readings:
@@ -672,18 +715,23 @@ def import_historical_groundwater_levels():
                 if value is None or r.get("quality") == "Missing":
                     continue
                 dt_str = r.get("dateTime") or r.get("date")
-                dt = datetime.strptime(dt_str, "%Y-%m-%dT%H:%M:%S" if "T" in dt_str else "%Y-%m-%d").date()
+                dt = datetime.strptime(
+                    dt_str, "%Y-%m-%dT%H:%M:%S" if "T" in dt_str else "%Y-%m-%d"
+                ).date()
                 GroundwaterLevel.objects.update_or_create(
                     station=station,
                     date=dt,
                     defaults={"value": value, "quality": r.get("quality", "Unknown")},
                 )
 
+
 @shared_task
 def fetch_current_groundwater_levels():
     stations_url = "https://environment.data.gov.uk/hydrology/id/stations"
     params = {"observedProperty": "groundwaterLevel"}
-    response = requests.get(stations_url, params=params, headers={"Accept": "application/json"})
+    response = requests.get(
+        stations_url, params=params, headers={"Accept": "application/json"}
+    )
     response.raise_for_status()
     data = response.json()
 
@@ -696,13 +744,23 @@ def fetch_current_groundwater_levels():
 
         station, _ = GroundwaterStation.objects.get_or_create(
             station_id=station_id,
-            defaults={"name": name, "region": region, "latitude": lat, "longitude": lon},
+            defaults={
+                "name": name,
+                "region": region,
+                "latitude": lat,
+                "longitude": lon,
+            },
         )
 
         measure_id = f"http://environment.data.gov.uk/hydrology/id/measures/{station_id}-gw-dipped-i-mAOD-qualified"
         readings_url = "https://environment.data.gov.uk/hydrology/data/readings"
         params = {"measure": measure_id, "_limit": 10000}
-        readings_response = requests.get(readings_url, params=params, headers={"Accept": "application/json"}, timeout=10)
+        readings_response = requests.get(
+            readings_url,
+            params=params,
+            headers={"Accept": "application/json"},
+            timeout=10,
+        )
         readings = readings_response.json().get("items", [])
 
         if readings:
@@ -710,23 +768,36 @@ def fetch_current_groundwater_levels():
                 readings,
                 key=lambda r: datetime.strptime(
                     r.get("dateTime") or r.get("date"),
-                    "%Y-%m-%dT%H:%M:%S" if "T" in (r.get("dateTime") or "") else "%Y-%m-%d",
+                    (
+                        "%Y-%m-%dT%H:%M:%S"
+                        if "T" in (r.get("dateTime") or "")
+                        else "%Y-%m-%d"
+                    ),
                 ),
             )
             value = latest.get("value")
             if value is not None and latest.get("quality") != "Missing":
                 dt_str = latest.get("dateTime") or latest.get("date")
-                dt = datetime.strptime(dt_str, "%Y-%m-%dT%H:%M:%S" if "T" in dt_str else "%Y-%m-%d").date()
+                dt = datetime.strptime(
+                    dt_str, "%Y-%m-%dT%H:%M:%S" if "T" in dt_str else "%Y-%m-%d"
+                ).date()
                 GroundwaterLevel.objects.update_or_create(
                     station=station,
                     date=dt,
-                    defaults={"value": value, "quality": latest.get("quality", "Unknown")},
+                    defaults={
+                        "value": value,
+                        "quality": latest.get("quality", "Unknown"),
+                    },
                 )
 
 
 def get_region_timeseries(region):
-    station_ids = GroundwaterStation.objects.filter(region=region).values_list("id", flat=True)
-    levels = GroundwaterLevel.objects.filter(station_id__in=station_ids).values("date", "value")
+    station_ids = GroundwaterStation.objects.filter(region=region).values_list(
+        "id", flat=True
+    )
+    levels = GroundwaterLevel.objects.filter(station_id__in=station_ids).values(
+        "date", "value"
+    )
     df = pd.DataFrame(list(levels))
     if df.empty:
         return pd.Series(dtype=float)
@@ -761,7 +832,9 @@ def predict_regression(df):
     last_t = series["t"].iloc[-1]
     for i in range(1, 17):
         t = last_t + i
-        xt = np.array([[1, t, np.sin(2 * np.pi * t / period), np.cos(2 * np.pi * t / period)]])
+        xt = np.array(
+            [[1, t, np.sin(2 * np.pi * t / period), np.cos(2 * np.pi * t / period)]]
+        )
         preds.append(model.predict(xt)[0])
     return preds
 
@@ -861,7 +934,10 @@ def calculate_severn_trent_accuracy():
     for f in forecasts:
         actual = SevernTrentReservoirLevel.objects.filter(date=f.date).first()
         if actual:
-            error = abs((actual.percentage - f.predicted_percentage) / actual.percentage) * 100
+            error = (
+                abs((actual.percentage - f.predicted_percentage) / actual.percentage)
+                * 100
+            )
             SevernTrentForecastAccuracy.objects.update_or_create(
                 date=f.date,
                 model_type=f.model_type,
@@ -890,20 +966,38 @@ def calculate_yorkshire_accuracy():
     for p in preds:
         report = YorkshireWaterReport.objects.filter(report_month=p.date).first()
         if report:
-            res_error = abs((report.reservoir_percent - p.predicted_reservoir_percent) / report.reservoir_percent) * 100 if report.reservoir_percent else None
+            res_error = (
+                abs(
+                    (report.reservoir_percent - p.predicted_reservoir_percent)
+                    / report.reservoir_percent
+                )
+                * 100
+                if report.reservoir_percent
+                else None
+            )
             dem_error = None
             if report.demand_megalitres_per_day:
-                dem_error = abs((report.demand_megalitres_per_day - p.predicted_demand_mld) / report.demand_megalitres_per_day) * 100
+                dem_error = (
+                    abs(
+                        (report.demand_megalitres_per_day - p.predicted_demand_mld)
+                        / report.demand_megalitres_per_day
+                    )
+                    * 100
+                )
             YorkshireWaterPredictionAccuracy.objects.update_or_create(
                 date=p.date,
                 model_type=p.model_type,
                 defaults={
                     "predicted_reservoir_percent": p.predicted_reservoir_percent,
                     "actual_reservoir_percent": report.reservoir_percent,
-                    "reservoir_error": round(res_error, 2) if res_error is not None else None,
+                    "reservoir_error": (
+                        round(res_error, 2) if res_error is not None else None
+                    ),
                     "predicted_demand_mld": p.predicted_demand_mld,
                     "actual_demand_mld": report.demand_megalitres_per_day,
-                    "demand_error": round(dem_error, 2) if dem_error is not None else None,
+                    "demand_error": (
+                        round(dem_error, 2) if dem_error is not None else None
+                    ),
                 },
             )
         else:
@@ -923,9 +1017,14 @@ def calculate_southernwater_accuracy():
     today = datetime.today().date()
     forecasts = SouthernWaterReservoirForecast.objects.filter(date__lte=today)
     for f in forecasts:
-        actual = SouthernWaterReservoirLevel.objects.filter(reservoir=f.reservoir, date=f.date).first()
+        actual = SouthernWaterReservoirLevel.objects.filter(
+            reservoir=f.reservoir, date=f.date
+        ).first()
         if actual:
-            error = abs((actual.current_level - f.predicted_level) / actual.current_level) * 100
+            error = (
+                abs((actual.current_level - f.predicted_level) / actual.current_level)
+                * 100
+            )
             SouthernWaterForecastAccuracy.objects.update_or_create(
                 reservoir=f.reservoir,
                 date=f.date,
@@ -948,11 +1047,14 @@ def calculate_scottishwater_accuracy():
         ScottishWaterPredictionAccuracy,
         ScottishWaterRegionalLevel,
     )
+
     # This assumes predictions exist in ScottishWaterPredictionAccuracy model
     today = datetime.today().date()
     records = ScottishWaterPredictionAccuracy.objects.filter(date__lte=today)
     for rec in records:
-        actual = ScottishWaterRegionalLevel.objects.filter(area=rec.area, date=rec.date).first()
+        actual = ScottishWaterRegionalLevel.objects.filter(
+            area=rec.area, date=rec.date
+        ).first()
         if actual and rec.predicted_value:
             error = abs((actual.current - rec.predicted_value) / actual.current) * 100
             rec.actual_value = actual.current

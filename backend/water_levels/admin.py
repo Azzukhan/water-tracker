@@ -18,6 +18,7 @@ from .models import (
     SouthernWaterForecastAccuracy,
     ScottishWaterPredictionAccuracy,
     ScottishWaterForecast,
+    ScottishWaterRegionalForecast,
 )
 
 
@@ -47,6 +48,7 @@ class ScottishWaterRegionalLevelAdmin(admin.ModelAdmin):
 class SevernTrentReservoirLevelAdmin(admin.ModelAdmin):
     list_display = ("date", "percentage")
 
+
 @admin.register(SevernTrentReservoirForecast)
 class SevernTrentReservoirForecastAdmin(admin.ModelAdmin):
     list_display = (
@@ -70,3 +72,4 @@ admin.site.register(YorkshireWaterPredictionAccuracy)
 admin.site.register(SouthernWaterForecastAccuracy)
 admin.site.register(ScottishWaterPredictionAccuracy)
 admin.site.register(ScottishWaterForecast)
+admin.site.register(ScottishWaterRegionalForecast)
