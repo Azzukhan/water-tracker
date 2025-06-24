@@ -3,6 +3,7 @@ import pytest
 from water_levels.models import (
     ScottishWaterAverageLevel,
     ScottishWaterRegionalLevel,
+    ScottishWaterForecast,
     SevernTrentReservoirLevel,
     SevernTrentReservoirForecast,
     YorkshireWaterReport,
@@ -29,6 +30,13 @@ def test_scottish_average_list(api_client):
 def test_scottish_regional_list(api_client):
     ScottishWaterRegionalLevel.objects.create(area='Test', date=datetime.date(2024,1,1), current=40.0, change_from_last_week=1.0, difference_from_average=-3.0)
     resp = api_client.get('/api/water-levels/scottish-regions/')
+    assert resp.status_code == 200
+
+
+@pytest.mark.django_db
+def test_scottish_forecast(api_client):
+    ScottishWaterForecast.objects.create(date=datetime.date(2024,1,8), predicted_percentage=55.0, model_type='ARIMA')
+    resp = api_client.get('/api/water-levels/scottishwater/ARIMA/')
     assert resp.status_code == 200
 
 @pytest.mark.django_db

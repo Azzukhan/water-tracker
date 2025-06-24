@@ -8,6 +8,7 @@ from .utils import fetch_scottish_water_resource_levels
 from .models import (
     ScottishWaterAverageLevel,
     ScottishWaterRegionalLevel,
+    ScottishWaterForecast,
     SevernTrentReservoirLevel,
     SevernTrentReservoirForecast,
     YorkshireWaterReport,
@@ -27,6 +28,7 @@ from .models import (
 from .serializers import (
     ScottishWaterAverageLevelSerializer,
     ScottishWaterRegionalLevelSerializer,
+    ScottishWaterForecastSerializer,
     SevernTrentReservoirLevelSerializer,
     SevernTrentForecastSerializer,
     YorkshireWaterReportSerializer,
@@ -73,6 +75,18 @@ class ScottishWaterRegionalLevelViewSet(viewsets.ModelViewSet):
             queryset = self.filter_queryset(self.get_queryset())
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+
+class ScottishWaterForecastAPIView(generics.ListAPIView):
+    serializer_class = ScottishWaterForecastSerializer
+    pagination_class = None
+
+    def get_queryset(self):
+        model_type = self.kwargs.get("model", "ARIMA").upper()
+        return (
+            ScottishWaterForecast.objects.filter(model_type=model_type)
+            .order_by("date")
+        )
 
 
 class SevernTrentReservoirLevelListView(generics.ListAPIView):

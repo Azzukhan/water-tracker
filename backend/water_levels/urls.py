@@ -5,6 +5,7 @@ from .views import (
     ScottishWaterRegionalLevelViewSet,
     SevernTrentReservoirLevelListView,
     SevernTrentForecastAPIView,
+    ScottishWaterForecastAPIView,
     YorkshireWaterReportViewSet,
     YorkshireWaterPredictionViewSet,
     YorkshireReservoirDataViewSet,
@@ -50,6 +51,7 @@ urlpatterns = [
     path('severn-trent/', SevernTrentReservoirLevelListView.as_view(), name='severn-trent-data-legacy'),
     path('severn-trent/forecast/', SevernTrentForecastAPIView.as_view(), name='severn-trent-forecast'),
     path('severn-trent/<str:model>/', SevernTrentForecastAPIView.as_view(), name='severn-trent-forecast-model'),
+    path('scottishwater/<str:model>/', ScottishWaterForecastAPIView.as_view(), name='scottish-forecast-model'),
     path('southernwater/<str:reservoir>/<str:model>/', SouthernWaterForecastAPIView.as_view(), name='southernwater-forecast-model'),
     path('groundwater/summary/', GroundwaterRegionSummaryAPIView.as_view(), name='groundwater-summary'),
 ]

@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import (
     ScottishWaterAverageLevel,
     ScottishWaterRegionalLevel,
+    ScottishWaterForecast,
     SevernTrentReservoirLevel,
     SevernTrentReservoirForecast,
     YorkshireWaterReport,
@@ -54,6 +55,12 @@ class SevernTrentReservoirLevelSerializer(serializers.ModelSerializer):
 class SevernTrentForecastSerializer(serializers.ModelSerializer):
     class Meta:
         model = SevernTrentReservoirForecast
+        fields = "__all__"
+
+
+class ScottishWaterForecastSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ScottishWaterForecast
         fields = "__all__"
 
 
