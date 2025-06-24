@@ -12,6 +12,11 @@ from .models import (
     GroundwaterStation,
     GroundwaterLevel,
     GroundwaterPrediction,
+    GroundwaterPredictionAccuracy,
+    SevernTrentForecastAccuracy,
+    YorkshireWaterPredictionAccuracy,
+    SouthernWaterForecastAccuracy,
+    ScottishWaterPredictionAccuracy,
 )
 
 
@@ -58,3 +63,8 @@ admin.site.register(SouthernWaterReservoirForecast)
 admin.site.register(GroundwaterStation)
 admin.site.register(GroundwaterLevel)
 admin.site.register(GroundwaterPrediction)
+admin.site.register(GroundwaterPredictionAccuracy)
+admin.site.register(SevernTrentForecastAccuracy)
+admin.site.register(YorkshireWaterPredictionAccuracy)
+admin.site.register(SouthernWaterForecastAccuracy)
+admin.site.register(ScottishWaterPredictionAccuracy)
