@@ -173,20 +173,6 @@ export function DataSources() {
             ))}
           </div>
 
-          <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <div className="flex items-start space-x-3">
-              <Database className="h-5 w-5 text-blue-600 mt-0.5" />
-              <div className="text-sm">
-                <div className="font-medium text-blue-900 mb-1">API Access Available</div>
-                <div className="text-blue-800">
-                  Developers can access real-time water level data through our REST API.
-                  <Button variant="link" className="p-0 h-auto text-blue-600 underline ml-1">
-                    View API Documentation
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
         </CardContent>
       </Card>
     </div>
