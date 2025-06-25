@@ -108,11 +108,6 @@ export function AgencyContacts() {
     startIndex + itemsPerPage,
   );
 
-
-  const getCompanyFromPostcode = (_postcode: string) => {
-    return "Scottish Water";
-  };
-
   const getCompanyFromAddress = (address: any) => {
     const state = address?.state || "";
     if (state.includes("Scotland")) {
@@ -130,8 +125,8 @@ export function AgencyContacts() {
             const res = await fetch(
               `https://nominatim.openstreetmap.org/reverse?format=json&lat=${position.coords.latitude}&lon=${position.coords.longitude}`,
             );
-          const data = await res.json();
-          setLocalCompany(getCompanyFromAddress(data.address));
+            const data = await res.json();
+            setLocalCompany(getCompanyFromAddress(data.address));
           } catch (e) {
             console.error(e);
             setLocalCompany(null);
@@ -181,14 +176,15 @@ export function AgencyContacts() {
             </SelectContent>
           </Select>
         </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr">
+        {/* KEY: Add items-stretch for perfect row alignment */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
           {paginatedAgencies.map((agency, index) => (
             <div
               key={index}
               className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow duration-200 flex flex-col h-full min-h-[350px]"
-
             >
-              <div className="space-y-4 flex flex-col flex-1">
+              {/* Main card content: fills space above buttons */}
+              <div className="flex-1 flex flex-col space-y-4">
                 {/* Header */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
@@ -265,34 +261,34 @@ export function AgencyContacts() {
                     ))}
                   </div>
                 </div>
-
-                {/* Actions */}
-                <div className="mt-auto flex gap-2">
-                  <Button
-                    size="sm"
-                    className={`${agency.color} text-white hover:brightness-90 cursor-pointer w-full`}
-                    asChild
+              </div>
+              {/* Buttons: outside flex-1, guaranteed bottom-aligned */}
+              <div className="flex gap-2 mt-6">
+                <Button
+                  size="sm"
+                  className={`${agency.color} text-white hover:brightness-90 cursor-pointer w-full`}
+                  asChild
+                >
+                  <a href={`tel:${agency.phone}`}>
+                    <Phone className="h-4 w-4 mr-1" />
+                    Call
+                  </a>
+                </Button>
+                <Button variant="outline" size="sm" asChild>
+                  <a
+                    href={`https://${agency.website}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
-                    <a href={`tel:${agency.phone}`}> 
-                      <Phone className="h-4 w-4 mr-1" />
-                      Call
-                    </a>
-                  </Button>
-                  <Button variant="outline" size="sm" asChild>
-                    <a
-                      href={`https://${agency.website}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <ExternalLink className="h-4 w-4" />
-                    </a>
-                  </Button>
-                </div>
+                    <ExternalLink className="h-4 w-4" />
+                  </a>
+                </Button>
               </div>
             </div>
           ))}
         </div>
 
+        {/* Pagination */}
         <div className="flex items-center justify-between mt-6">
           <div className="text-sm text-gray-600">
             Showing {startIndex + 1}-
