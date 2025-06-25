@@ -19,7 +19,6 @@ from water_levels.models import WaterStation, WaterLevel, Alert, Prediction
 from weather.models import WeatherStation, CurrentWeather, HourlyForecast, DailyForecast
 from news.models import NewsArticle
 from blog.models import BlogCategory, BlogPost
-from dashboard.models import DashboardStat, AnalyticsData
 
 User = get_user_model()
 
