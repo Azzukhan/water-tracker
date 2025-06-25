@@ -12,9 +12,13 @@ export default function ContactPage() {
     <div className="container mx-auto px-4 py-8 space-y-10 mt-24">
       <ContactHeader />
       <EmergencyContacts />
-      <div className="grid lg:grid-cols-2 gap-8 items-start">
-        <ContactForm />
-        <ReportIssueForm />
+      <div className="grid lg:grid-cols-2 gap-8 items-stretch">
+        <div className="flex flex-col h-full">
+          <ContactForm />
+        </div>
+        <div className="flex flex-col h-full">
+          <ReportIssueForm />
+        </div>
       </div>
       <AgencyContacts />
       <FAQ />
