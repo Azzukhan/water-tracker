@@ -21,9 +21,16 @@ import type { BlogItem } from "@/hooks/use-blogs"
 export interface BlogSidebarProps {
   posts: BlogItem[]
   onSearch: (query: string) => void
+  selectedTopic?: string | null
+  onSelectTopic?: (topic: string | null) => void
 }
 
-export function BlogSidebar({ posts, onSearch }: BlogSidebarProps) {
+export function BlogSidebar({
+  posts,
+  onSearch,
+  selectedTopic,
+  onSelectTopic,
+}: BlogSidebarProps) {
   const [query, setQuery] = useState("")
   const [email, setEmail] = useState("")
   const [storyOpen, setStoryOpen] = useState(false)
@@ -175,17 +182,33 @@ export function BlogSidebar({ posts, onSearch }: BlogSidebarProps) {
           <CardTitle className="text-lg font-bold">Popular Topics</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 items-center">
             {topTags.map((tag) => (
               <Badge
                 key={tag.name}
-                variant="outline"
-                onClick={() => onSearch(tag.name)}
-                className="cursor-pointer hover:bg-blue-50 hover:border-blue-300 transition-colors"
+                variant={selectedTopic === tag.name ? "default" : "outline"}
+                onClick={() =>
+                  onSelectTopic?.(
+                    selectedTopic === tag.name ? null : tag.name
+                  )
+                }
+                className={`cursor-pointer transition-colors ${
+                  selectedTopic === tag.name
+                    ? "bg-blue-600 text-white border-blue-600"
+                    : "hover:bg-blue-50 hover:border-blue-300"
+                }`}
               >
                 {tag.name} ({tag.count})
               </Badge>
             ))}
+            {selectedTopic && (
+              <button
+                onClick={() => onSelectTopic?.(null)}
+                className="text-xs text-blue-600 underline ml-auto"
+              >
+                Clear filter
+              </button>
+            )}
           </div>
         </CardContent>
       </Card>
