@@ -73,6 +73,8 @@ export function SevernTrentARIMAChart() {
     actual: number;
     error: number;
   } | null>(null);
+  const [latestActual, setLatestActual] = useState<number | null>(null);
+  const [latestForecast, setLatestForecast] = useState<number | null>(null);
   const data = useMemo(() => filterByPeriod(allData, period), [allData, period]);
 
   useEffect(() => {
@@ -123,6 +125,24 @@ export function SevernTrentARIMAChart() {
             (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
           );
           setAllData(combined);
+
+          if (histData.length) {
+            const latestHist = histData.reduce((a, b) =>
+              new Date(b.date) > new Date(a.date) ? b : a,
+            );
+            setLatestActual(latestHist.percentage);
+          } else {
+            setLatestActual(null);
+          }
+
+          if (forecastData.length) {
+            const latestFor = forecastData.reduce((a, b) =>
+              new Date(b.date) > new Date(a.date) ? b : a,
+            );
+            setLatestForecast(latestFor.predicted_percentage);
+          } else {
+            setLatestForecast(null);
+          }
 
           if (forecastData.length) {
             const avg =
@@ -254,6 +274,25 @@ export function SevernTrentARIMAChart() {
         </div>
 
         <div className="grid md:grid-cols-3 gap-4 mb-6">
+          <div className="p-4 bg-gray-50 rounded-lg">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-600">Latest Actual</span>
+              <Badge variant="secondary">Historic</Badge>
+            </div>
+            <div className="text-2xl font-bold text-gray-600">
+              {latestActual !== null ? `${latestActual.toFixed(1)}%` : "-"}
+            </div>
+          </div>
+
+          <div className="p-4 bg-gray-50 rounded-lg">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-600">Latest Forecast</span>
+              <Badge variant="secondary">Forecast</Badge>
+            </div>
+            <div className="text-2xl font-bold text-gray-600">
+              {latestForecast !== null ? `${latestForecast.toFixed(1)}%` : "-"}
+            </div>
+          </div>
           <div className="p-4 bg-purple-50 rounded-lg">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm text-gray-600">Avg. Predicted Level</span>
