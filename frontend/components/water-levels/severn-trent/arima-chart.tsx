@@ -290,25 +290,6 @@ export function SevernTrentARIMAChart() {
         </div>
 
         <div className="grid md:grid-cols-3 gap-4 mb-6">
-          <div className="p-4 bg-gray-50 rounded-lg">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-600">Latest Actual</span>
-              <Badge variant="secondary">Historic</Badge>
-            </div>
-            <div className="text-2xl font-bold text-gray-600">
-              {latestActual !== null ? `${latestActual.toFixed(1)}%` : "-"}
-            </div>
-          </div>
-
-          <div className="p-4 bg-gray-50 rounded-lg">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-600">Latest Forecast</span>
-              <Badge variant="secondary">Forecast</Badge>
-            </div>
-            <div className="text-2xl font-bold text-gray-600">
-              {latestForecast !== null ? `${latestForecast.toFixed(1)}%` : "-"}
-            </div>
-          </div>
           <div className="p-4 bg-purple-50 rounded-lg">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm text-gray-600">Avg. Predicted Level</span>
