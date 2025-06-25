@@ -64,7 +64,17 @@ admin.site.register(YorkshireReservoirData)
 admin.site.register(SouthernWaterReservoirLevel)
 admin.site.register(SouthernWaterReservoirForecast)
 admin.site.register(GroundwaterStation)
-admin.site.register(GroundwaterLevel)
+@admin.register(GroundwaterLevel)
+class GroundwaterLevelAdmin(admin.ModelAdmin):
+    list_display = (
+        "station",
+        "date",
+        "value",
+        "quality",
+    )
+    ordering = ("-date",)  # Show most recent records first
+    list_filter = ("station", "quality")
+
 admin.site.register(GroundwaterPrediction)
 admin.site.register(GroundwaterPredictionAccuracy)
 admin.site.register(SevernTrentForecastAccuracy)
