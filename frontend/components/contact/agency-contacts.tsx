@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -95,8 +95,6 @@ export function AgencyContacts() {
   const [currentPage, setCurrentPage] = useState(1);
   const [localCompany, setLocalCompany] = useState<string | null>(null);
   const [locating, setLocating] = useState(false);
-  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const [cardHeight, setCardHeight] = useState<number | null>(null);
   const regions = Array.from(new Set(agencies.map((a) => a.region)));
   const filteredAgencies =
     selectedRegion === "All"
@@ -110,19 +108,6 @@ export function AgencyContacts() {
     startIndex + itemsPerPage,
   );
 
-  useEffect(() => {
-    const updateHeight = () => {
-      const heights = cardRefs.current.map((el) => el?.offsetHeight || 0);
-      const max = Math.max(0, ...heights);
-      if (max && max !== cardHeight) {
-        setCardHeight(max);
-      }
-    };
-
-    updateHeight();
-    window.addEventListener("resize", updateHeight);
-    return () => window.removeEventListener("resize", updateHeight);
-  }, [paginatedAgencies]);
 
   const getCompanyFromPostcode = (_postcode: string) => {
     return "Scottish Water";
@@ -196,13 +181,11 @@ export function AgencyContacts() {
             </SelectContent>
           </Select>
         </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr items-stretch">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-auto">
           {paginatedAgencies.map((agency, index) => (
             <div
               key={index}
-              ref={(el) => (cardRefs.current[index] = el)}
-              style={{ minHeight: cardHeight ?? undefined }}
-              className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow duration-200 flex flex-col h-full"
+              className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow duration-200 flex flex-col h-full min-h-[350px]"
 
             >
               <div className="space-y-4 flex-1">
