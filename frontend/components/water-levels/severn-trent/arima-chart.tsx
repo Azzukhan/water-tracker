@@ -75,6 +75,7 @@ export function SevernTrentARIMAChart() {
   } | null>(null);
   const [latestActual, setLatestActual] = useState<number | null>(null);
   const [latestForecast, setLatestForecast] = useState<number | null>(null);
+  const [latestEntries, setLatestEntries] = useState<ForecastEntry[]>([]);
   const data = useMemo(() => filterByPeriod(allData, period), [allData, period]);
 
   useEffect(() => {
@@ -138,6 +139,11 @@ export function SevernTrentARIMAChart() {
             (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
           );
           setAllData(combined);
+
+          const latestSorted = [...forecastData].sort(
+            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+          );
+          setLatestEntries(latestSorted.slice(0, 4));
 
           if (histData.length) {
             const latestHist = histData.reduce((a, b) =>
@@ -348,6 +354,25 @@ export function SevernTrentARIMAChart() {
                   Forecasts indicate water levels may drop below normal in the coming weeks. Consider conservation measures.
                 </p>
               </div>
+            </div>
+          </div>
+        )}
+
+        {latestEntries.length > 0 && (
+          <div className="mt-6">
+            <h4 className="font-semibold mb-2">Latest Forecast Entries</h4>
+            <div className="grid grid-cols-2 gap-2 text-sm">
+              {latestEntries.map((e) => (
+                <div key={e.date} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                  <span>
+                    {new Date(e.date).toLocaleDateString("en-GB", {
+                      month: "short",
+                      day: "numeric",
+                    })}
+                  </span>
+                  <span>{e.predicted_percentage.toFixed(1)}%</span>
+                </div>
+              ))}
             </div>
           </div>
         )}
