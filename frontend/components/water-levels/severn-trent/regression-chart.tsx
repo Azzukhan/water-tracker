@@ -73,6 +73,8 @@ export function SevernTrentRegressionChart() {
     actual: number;
     error: number;
   } | null>(null);
+  const [latestActual, setLatestActual] = useState<number | null>(null);
+  const [latestForecast, setLatestForecast] = useState<number | null>(null);
   const data = useMemo(() => filterByPeriod(allData, period), [allData, period]);
 
   useEffect(() => {
@@ -85,12 +87,15 @@ export function SevernTrentRegressionChart() {
             `${API_BASE}/api/water-levels/severn-trent-prediction-accuracy/?model_type=REGRESSION`
           ),
         ]);
-        const [histData, forecastData, accData] = await Promise.all([
+        const [histData, rawForecastData, accData] = await Promise.all([
           histRes.json(),
           forecastRes.json(),
           accRes.json(),
         ]);
-        if (Array.isArray(histData) && Array.isArray(forecastData)) {
+        if (Array.isArray(histData) && Array.isArray(rawForecastData)) {
+          const forecastData = [...rawForecastData]
+            .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+            .slice(-4);
           const map = new Map<string, ChartPoint>();
           histData.forEach((e: HistoricalEntry) => {
             map.set(e.date, {
@@ -104,22 +109,53 @@ export function SevernTrentRegressionChart() {
             });
           });
           forecastData.forEach((e: ForecastEntry) => {
-            map.set(e.date, {
-              date: e.date,
-              actual: null,
-              predicted: e.predicted_percentage,
-              upperBound: Math.min(e.predicted_percentage + 5, 100),
-              lowerBound: Math.max(e.predicted_percentage - 5, 0),
-              displayDate: new Date(e.date).toLocaleDateString("en-GB", {
-                month: "short",
-                day: "numeric",
-              }),
+            const existing = map.get(e.date);
+            const displayDate = new Date(e.date).toLocaleDateString("en-GB", {
+              month: "short",
+              day: "numeric",
             });
+
+            if (existing) {
+              map.set(e.date, {
+                ...existing,
+                predicted: e.predicted_percentage,
+                upperBound: Math.min(e.predicted_percentage + 5, 100),
+                lowerBound: Math.max(e.predicted_percentage - 5, 0),
+                displayDate,
+              });
+            } else {
+              map.set(e.date, {
+                date: e.date,
+                actual: null,
+                predicted: e.predicted_percentage,
+                upperBound: Math.min(e.predicted_percentage + 5, 100),
+                lowerBound: Math.max(e.predicted_percentage - 5, 0),
+                displayDate,
+              });
+            }
           });
           const combined = Array.from(map.values()).sort(
             (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
           );
           setAllData(combined);
+
+          if (histData.length) {
+            const latestHist = histData.reduce((a, b) =>
+              new Date(b.date) > new Date(a.date) ? b : a,
+            );
+            setLatestActual(latestHist.percentage);
+          } else {
+            setLatestActual(null);
+          }
+
+          if (forecastData.length) {
+            const latestFor = forecastData.reduce((a, b) =>
+              new Date(b.date) > new Date(a.date) ? b : a,
+            );
+            setLatestForecast(latestFor.predicted_percentage);
+          } else {
+            setLatestForecast(null);
+          }
 
           if (forecastData.length) {
             const avg =
