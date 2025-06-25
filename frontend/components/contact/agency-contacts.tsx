@@ -37,6 +37,57 @@ const agencies = [
     color: "bg-indigo-700",
     hours: "24/7 Incident Line, office hours general",
   },
+  {
+    name: "Severn Trent Water",
+    logo: "SevernTrent",
+    description:
+      "Water utility serving the Midlands and surrounding regions in England.",
+    phone: "0345 750 0500",
+    emergency: "0800 783 4444",
+    email: "customer.relations@severntrent.co.uk",
+    website: "stwater.co.uk",
+    region: "Midlands & Central England",
+    color: "bg-green-700",
+    hours: "24/7 Emergency Line, general office hours for queries",
+  },
+  {
+    name: "Yorkshire Water",
+    logo: "YorkshireWater",
+    description: "Water supply and wastewater services for Yorkshire.",
+    phone: "0345 1 24 24 24",
+    emergency: "0800 57 35 53",
+    email: "customer.services@yorkshirewater.co.uk",
+    website: "yorkshirewater.com",
+    region: "Yorkshire, England",
+    color: "bg-blue-800",
+    hours: "24/7 Emergencies, office hours for customer service",
+  },
+  {
+    name: "Southern Water",
+    logo: "SouthernWater",
+    description: "Water and wastewater services for the south of England.",
+    phone: "0330 303 0368",
+    emergency: "0330 303 0368",
+    email: "customer.services@southernwater.co.uk",
+    website: "southernwater.co.uk",
+    region: "South East England",
+    color: "bg-teal-700",
+    hours: "24/7 Emergency Line, office hours for queries",
+  },
+  {
+    name: "Environment Agency (Hydrology)",
+    logo: "EA",
+    description:
+      "Government agency responsible for environmental protection and hydrology data across England.",
+    phone: "03708 506 506",
+    emergency: "0800 80 70 60",
+    email: "enquiries@environment-agency.gov.uk",
+    website: "environment.data.gov.uk/hydrology/",
+    region: "England",
+    color: "bg-emerald-700",
+    hours:
+      "24/7 Emergency Hotline, general enquiries Mon-Fri 8am–6pm",
+  },
 ];
 
 export function AgencyContacts() {
@@ -137,7 +188,7 @@ export function AgencyContacts() {
             >
               <div className="space-y-4">
                 {/* Header */}
-                <div className="flex items-start justify-between">
+                <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <div
                       className={`w-12 h-12 ${agency.color} rounded-lg flex items-center justify-center`}
@@ -204,7 +255,7 @@ export function AgencyContacts() {
                 </div>
 
                 {/* Hours */}
-                <div className="flex items-start space-x-2">
+                <div className="flex items-center space-x-2">
                   <Clock className="h-4 w-4 text-gray-500 mt-0.5" />
                   <div className="text-xs text-gray-600 space-y-0.5">
                     {agency.hours.split(",").map((part, idx) => (
@@ -214,7 +265,7 @@ export function AgencyContacts() {
                 </div>
 
                 {/* Actions */}
-                <div className="flex space-x-2">
+                <div className="flex items-center space-x-2">
                   <Button
                     variant="outline"
                     size="sm"
@@ -271,7 +322,7 @@ export function AgencyContacts() {
 
         {/* Additional Information */}
         <div className="mt-8 p-6 bg-blue-50 border border-blue-200 rounded-lg">
-          <div className="flex items-start space-x-3">
+          <div className="flex items-center space-x-3">
             <MapPin className="h-6 w-6 text-blue-600 mt-1" />
             <div>
               <h3 className="font-semibold text-blue-900 mb-2">
