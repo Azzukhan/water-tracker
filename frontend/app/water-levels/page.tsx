@@ -129,8 +129,6 @@ export default function WaterLevelsPage() {
               </div>
             </>
           )}
-          <DataSources />
-          <ScottishAverageTables />
         </>
       ) : agency === "yorkshire" ? (
         <>
@@ -176,7 +174,6 @@ export default function WaterLevelsPage() {
             <SevernTrentLSTMChart />
             <SevernTrentRegressionChart />
           </div>
-          <SevernTrentDownload />
         </>
       )}
     </div>
