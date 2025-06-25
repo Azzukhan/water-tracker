@@ -181,14 +181,14 @@ export function AgencyContacts() {
             </SelectContent>
           </Select>
         </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-auto">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr">
           {paginatedAgencies.map((agency, index) => (
             <div
               key={index}
               className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow duration-200 flex flex-col h-full min-h-[350px]"
 
             >
-              <div className="space-y-4 flex-1">
+              <div className="space-y-4 flex flex-col flex-1">
                 {/* Header */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
