@@ -109,17 +109,30 @@ export function SevernTrentARIMAChart() {
             });
           });
           forecastData.forEach((e: ForecastEntry) => {
-            map.set(e.date, {
-              date: e.date,
-              actual: null,
-              predicted: e.predicted_percentage,
-              upperBound: Math.min(e.predicted_percentage + 5, 100),
-              lowerBound: Math.max(e.predicted_percentage - 5, 0),
-              displayDate: new Date(e.date).toLocaleDateString("en-GB", {
-                month: "short",
-                day: "numeric",
-              }),
+            const existing = map.get(e.date);
+            const displayDate = new Date(e.date).toLocaleDateString("en-GB", {
+              month: "short",
+              day: "numeric",
             });
+
+            if (existing) {
+              map.set(e.date, {
+                ...existing,
+                predicted: e.predicted_percentage,
+                upperBound: Math.min(e.predicted_percentage + 5, 100),
+                lowerBound: Math.max(e.predicted_percentage - 5, 0),
+                displayDate,
+              });
+            } else {
+              map.set(e.date, {
+                date: e.date,
+                actual: null,
+                predicted: e.predicted_percentage,
+                upperBound: Math.min(e.predicted_percentage + 5, 100),
+                lowerBound: Math.max(e.predicted_percentage - 5, 0),
+                displayDate,
+              });
+            }
           });
           const combined = Array.from(map.values()).sort(
             (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
