@@ -22,16 +22,19 @@ export default function BlogPage() {
   const { blogs, loading, error } = useBlogs()
   const [category, setCategory] = useState("All Articles")
   const [query, setQuery] = useState("")
+  const [selectedTopic, setSelectedTopic] = useState<string | null>(null)
 
   const filtered = blogs.filter((b) => {
     const matchCategory = category === "All Articles" || b.category === category
+    const matchTopic =
+      selectedTopic == null || (b.tags || []).includes(selectedTopic)
     const q = query.toLowerCase()
     const matchSearch =
       q.length === 0 ||
       b.title.toLowerCase().includes(q) ||
       b.summary.toLowerCase().includes(q) ||
       (b.tags || []).some((t) => t.toLowerCase().includes(q))
-    return matchCategory && matchSearch
+    return matchCategory && matchTopic && matchSearch
   })
 
   return (
@@ -132,7 +135,12 @@ export default function BlogPage() {
           {!loading && filtered.length > 0 && <BlogGrid posts={filtered} />}
         </div>
         <div className="lg:col-span-1">
-          <BlogSidebar posts={blogs} onSearch={setQuery} />
+          <BlogSidebar
+            posts={blogs}
+            onSearch={setQuery}
+            selectedTopic={selectedTopic}
+            onSelectTopic={setSelectedTopic}
+          />
         </div>
       </div>
     </div>
