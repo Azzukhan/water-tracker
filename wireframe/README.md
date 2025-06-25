@@ -8,7 +8,6 @@ This folder contains text-based wireframes for each page of the UK Water Tracker
 - `contact.md`
 - `blog.md`
 - `news.md`
-- `dashboard.md`
 - `data-sources.md`
 - `flood-alerts.md`
 - `api-documentation.md`

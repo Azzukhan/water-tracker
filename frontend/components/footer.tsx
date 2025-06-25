@@ -27,7 +27,6 @@ export default function Footer() {
             <li><Link href="/water-levels" className="hover:text-blue-600">Water Level Monitoring</Link></li>
             <li><Link href="/weather" className="hover:text-blue-600">Weather Forecasts</Link></li>
             <li><Link href="/flood-alerts" className="hover:text-blue-600">Flood Alerts</Link></li>
-            <li><Link href="/dashboard" className="hover:text-blue-600">Analytics Dashboard</Link></li>
           </ul>
         </div>
         <div>

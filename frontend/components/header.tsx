@@ -14,7 +14,6 @@ const navItems = [
   { name: "News", href: "/news" },
   { name: "Blogs", href: "/blog" },
   { name: "Contact", href: "/contact" },
-  { name: "Dashboard", href: "/dashboard" },
 ]
 
 export function Header() {
