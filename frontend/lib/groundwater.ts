@@ -41,5 +41,8 @@ export async function fetchRegionLevels(region: string, start: string) {
 export async function fetchStationNames(region: string) {
   const stationsRes = await fetch(`${API_BASE}/api/water-levels/groundwater-stations/`);
   const stations: Station[] = await stationsRes.json();
-  return stations.filter((s) => s.region === region).map((s) => s.name);
+  const names = stations
+    .filter((s) => s.region === region)
+    .map((s) => s.name);
+  return Array.from(new Set(names));
 }
