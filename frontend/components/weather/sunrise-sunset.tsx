@@ -30,11 +30,11 @@ interface SunriseSunsetProps {
 export function SunriseSunset({ sun, moon }: SunriseSunsetProps) {
   if (!sun && !moon) {
     return (
-      <Card className="shadow-lg border-0">
+      <Card className="shadow-lg border-0 flex flex-col h-full">
         <CardHeader className="bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 dark:text-white">
           <CardTitle className="text-2xl font-bold">Sun & Moon</CardTitle>
         </CardHeader>
-        <CardContent className="p-6">
+        <CardContent className="p-6 flex flex-col flex-1">
           <div className="text-center text-gray-500">No sun or moon data available.</div>
         </CardContent>
       </Card>
@@ -83,14 +83,14 @@ export function SunriseSunset({ sun, moon }: SunriseSunsetProps) {
   const phase = phaseName(moon?.phase)
 
   return (
-    <Card className="shadow-lg border-0">
+    <Card className="shadow-lg border-0 flex flex-col h-full">
       <CardHeader className="bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 dark:text-white">
         <CardTitle className="text-2xl font-bold flex items-center space-x-2">
           <Sun className="h-6 w-6" />
           <span>Sun & Moon</span>
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-6">
+      <CardContent className="p-6 flex flex-col flex-1">
         <div className="grid grid-cols-2 gap-6">
           <div className="space-y-3">
             <div className="flex items-center space-x-2">
