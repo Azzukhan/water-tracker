@@ -4,7 +4,8 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Menu, Droplets, Phone, Mail, Sun, Moon } from "lucide-react"
+import { Menu, Droplets, Mail, Sun, Moon } from "lucide-react"
+import { EmergencyButton } from "@/components/emergency-button"
 import { useTheme } from "next-themes"
 
 const navItems = [
@@ -77,17 +78,9 @@ export function Header() {
               </Button>
             )}
 
-            <Button
-              variant="outline"
-              size="sm"
-              className="hidden md:flex items-center space-x-2 border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
-              asChild
-            >
-              <Link href="/contact">
-                <Phone className="h-4 w-4" />
-                <span>Emergency: 999</span>
-              </Link>
-            </Button>
+            <div className="hidden md:flex">
+              <EmergencyButton />
+            </div>
 
             {/* Mobile Menu */}
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -137,12 +130,7 @@ export function Header() {
                       </Button>
                     )}
 
-                    <Button className="w-full mb-3 bg-red-600 hover:bg-red-700" asChild>
-                      <Link href="/contact">
-                        <Phone className="h-4 w-4 mr-2" />
-                        Emergency: 999
-                      </Link>
-                    </Button>
+                    <EmergencyButton fullWidth className="mb-3" />
                     <Button variant="outline" className="w-full" asChild>
                       <Link href="/contact">
                         <Mail className="h-4 w-4 mr-2" />
