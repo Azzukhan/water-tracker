@@ -6,34 +6,36 @@ interface Station {
   region: string;
 }
 
-export interface SeriesPoint {
+interface Level {
   date: string;
   value: number;
-  stations_reporting: number;
-  total_stations: number;
-}
-
-export function trimLowCoverage(
-  data: SeriesPoint[],
-  totalStations: number,
-  minCoverage = 0.8,
-) {
-  const threshold = Math.ceil(totalStations * minCoverage);
-  let lastGoodIdx = -1;
-  for (let i = 0; i < data.length; ++i) {
-    if (data[i].stations_reporting >= threshold) {
-      lastGoodIdx = i;
-    }
-  }
-  return data.slice(0, lastGoodIdx + 1);
 }
 
 export async function fetchRegionLevels(region: string, start: string) {
-  const res = await fetch(
-    `${API_BASE}/api/water-levels/groundwater/region-history/${region}/?start=${start}`
+  const stationsRes = await fetch(`${API_BASE}/api/water-levels/groundwater-stations/`);
+  const stations: Station[] = await stationsRes.json();
+  const regionStations = stations.filter((s) => s.region === region);
+  const data: Record<string, number[]> = {};
+
+  await Promise.all(
+    regionStations.map(async (st) => {
+      const res = await fetch(
+        `${API_BASE}/api/water-levels/groundwater-levels/?station__station_id=${st.station_id}&date__gte=${start}`
+      );
+      const levels: Level[] = await res.json();
+      levels.forEach((l) => {
+        if (!data[l.date]) data[l.date] = [];
+        data[l.date].push(l.value);
+      });
+    })
   );
-  const data: SeriesPoint[] = await res.json();
-  return data;
+
+  return Object.entries(data)
+    .map(([date, vals]) => ({
+      date,
+      value: vals.reduce((a, b) => a + b, 0) / vals.length,
+    }))
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 }
 
 export async function fetchStationNames(region: string) {

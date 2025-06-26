@@ -1,5 +1,4 @@
 from rest_framework import viewsets, generics
-from django.db.models import Avg, Count
 from django_filters.rest_framework import DjangoFilterBackend
 
 from .filters import GroundwaterPredictionFilter
@@ -218,40 +217,6 @@ class ScottishWaterPredictionAccuracyViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["area", "model_type", "date"]
     pagination_class = None
-
-
-class GroundwaterRegionHistoryAPIView(generics.GenericAPIView):
-    """Return aggregated groundwater history for a region."""
-
-    serializer_class = GroundwaterLevelSerializer
-    pagination_class = None
-
-    def get(self, request, region, *args, **kwargs):
-        start = request.GET.get("start")
-        qs = GroundwaterLevel.objects.filter(station__region=region)
-        if start:
-            qs = qs.filter(date__gte=start)
-
-        total_stations = GroundwaterStation.objects.filter(region=region).count()
-        data = (
-            qs.values("date")
-            .annotate(
-                value=Avg("value"),
-                stations_reporting=Count("station", distinct=True),
-            )
-            .order_by("date")
-        )
-
-        results = [
-            {
-                "date": entry["date"],
-                "value": entry["value"],
-                "stations_reporting": entry["stations_reporting"],
-                "total_stations": total_stations,
-            }
-            for entry in data
-        ]
-        return Response(results)
 
 
 class GroundwaterRegionSummaryAPIView(generics.GenericAPIView):
