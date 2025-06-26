@@ -73,7 +73,7 @@ export function HeroSection() {
             {/* Stats */}
             <div className="grid grid-cols-3 gap-6 pt-8">
               <div className="text-center">
-                <div className="text-2xl font-bold text-cyan-300">500+</div>
+                <div className="text-2xl font-bold text-cyan-300">100+</div>
                 <div className="text-sm text-blue-200">Monitoring Stations</div>
               </div>
               <div className="text-center">
