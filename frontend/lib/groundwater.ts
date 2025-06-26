@@ -11,7 +11,32 @@ interface Level {
   value: number;
 }
 
-export async function fetchRegionLevels(region: string, start: string) {
+interface SeriesPoint {
+  date: string;
+  value: number;
+  stations_reporting: number;
+}
+
+export function trimLowCoverage(
+  data: SeriesPoint[],
+  totalStations: number,
+  minCoverage = 0.8,
+) {
+  const threshold = Math.ceil(totalStations * minCoverage);
+  let lastGoodIdx = -1;
+  for (let i = 0; i < data.length; ++i) {
+    if (data[i].stations_reporting >= threshold) {
+      lastGoodIdx = i;
+    }
+  }
+  return data.slice(0, lastGoodIdx + 1);
+}
+
+export async function fetchRegionLevels(
+  region: string,
+  start: string,
+  minCoverage = 0.8,
+) {
   const stationsRes = await fetch(
     `${API_BASE}/api/water-levels/groundwater-stations/`
   );
@@ -37,11 +62,13 @@ export async function fetchRegionLevels(region: string, start: string) {
     (a, b) => new Date(a).getTime() - new Date(b).getTime()
   );
 
-  return allDates.map((date) => ({
+  const series = allDates.map((date) => ({
     date,
     value: data[date].reduce((a, b) => a + b, 0) / data[date].length,
     stations_reporting: data[date].length,
   }));
+
+  return trimLowCoverage(series, regionStations.length, minCoverage);
 }
 
 export async function fetchStationNames(region: string) {
