@@ -20,7 +20,15 @@ export default function NewsPage() {
   const { news, loading } = useNews()
   const [filters, setFilters] = useState<NewsFilterValues>(DEFAULT_FILTERS)
 
-  const filteredNews = news.filter((item) => {
+  const now = new Date();
+const last10DaysNews = news.filter((item) => {
+  const publishedDate = new Date(item.publishedAt);
+  const diffDays = (now.getTime() - publishedDate.getTime()) / (1000 * 60 * 60 * 24);
+  return diffDays <= 10; // keep only last 10 days
+});
+
+// Then, apply your existing filters to this reduced set
+const filteredNews = last10DaysNews.filter((item) => {
     if (filters.category !== "All Categories" && item.category !== filters.category) {
       return false
     }
