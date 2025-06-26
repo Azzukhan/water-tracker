@@ -12,10 +12,14 @@ interface Level {
 }
 
 export async function fetchRegionLevels(region: string, start: string) {
-  const stationsRes = await fetch(`${API_BASE}/api/water-levels/groundwater-stations/`);
+  const stationsRes = await fetch(
+    `${API_BASE}/api/water-levels/groundwater-stations/`
+  );
   const stations: Station[] = await stationsRes.json();
   const regionStations = stations.filter((s) => s.region === region);
+
   const data: Record<string, number[]> = {};
+  const dateSets: Set<string>[] = [];
 
   await Promise.all(
     regionStations.map(async (st) => {
@@ -23,19 +27,31 @@ export async function fetchRegionLevels(region: string, start: string) {
         `${API_BASE}/api/water-levels/groundwater-levels/?station__station_id=${st.station_id}&date__gte=${start}`
       );
       const levels: Level[] = await res.json();
+      const dates = new Set<string>();
       levels.forEach((l) => {
+        dates.add(l.date);
         if (!data[l.date]) data[l.date] = [];
         data[l.date].push(l.value);
       });
+      dateSets.push(dates);
     })
   );
 
-  return Object.entries(data)
-    .map(([date, vals]) => ({
-      date,
-      value: vals.reduce((a, b) => a + b, 0) / vals.length,
-    }))
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  if (!dateSets.length) return [];
+
+  let commonDates = dateSets[0];
+  for (const ds of dateSets.slice(1)) {
+    commonDates = new Set([...commonDates].filter((d) => ds.has(d)));
+  }
+
+  const sortedDates = Array.from(commonDates).sort(
+    (a, b) => new Date(a).getTime() - new Date(b).getTime()
+  );
+
+  return sortedDates.map((date) => ({
+    date,
+    value: data[date].reduce((a, b) => a + b, 0) / data[date].length,
+  }));
 }
 
 export async function fetchStationNames(region: string) {
