@@ -34,6 +34,8 @@ else:
         YorkshireWaterPrediction,
         SouthernWaterReservoirLevel,
         SouthernWaterReservoirForecast,
+        GroundwaterPrediction,
+        GroundwaterPredictionAccuracy
     )
     from .utils import fetch_scottish_water_resource_levels
 
@@ -882,42 +884,71 @@ def train_groundwater_prediction_models():
     return "predictions updated"
 
 
+from django.db.models import Avg
+from datetime import datetime, timedelta
+
 @shared_task
 def calculate_prediction_accuracy():
-    """Compare predictions with actual groundwater levels and store accuracy."""
-    from django.db.models import Avg
-    from .models import (
-        GroundwaterPrediction,
-        GroundwaterLevel,
-        GroundwaterPredictionAccuracy,
-    )
-
     today = datetime.today().date()
+    model_types = ['ARIMA', 'LSTM', 'REGRESSION']
 
-    predictions = GroundwaterPrediction.objects.filter(date__lte=today)
-    for pred in predictions:
-        actual = GroundwaterLevel.objects.filter(
-            station__region=pred.region, date=pred.date
-        ).aggregate(avg_value=Avg("value"))
+    regions = GroundwaterLevel.objects.values_list('station__region', flat=True).distinct()
+    for region in regions:
+        # 1. Find latest actual date and value
+        last_actual = (
+            GroundwaterLevel.objects
+            .filter(station__region=region, date__lte=today)
+            .values('date')
+            .annotate(avg_actual=Avg('value'))
+            .order_by('-date')
+            .first()
+        )
+        if not last_actual:
+            continue
 
-        actual_value = actual["avg_value"]
-        if actual_value is not None:
-            error = abs((actual_value - pred.predicted_value) / actual_value) * 100
-            GroundwaterPredictionAccuracy.objects.update_or_create(
-                region=pred.region,
-                date=pred.date,
-                model_type=pred.model_type,
-                defaults={
-                    "predicted_value": pred.predicted_value,
-                    "actual_value": actual_value,
-                    "percentage_error": round(error, 2),
-                },
+        last_actual_date = last_actual['date']
+        last_actual_value = last_actual['avg_actual']
+
+        # 2. For each model, look for closest forecast within ±7 days
+        for model_type in model_types:
+            forecasts = (
+                GroundwaterPrediction.objects
+                .filter(
+                    region=region,
+                    model_type=model_type,
+                    date__gte=last_actual_date - timedelta(days=7),
+                    date__lte=last_actual_date + timedelta(days=7),
+                )
+                .values('date', 'predicted_value')
             )
-        else:
-            print(
-                f"Actual data not available for {pred.region} {pred.date} ({pred.model_type})"
+
+            if not forecasts:
+                continue
+
+            # 3. Find forecast with the smallest date difference to actual
+            closest = min(
+                forecasts,
+                key=lambda f: abs((f['date'] - last_actual_date).days)
             )
+            forecast_date = closest['date']
+            predicted_value = closest['predicted_value']
+
+            # 4. Calculate and store accuracy
+            if last_actual_value is not None and predicted_value is not None:
+                error = abs((last_actual_value - predicted_value) / last_actual_value) * 100
+                GroundwaterPredictionAccuracy.objects.update_or_create(
+                    region=region,
+                    date=forecast_date,
+                    model_type=model_type,
+                    defaults={
+                        "predicted_value": predicted_value,
+                        "actual_value": last_actual_value,
+                        "percentage_error": round(error, 2),
+                    },
+                )
+
     return "accuracy updated"
+
 
 
 @shared_task
