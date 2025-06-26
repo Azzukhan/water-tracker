@@ -25,11 +25,11 @@ export function LiveHighlights() {
       (a, b) =>
         new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
     )
-    .slice(0, 4)
+    .slice(0, 3)
 
   return (
     <Card className="shadow-lg border-0 h-full flex flex-col">
-      <CardHeader className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-t-lg">
+      <CardHeader className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white h-24 flex flex-col justify-center rounded-t-lg">
         <div className="flex items-center justify-between">
           <CardTitle className="text-2xl font-bold flex items-center">
             <div className="w-3 h-3 bg-green-400 rounded-full mr-3 animate-pulse"></div>

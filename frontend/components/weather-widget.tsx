@@ -114,7 +114,7 @@ export default function WeatherWidget() {
 
   return (
     <Card className="shadow-lg border-0 h-full flex flex-col">
-      <CardHeader className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-t-lg">
+      <CardHeader className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white h-24 flex flex-col justify-center rounded-t-lg">
         <CardTitle className="flex items-center justify-between text-xl">
           <span>Current Weather</span>
           <Badge variant="secondary" className="flex items-center gap-1 bg-white/20 text-white border-white/30">
@@ -161,17 +161,35 @@ export default function WeatherWidget() {
         </div>
         <div className="mb-6">
           <h3 className="font-semibold text-gray-900 mb-4 text-center">4-Day Forecast</h3>
-          <div className="grid grid-cols-4 gap-4 text-sm">
-            {weather.daily.map((d, idx) => {
+          <div className="flex flex-col gap-3">
+            {weather.daily.slice(0, 4).map((d, idx) => {
               const Icon = getWeatherIcon(d.icon);
               return (
-                <div key={idx} className="bg-gray-50 rounded-lg p-3 text-center">
-                  <Icon className="h-5 w-5 text-blue-500 mx-auto mb-1" />
-                  <div className="font-medium text-gray-900">{d.day}</div>
-                  <div className="text-gray-600">{d.condition}</div>
-                  <div className="font-semibold text-gray-900">
+                <div
+                  key={idx}
+                  className="
+                    grid 
+                    grid-cols-[7rem,1fr,3.5rem]
+                    items-center 
+                    px-4 py-3 
+                    min-h-[48px] 
+                    rounded-xl 
+                    bg-white 
+                    shadow-sm 
+                    border border-gray-100
+                  "
+                >
+                  {/* Icon and day (fixed width column) */}
+                  <div className="flex items-center gap-2 w-28">
+                    <Icon className="h-6 w-6 text-blue-500" />
+                    <span className="font-medium text-gray-900">{d.day}</span>
+                  </div>
+                  {/* Condition (middle column) */}
+                  <div className="pl-4 text-gray-600 text-sm">{d.condition}</div>
+                  {/* Temps (fixed width column, right-aligned) */}
+                  <div className="flex items-baseline justify-end gap-1 font-semibold text-gray-900 text-lg">
                     {Math.round(d.high)}°
-                    <span className="text-gray-500 ml-1">{Math.round(d.low)}°</span>
+                    <span className="text-gray-400 text-base font-normal ml-1">{Math.round(d.low)}°</span>
                   </div>
                 </div>
               );
