@@ -21,7 +21,6 @@ from .views import (
     SouthernWaterForecastAccuracyViewSet,
     ScottishWaterPredictionAccuracyViewSet,
     GroundwaterRegionSummaryAPIView,
-    GroundwaterRegionHistoryAPIView,
 )
 
 router = DefaultRouter()
@@ -96,10 +95,5 @@ urlpatterns = [
         "groundwater/summary/",
         GroundwaterRegionSummaryAPIView.as_view(),
         name="groundwater-summary",
-    ),
-    path(
-        "groundwater/region-history/<str:region>/",
-        GroundwaterRegionHistoryAPIView.as_view(),
-        name="groundwater-region-history",
     ),
 ]
