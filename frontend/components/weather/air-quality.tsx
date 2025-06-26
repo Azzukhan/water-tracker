@@ -56,7 +56,7 @@ const getStatusIcon = (status: string) => {
 export function AirQuality({ aqi }: AirQualityProps) {
   if (!aqi) {
     return (
-      <Card className="shadow-lg border-0 flex flex-col h-full">
+      <Card className="shadow-lg border-0 flex flex-col h-full min-h-[540px]">
         <CardHeader className="bg-gradient-to-r from-green-500 to-emerald-600 text-gray-900 dark:text-white">
           <CardTitle className="text-2xl font-bold">Air Quality</CardTitle>
         </CardHeader>

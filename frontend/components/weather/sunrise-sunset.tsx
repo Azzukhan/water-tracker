@@ -30,7 +30,7 @@ interface SunriseSunsetProps {
 export function SunriseSunset({ sun, moon }: SunriseSunsetProps) {
   if (!sun && !moon) {
     return (
-      <Card className="shadow-lg border-0 flex flex-col h-full">
+      <Card className="shadow-lg border-0 flex flex-col h-full min-h-[540px]">
         <CardHeader className="bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 dark:text-white">
           <CardTitle className="text-2xl font-bold">Sun & Moon</CardTitle>
         </CardHeader>

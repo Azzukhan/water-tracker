@@ -517,7 +517,7 @@ export default function WeatherPage() {
             <ForecastSection daily={weatherData.daily} />
           </div>
           {/* Additional Weather Info */}
-          <div className="grid lg:grid-cols-3 gap-8 mb-12 items-stretch">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
             <RainRadar />
             <SunriseSunset sun={weatherData.sun} moon={weatherData.moon} />
             <AirQuality aqi={weatherData.aqi} />
