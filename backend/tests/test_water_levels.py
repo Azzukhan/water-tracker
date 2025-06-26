@@ -165,6 +165,19 @@ def test_groundwater_region_summary(api_client):
 
 
 @pytest.mark.django_db
+def test_groundwater_region_history(api_client):
+    s1 = GroundwaterStation.objects.create(station_id="s1", name="S1", region="north")
+    s2 = GroundwaterStation.objects.create(station_id="s2", name="S2", region="north")
+    GroundwaterLevel.objects.create(station=s1, date=datetime.date(2024, 1, 1), value=10.0)
+    GroundwaterLevel.objects.create(station=s2, date=datetime.date(2024, 1, 1), value=20.0)
+    resp = api_client.get("/api/water-levels/groundwater/region-history/north/")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data[0]["stations_reporting"] == 2
+    assert data[0]["total_stations"] == 2
+
+
+@pytest.mark.django_db
 def test_groundwater_levels_list(api_client):
     station = GroundwaterStation.objects.create(
         station_id="s1", name="S1", region="north"
