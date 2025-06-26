@@ -26,8 +26,12 @@ import { fetchRegionLevels } from "@/lib/groundwater";
 interface ChartPoint {
   date: string;
   level: number;
+  levelHigh: number | null;
+  levelLow: number | null;
   displayDate: string;
   average: number;
+  stations: number;
+  total: number;
 }
 
 const filterByPeriod = (data: ChartPoint[], period: string): ChartPoint[] => {
@@ -60,6 +64,10 @@ export function EnglandHistoryChart({ region }: { region: string }) {
   const [period, setPeriod] = useState("3m");
   const [zoomLevel, setZoomLevel] = useState(1);
   const [allData, setAllData] = useState<ChartPoint[]>([]);
+  const hasLowCoverage = useMemo(
+    () => allData.some((d) => d.levelLow !== null),
+    [allData]
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -72,15 +80,22 @@ export function EnglandHistoryChart({ region }: { region: string }) {
         );
         if (series.length) {
           const avg = series.reduce((s, d) => s + d.value, 0) / series.length;
-          const mapped = series.map((s) => ({
-            date: s.date,
-            level: s.value,
-            average: avg,
-            displayDate: new Date(s.date).toLocaleDateString("en-GB", {
-              month: "short",
-              day: "numeric",
-            }),
-          }));
+          const mapped = series.map((s) => {
+            const coverage = s.stations_reporting / s.total_stations;
+            return {
+              date: s.date,
+              level: s.value,
+              levelHigh: coverage >= 0.8 ? s.value : null,
+              levelLow: coverage < 0.8 ? s.value : null,
+              stations: s.stations_reporting,
+              total: s.total_stations,
+              average: avg,
+              displayDate: new Date(s.date).toLocaleDateString("en-GB", {
+                month: "short",
+                day: "numeric",
+              }),
+            };
+          });
           setAllData(mapped);
         }
       } catch {
@@ -152,10 +167,14 @@ export function EnglandHistoryChart({ region }: { region: string }) {
               <Tooltip
                 content={({ active, payload, label }) => {
                   if (active && payload && payload.length) {
+                    const d = payload[0].payload as ChartPoint;
                     return (
                       <div className="bg-white p-4 border border-gray-200 rounded-lg shadow-lg">
                         <p className="font-semibold text-gray-900">{label}</p>
-                        <p className="text-blue-600">Level: {payload[0].value.toFixed(1)}%</p>
+                        <p className="text-blue-600">Level: {d.level.toFixed(1)}%</p>
+                        <p className="text-gray-600 text-sm">
+                          {d.stations}/{d.total} stations reporting
+                        </p>
                       </div>
                     );
                   }
@@ -163,7 +182,8 @@ export function EnglandHistoryChart({ region }: { region: string }) {
                 }}
               />
               <ReferenceLine y={allData.length ? allData[0].average : 0} stroke="#6b7280" strokeDasharray="5 5" label={{ value: "Average", position: "topRight" }} />
-              <Line type="monotone" dataKey="level" stroke="#2563eb" strokeWidth={3} dot={false} activeDot={{ r: 6, fill: "#2563eb" }} />
+              <Line type="monotone" dataKey="levelHigh" stroke="#2563eb" strokeWidth={3} dot={false} activeDot={{ r: 6, fill: "#2563eb" }} />
+              <Line type="monotone" dataKey="levelLow" stroke="#2563eb" strokeWidth={3} strokeDasharray="5 5" dot={false} activeDot={{ r: 6, fill: "#2563eb" }} />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -171,6 +191,10 @@ export function EnglandHistoryChart({ region }: { region: string }) {
           <div className="flex items-center space-x-2">
             <div className="w-4 h-0.5 bg-blue-600"></div>
             <span>Level</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <div className="w-4 h-0.5 bg-blue-600 border-dashed"></div>
+            <span>Low Coverage</span>
           </div>
           <div className="flex items-center space-x-4 text-sm text-gray-600">
             <div className="flex items-center space-x-1">
@@ -183,6 +207,11 @@ export function EnglandHistoryChart({ region }: { region: string }) {
             <span>{data.length} data points</span>
           </div>
         </div>
+        {hasLowCoverage && (
+          <p className="text-xs text-gray-600 mt-2">
+            Note: some periods have low station coverage. See tooltip for details.
+          </p>
+        )}
       </CardContent>
     </Card>
   );
