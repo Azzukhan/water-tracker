@@ -35,7 +35,7 @@ export function NewsList({ items }: NewsListProps) {
   const [currentPage, setCurrentPage] = useState(1)
   const [bookmarkedItems, setBookmarkedItems] = useState<number[]>([])
   const [sortBy, setSortBy] = useState<"recent" | "oldest">("recent")
-  const itemsPerPage = 5
+  const itemsPerPage = 3
 
   const sortedItems = [...items].sort((a, b) =>
     sortBy === "recent"
