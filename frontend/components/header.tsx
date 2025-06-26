@@ -1,12 +1,12 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Menu, Droplets, Mail, Sun, Moon } from "lucide-react"
+import { Menu, Droplets, Mail } from "lucide-react"
 import { EmergencyButton } from "@/components/emergency-button"
-import { useTheme } from "next-themes"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 const navItems = [
   { name: "Home", href: "/" },
@@ -19,24 +19,9 @@ const navItems = [
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false)
-  const { theme, setTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
-
-  // Wait for component to mount to avoid hydration mismatch
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  const toggleTheme = () => {
-    if (theme === "dark") {
-      setTheme("light")
-    } else {
-      setTheme("dark")
-    }
-  }
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-b border-blue-100 dark:border-gray-800 shadow-sm">
+    <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b border-blue-100 dark:border-gray-800 shadow-sm bg-gradient-to-r from-white/90 to-blue-50/90 dark:from-gray-900/90 dark:to-gray-800/90">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
@@ -66,17 +51,7 @@ export function Header() {
 
           {/* Theme Toggle & Emergency Contact & Mobile Menu */}
           <div className="flex items-center space-x-3">
-            {/* Theme Toggle */}
-            {mounted && (
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={toggleTheme}
-                className="hidden md:flex border-gray-200 dark:border-gray-700"
-              >
-                {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-              </Button>
-            )}
+            <ThemeToggle className="hidden md:flex" />
 
             <div className="hidden md:flex">
               <EmergencyButton />
@@ -112,23 +87,8 @@ export function Header() {
                     ))}
                   </nav>
 
-                  <div className="pt-4 border-t dark:border-gray-700">
-                    {/* Theme Toggle for Mobile */}
-                    {mounted && (
-                      <Button variant="outline" className="w-full mb-3" onClick={toggleTheme}>
-                        {theme === "dark" ? (
-                          <>
-                            <Sun className="h-4 w-4 mr-2" />
-                            Light Mode
-                          </>
-                        ) : (
-                          <>
-                            <Moon className="h-4 w-4 mr-2" />
-                            Dark Mode
-                          </>
-                        )}
-                      </Button>
-                    )}
+                    <div className="pt-4 border-t dark:border-gray-700">
+                      <ThemeToggle className="mb-3" />
 
                     <EmergencyButton fullWidth className="mb-3" />
                     <Button variant="outline" className="w-full" asChild>
