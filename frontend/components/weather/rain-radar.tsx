@@ -36,7 +36,7 @@ const DEFAULT_RADAR = {
 
 export function RainRadar() {
   return (
-    <Card className="shadow-lg border-0">
+    <Card className="shadow-lg border-0 flex flex-col h-full">
       <CardHeader className="bg-gradient-to-r from-blue-500 to-indigo-600 text-gray-900 dark:text-white">
         <div className="flex items-center justify-between">
           <div>
@@ -50,7 +50,7 @@ export function RainRadar() {
           </div>
         </div>
       </CardHeader>
-      <CardContent className="p-6">
+      <CardContent className="p-6 flex flex-col flex-1">
         <div className="space-y-6">
           {/* Radar Map */}
           <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-100">
