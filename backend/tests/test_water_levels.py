@@ -11,10 +11,10 @@ from water_levels.models import (
     YorkshireReservoirData,
     SouthernWaterReservoirLevel,
     SouthernWaterReservoirForecast,
-    GroundwaterStation,
-    GroundwaterLevel,
-    GroundwaterPrediction,
-    GroundwaterPredictionAccuracy,
+    EnglandwaterStation,
+    EnglandwaterLevel,
+    EnglandwaterPrediction,
+    EnglandwaterPredictionAccuracy,
     ScottishWaterRegionalForecast,
     SevernTrentForecastAccuracy,
     YorkshireWaterPredictionAccuracy,
@@ -153,11 +153,11 @@ def test_southernwater_forecast(api_client):
 
 
 @pytest.mark.django_db
-def test_groundwater_region_summary(api_client):
-    station = GroundwaterStation.objects.create(
+def test_englandwater_region_summary(api_client):
+    station = EnglandwaterStation.objects.create(
         station_id="s1", name="S1", region="north"
     )
-    GroundwaterLevel.objects.create(
+    EnglandwaterLevel.objects.create(
         station=station, date=datetime.date(2024, 1, 1), value=10.0
     )
     resp = api_client.get("/api/water-levels/groundwater/summary/")
@@ -165,11 +165,11 @@ def test_groundwater_region_summary(api_client):
 
 
 @pytest.mark.django_db
-def test_groundwater_levels_list(api_client):
-    station = GroundwaterStation.objects.create(
+def test_englandwater_levels_list(api_client):
+    station = EnglandwaterStation.objects.create(
         station_id="s1", name="S1", region="north"
     )
-    GroundwaterLevel.objects.create(
+    EnglandwaterLevel.objects.create(
         station=station, date=datetime.date(2024, 1, 1), value=10.0
     )
     resp = api_client.get("/api/water-levels/groundwater-levels/")
@@ -177,8 +177,8 @@ def test_groundwater_levels_list(api_client):
 
 
 @pytest.mark.django_db
-def test_groundwater_predictions(api_client):
-    GroundwaterPrediction.objects.create(
+def test_englandwater_predictions(api_client):
+    EnglandwaterPrediction.objects.create(
         region="north",
         model_type="ARIMA",
         date=datetime.date(2024, 1, 8),
@@ -189,20 +189,20 @@ def test_groundwater_predictions(api_client):
 
 
 @pytest.mark.django_db
-def test_groundwater_prediction_accuracy(api_client):
-    station = GroundwaterStation.objects.create(
+def test_englandwater_prediction_accuracy(api_client):
+    station = EnglandwaterStation.objects.create(
         station_id="s1", name="S1", region="north"
     )
-    GroundwaterLevel.objects.create(
+    EnglandwaterLevel.objects.create(
         station=station, date=datetime.date(2024, 1, 8), value=10.0
     )
-    GroundwaterPrediction.objects.create(
+    EnglandwaterPrediction.objects.create(
         region="north",
         model_type="ARIMA",
         date=datetime.date(2024, 1, 8),
         predicted_value=12.0,
     )
-    GroundwaterPredictionAccuracy.objects.create(
+    EnglandwaterPredictionAccuracy.objects.create(
         region="north",
         model_type="ARIMA",
         date=datetime.date(2024, 1, 8),
