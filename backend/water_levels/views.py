@@ -1,7 +1,7 @@
 from rest_framework import viewsets, generics
 from django_filters.rest_framework import DjangoFilterBackend
 
-from .filters import GroundwaterPredictionFilter
+from .filters import EnglandwaterPredictionFilter
 from rest_framework.response import Response
 
 from .utils import fetch_scottish_water_resource_levels
@@ -17,10 +17,10 @@ from .models import (
     SouthernWaterReservoirLevel,
     SouthernWaterReservoirForecast,
     ScottishWaterRegionalForecast,
-    GroundwaterStation,
-    GroundwaterLevel,
-    GroundwaterPrediction,
-    GroundwaterPredictionAccuracy,
+    EnglandwaterStation,
+    EnglandwaterLevel,
+    EnglandwaterPrediction,
+    EnglandwaterPredictionAccuracy,
     SevernTrentForecastAccuracy,
     YorkshireWaterPredictionAccuracy,
     SouthernWaterForecastAccuracy,
@@ -38,10 +38,10 @@ from .serializers import (
     SouthernWaterReservoirLevelSerializer,
     SouthernWaterForecastSerializer,
     ScottishWaterRegionalForecastSerializer,
-    GroundwaterStationSerializer,
-    GroundwaterLevelSerializer,
-    GroundwaterPredictionSerializer,
-    GroundwaterPredictionAccuracySerializer,
+    EnglandwaterStationSerializer,
+    EnglandwaterLevelSerializer,
+    EnglandwaterPredictionSerializer,
+    EnglandwaterPredictionAccuracySerializer,
     SevernTrentForecastAccuracySerializer,
     YorkshireWaterPredictionAccuracySerializer,
     SouthernWaterForecastAccuracySerializer,
@@ -157,31 +157,31 @@ class SouthernWaterForecastAPIView(generics.ListAPIView):
         ).order_by("date")
 
 
-class GroundwaterStationViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = GroundwaterStation.objects.all()
-    serializer_class = GroundwaterStationSerializer
+class EnglandwaterStationViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = EnglandwaterStation.objects.all()
+    serializer_class = EnglandwaterStationSerializer
     pagination_class = None
 
 
-class GroundwaterLevelViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = GroundwaterLevel.objects.all().order_by("-date")
-    serializer_class = GroundwaterLevelSerializer
+class EnglandwaterLevelViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = EnglandwaterLevel.objects.all().order_by("-date")
+    serializer_class = EnglandwaterLevelSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["station", "station__station_id", "date"]
     pagination_class = None
 
 
-class GroundwaterPredictionViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = GroundwaterPrediction.objects.all().order_by("date")
-    serializer_class = GroundwaterPredictionSerializer
+class EnglandwaterPredictionViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = EnglandwaterPrediction.objects.all().order_by("date")
+    serializer_class = EnglandwaterPredictionSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = GroundwaterPredictionFilter
+    filterset_class = EnglandwaterPredictionFilter
     pagination_class = None
 
 
-class GroundwaterPredictionAccuracyViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = GroundwaterPredictionAccuracy.objects.all().order_by("-date")
-    serializer_class = GroundwaterPredictionAccuracySerializer
+class EnglandwaterPredictionAccuracyViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = EnglandwaterPredictionAccuracy.objects.all().order_by("-date")
+    serializer_class = EnglandwaterPredictionAccuracySerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["region", "model_type", "date"]
     pagination_class = None
@@ -219,17 +219,17 @@ class ScottishWaterPredictionAccuracyViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = None
 
 
-class GroundwaterRegionSummaryAPIView(generics.GenericAPIView):
+class EnglandwaterRegionSummaryAPIView(generics.GenericAPIView):
     """Return average latest groundwater level by region and overall."""
 
-    serializer_class = GroundwaterLevelSerializer
+    serializer_class = EnglandwaterLevelSerializer
 
     def get(self, request, *args, **kwargs):
         data = {}
         overall_values = []
         for region in ["north", "south", "east", "west"]:
             values = []
-            stations = GroundwaterStation.objects.filter(region=region)
+            stations = EnglandwaterStation.objects.filter(region=region)
             for s in stations:
                 level = s.levels.order_by("-date").first()
                 if level:

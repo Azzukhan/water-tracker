@@ -12,15 +12,15 @@ from .views import (
     YorkshireReservoirDataViewSet,
     SouthernWaterReservoirLevelViewSet,
     SouthernWaterForecastAPIView,
-    GroundwaterStationViewSet,
-    GroundwaterLevelViewSet,
-    GroundwaterPredictionViewSet,
-    GroundwaterPredictionAccuracyViewSet,
+    EnglandwaterStationViewSet,
+    EnglandwaterLevelViewSet,
+    EnglandwaterPredictionViewSet,
+    EnglandwaterPredictionAccuracyViewSet,
     SevernTrentForecastAccuracyViewSet,
     YorkshireWaterPredictionAccuracyViewSet,
     SouthernWaterForecastAccuracyViewSet,
     ScottishWaterPredictionAccuracyViewSet,
-    GroundwaterRegionSummaryAPIView,
+    EnglandwaterRegionSummaryAPIView,
 )
 
 router = DefaultRouter()
@@ -30,11 +30,11 @@ router.register(r"yorkshire-water-reports", YorkshireWaterReportViewSet)
 router.register(r"yorkshire-predictions", YorkshireWaterPredictionViewSet)
 router.register(r"yorkshire/reservoir-data", YorkshireReservoirDataViewSet)
 router.register(r"southernwater-reservoirs", SouthernWaterReservoirLevelViewSet)
-router.register(r"groundwater-stations", GroundwaterStationViewSet)
-router.register(r"groundwater-levels", GroundwaterLevelViewSet)
-router.register(r"groundwater-predictions", GroundwaterPredictionViewSet)
+router.register(r"groundwater-stations", EnglandwaterStationViewSet)
+router.register(r"groundwater-levels", EnglandwaterLevelViewSet)
+router.register(r"groundwater-predictions", EnglandwaterPredictionViewSet)
 router.register(
-    r"groundwater-prediction-accuracy", GroundwaterPredictionAccuracyViewSet
+    r"groundwater-prediction-accuracy", EnglandwaterPredictionAccuracyViewSet
 )
 router.register(r"severn-trent-prediction-accuracy", SevernTrentForecastAccuracyViewSet)
 router.register(
@@ -93,7 +93,7 @@ urlpatterns = [
     ),
     path(
         "groundwater/summary/",
-        GroundwaterRegionSummaryAPIView.as_view(),
+        EnglandwaterRegionSummaryAPIView.as_view(),
         name="groundwater-summary",
     ),
 ]

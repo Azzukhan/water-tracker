@@ -34,8 +34,8 @@ else:
         YorkshireWaterPrediction,
         SouthernWaterReservoirLevel,
         SouthernWaterReservoirForecast,
-        GroundwaterPrediction,
-        GroundwaterPredictionAccuracy
+        EnglandwaterPrediction,
+        EnglandwaterPredictionAccuracy
     )
     from .utils import fetch_scottish_water_resource_levels
 
@@ -663,12 +663,12 @@ def monthly_southernwater_predictions():
     return "scheduled"
 
 
-from .models import GroundwaterStation, GroundwaterLevel
+from .models import EnglandwaterStation, EnglandwaterLevel
 from .utils import get_region
 
 
 @shared_task
-def import_historical_groundwater_levels():
+def import_historical_englandwater_levels():
     stations_url = "https://environment.data.gov.uk/hydrology/id/stations"
     params = {"observedProperty": "groundwaterLevel"}
     response = requests.get(
@@ -684,7 +684,7 @@ def import_historical_groundwater_levels():
         lon = float(item.get("long", 0))
         region = get_region(lat, lon)
 
-        station, _ = GroundwaterStation.objects.get_or_create(
+        station, _ = EnglandwaterStation.objects.get_or_create(
             station_id=station_id,
             defaults={
                 "name": name,
@@ -720,7 +720,7 @@ def import_historical_groundwater_levels():
                 dt = datetime.strptime(
                     dt_str, "%Y-%m-%dT%H:%M:%S" if "T" in dt_str else "%Y-%m-%d"
                 ).date()
-                GroundwaterLevel.objects.update_or_create(
+                EnglandwaterLevel.objects.update_or_create(
                     station=station,
                     date=dt,
                     defaults={"value": value, "quality": r.get("quality", "Unknown")},
@@ -728,7 +728,7 @@ def import_historical_groundwater_levels():
 
 
 @shared_task
-def fetch_current_groundwater_levels():
+def fetch_current_englandwater_levels():
     stations_url = "https://environment.data.gov.uk/hydrology/id/stations"
     params = {"observedProperty": "groundwaterLevel"}
     response = requests.get(
@@ -744,7 +744,7 @@ def fetch_current_groundwater_levels():
         lon = float(item.get("long", 0))
         region = get_region(lat, lon)
 
-        station, _ = GroundwaterStation.objects.get_or_create(
+        station, _ = EnglandwaterStation.objects.get_or_create(
             station_id=station_id,
             defaults={
                 "name": name,
@@ -783,7 +783,7 @@ def fetch_current_groundwater_levels():
                 dt = datetime.strptime(
                     dt_str, "%Y-%m-%dT%H:%M:%S" if "T" in dt_str else "%Y-%m-%d"
                 ).date()
-                GroundwaterLevel.objects.update_or_create(
+                EnglandwaterLevel.objects.update_or_create(
                     station=station,
                     date=dt,
                     defaults={
@@ -794,10 +794,10 @@ def fetch_current_groundwater_levels():
 
 
 def get_region_timeseries(region):
-    station_ids = GroundwaterStation.objects.filter(region=region).values_list(
+    station_ids = EnglandwaterStation.objects.filter(region=region).values_list(
         "id", flat=True
     )
-    levels = GroundwaterLevel.objects.filter(station_id__in=station_ids).values(
+    levels = EnglandwaterLevel.objects.filter(station_id__in=station_ids).values(
         "date", "value"
     )
     df = pd.DataFrame(list(levels))
@@ -847,8 +847,8 @@ def predict_lstm(df):
 
 
 @shared_task
-def train_groundwater_prediction_models():
-    from .models import GroundwaterPrediction
+def train_englandwater_prediction_models():
+    from .models import EnglandwaterPrediction
 
     for region in ["north", "south", "east", "west"]:
         series = get_region_timeseries(region)
@@ -863,19 +863,19 @@ def train_groundwater_prediction_models():
 
         for i in range(16):
             pred_date = last_date + timedelta(weeks=i + 1)
-            GroundwaterPrediction.objects.update_or_create(
+            EnglandwaterPrediction.objects.update_or_create(
                 region=region,
                 model_type="ARIMA",
                 date=pred_date,
                 defaults={"predicted_value": float(arima_preds.iloc[i])},
             )
-            GroundwaterPrediction.objects.update_or_create(
+            EnglandwaterPrediction.objects.update_or_create(
                 region=region,
                 model_type="LSTM",
                 date=pred_date,
                 defaults={"predicted_value": float(lstm_preds[i])},
             )
-            GroundwaterPrediction.objects.update_or_create(
+            EnglandwaterPrediction.objects.update_or_create(
                 region=region,
                 model_type="REGRESSION",
                 date=pred_date,
@@ -888,15 +888,15 @@ from django.db.models import Avg
 from datetime import datetime, timedelta
 
 @shared_task
-def calculate_prediction_accuracy():
+def calculate_Englandwater_prediction_accuracy():
     today = datetime.today().date()
     model_types = ['ARIMA', 'LSTM', 'REGRESSION']
 
-    regions = GroundwaterLevel.objects.values_list('station__region', flat=True).distinct()
+    regions = EnglandwaterLevel.objects.values_list('station__region', flat=True).distinct()
     for region in regions:
         # 1. Find latest actual date and value
         last_actual = (
-            GroundwaterLevel.objects
+            EnglandwaterLevel.objects
             .filter(station__region=region, date__lte=today)
             .values('date')
             .annotate(avg_actual=Avg('value'))
@@ -912,7 +912,7 @@ def calculate_prediction_accuracy():
         # 2. For each model, look for closest forecast within ±7 days
         for model_type in model_types:
             forecasts = (
-                GroundwaterPrediction.objects
+                EnglandwaterPrediction.objects
                 .filter(
                     region=region,
                     model_type=model_type,
@@ -936,7 +936,7 @@ def calculate_prediction_accuracy():
             # 4. Calculate and store accuracy
             if last_actual_value is not None and predicted_value is not None:
                 error = abs((last_actual_value - predicted_value) / last_actual_value) * 100
-                GroundwaterPredictionAccuracy.objects.update_or_create(
+                EnglandwaterPredictionAccuracy.objects.update_or_create(
                     region=region,
                     date=forecast_date,
                     model_type=model_type,

@@ -215,7 +215,7 @@ class SouthernWaterReservoirForecast(models.Model):
         )
 
 
-class GroundwaterStation(models.Model):
+class EnglandwaterStation(models.Model):
     station_id = models.CharField(max_length=50, unique=True)
     name = models.CharField(max_length=200)
     region = models.CharField(max_length=10)
@@ -226,9 +226,9 @@ class GroundwaterStation(models.Model):
         return f"{self.name} ({self.region})"
 
 
-class GroundwaterLevel(models.Model):
+class EnglandwaterLevel(models.Model):
     station = models.ForeignKey(
-        GroundwaterStation, on_delete=models.CASCADE, related_name="levels"
+        EnglandwaterStation, on_delete=models.CASCADE, related_name="levels"
     )
     date = models.DateField()
     value = models.FloatField()
@@ -238,7 +238,7 @@ class GroundwaterLevel(models.Model):
         unique_together = ("station", "date")
 
 
-class GroundwaterPrediction(models.Model):
+class EnglandwaterPrediction(models.Model):
     """Predicted groundwater levels for each UK region."""
 
     region = models.CharField(max_length=10)
@@ -251,7 +251,7 @@ class GroundwaterPrediction(models.Model):
         unique_together = ("region", "model_type", "date")
 
 
-class GroundwaterPredictionAccuracy(models.Model):
+class EnglandwaterPredictionAccuracy(models.Model):
     """Store accuracy of groundwater predictions once actuals are available."""
 
     region = models.CharField(max_length=10)

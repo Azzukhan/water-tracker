@@ -10,10 +10,10 @@ from .models import (
     YorkshireReservoirData,
     SouthernWaterReservoirLevel,
     SouthernWaterReservoirForecast,
-    GroundwaterStation,
-    GroundwaterLevel,
-    GroundwaterPrediction,
-    GroundwaterPredictionAccuracy,
+    EnglandwaterStation,
+    EnglandwaterLevel,
+    EnglandwaterPrediction,
+    EnglandwaterPredictionAccuracy,
     SevernTrentForecastAccuracy,
     YorkshireWaterPredictionAccuracy,
     SouthernWaterForecastAccuracy,
@@ -101,27 +101,27 @@ class SouthernWaterForecastSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class GroundwaterStationSerializer(serializers.ModelSerializer):
+class EnglandwaterStationSerializer(serializers.ModelSerializer):
     class Meta:
-        model = GroundwaterStation
+        model = EnglandwaterStation
         fields = "__all__"
 
 
-class GroundwaterLevelSerializer(serializers.ModelSerializer):
+class EnglandwaterLevelSerializer(serializers.ModelSerializer):
     class Meta:
-        model = GroundwaterLevel
+        model = EnglandwaterLevel
         fields = "__all__"
 
 
-class GroundwaterPredictionSerializer(serializers.ModelSerializer):
+class EnglandwaterPredictionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = GroundwaterPrediction
+        model = EnglandwaterPrediction
         fields = "__all__"
 
 
-class GroundwaterPredictionAccuracySerializer(serializers.ModelSerializer):
+class EnglandwaterPredictionAccuracySerializer(serializers.ModelSerializer):
     class Meta:
-        model = GroundwaterPredictionAccuracy
+        model = EnglandwaterPredictionAccuracy
         fields = "__all__"
 
 
