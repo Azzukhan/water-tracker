@@ -486,7 +486,14 @@ def fetch_southern_water_levels():
         name = reservoir_names[i]
         for j, row in df.iterrows():
             date_str = row["date"].replace(",", "").strip()
-            date = pd.to_datetime(date_str, dayfirst=True).date()
+            # If the date does not have a year, append the current water_year
+            if not any(char.isdigit() for char in date_str.split()[-1]):
+                date_str = f"{date_str} {water_year}"
+            try:
+                date = pd.to_datetime(date_str, dayfirst=True).date()
+            except Exception as e:
+                print(f"Failed to parse date: {date_str} ({e})")
+                continue  # skip this row if still fails
             current = row["actual"]
             avg = row["average"]
             diff = round(current - avg, 2)
@@ -1086,7 +1093,7 @@ def calculate_scottishwater_accuracy():
         actual = ScottishWaterRegionalLevel.objects.filter(
             area=rec.area, date=rec.date
         ).first()
-        if actual and rec.predicted_value:
+        if actual:
             error = abs((actual.current - rec.predicted_value) / actual.current) * 100
             rec.actual_value = actual.current
             rec.percentage_error = round(error, 2)
