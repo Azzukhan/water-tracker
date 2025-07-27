@@ -69,9 +69,9 @@ export function ScottishARIMAChart() {
   const [trend, setTrend] = useState(0);
   const [showUncertainty, setShowUncertainty] = useState(true);
   const [accuracy, setAccuracy] = useState<{
-    predicted: number;
-    actual: number;
-    error: number;
+    predicted: number | null;
+    actual: number | null;
+    error: number | null;
   } | null>(null);
   const data = useMemo(() => filterByPeriod(allData, period), [allData, period]);
 
@@ -189,11 +189,14 @@ export function ScottishARIMAChart() {
           </div>
         </div>
 
-        {accuracy && (
-          <p className="mb-4 text-red-600 font-semibold">
-            Last week's prediction: {accuracy.predicted.toFixed(1)}% | Actual: {accuracy.actual.toFixed(1)}% | Accuracy: {(100 - accuracy.error).toFixed(1)}%
-          </p>
-        )}
+        {accuracy &&
+          accuracy.predicted !== null &&
+          accuracy.actual !== null &&
+          accuracy.error !== null && (
+            <p className="mb-4 text-red-600 font-semibold">
+              Last week's prediction: {accuracy.predicted.toFixed(1)}% | Actual: {accuracy.actual.toFixed(1)}% | Accuracy: {(100 - accuracy.error).toFixed(1)}%
+            </p>
+          )}
 
         <div className="h-80 mb-6">
           <ResponsiveContainer width="100%" height="100%">
