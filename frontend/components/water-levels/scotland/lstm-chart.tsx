@@ -68,18 +68,27 @@ export function ScottishLSTMChart() {
   const [avgPrediction, setAvgPrediction] = useState(0);
   const [trend, setTrend] = useState(0);
   const [showUncertainty, setShowUncertainty] = useState(true);
+  const [accuracy, setAccuracy] = useState<{
+    predicted: number;
+    actual: number;
+    error: number;
+  } | null>(null);
   const data = useMemo(() => filterByPeriod(allData, period), [allData, period]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [histRes, forecastRes] = await Promise.all([
+        const [histRes, forecastRes, accRes] = await Promise.all([
           fetch(`${API_BASE}/api/water-levels/scottish-averages/`),
           fetch(`${API_BASE}/api/water-levels/scottishwater/LSTM/`),
+          fetch(
+            `${API_BASE}/api/water-levels/scottishwater-forecast-accuracy/?model_type=LSTM`
+          ),
         ]);
-        const [histData, forecastData] = await Promise.all([
+        const [histData, forecastData, accData] = await Promise.all([
           histRes.json(),
           forecastRes.json(),
+          accRes.json(),
         ]);
         if (Array.isArray(histData) && Array.isArray(forecastData)) {
           const map = new Map<string, ChartPoint>();
@@ -121,6 +130,16 @@ export function ScottishLSTMChart() {
               forecastData[forecastData.length - 1].predicted_percentage -
               forecastData[0].predicted_percentage;
             setTrend(tr);
+          }
+
+          if (Array.isArray(accData) && accData.length > 0) {
+            setAccuracy({
+              predicted: accData[0].predicted_percentage,
+              actual: accData[0].actual_percentage,
+              error: accData[0].percentage_error,
+            });
+          } else {
+            setAccuracy(null);
           }
         }
       } catch {
@@ -169,6 +188,12 @@ export function ScottishLSTMChart() {
             </div>
           </div>
         </div>
+
+        {accuracy && (
+          <p className="mb-4 text-red-600 font-semibold">
+            Last week's prediction: {accuracy.predicted.toFixed(1)}% | Actual: {accuracy.actual.toFixed(1)}% | Accuracy: {(100 - accuracy.error).toFixed(1)}%
+          </p>
+        )}
 
         <div className="h-80 mb-6">
           <ResponsiveContainer width="100%" height="100%">

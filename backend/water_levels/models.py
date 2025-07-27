@@ -329,3 +329,21 @@ class ScottishWaterPredictionAccuracy(models.Model):
     class Meta:
         unique_together = ("area", "date", "model_type")
         ordering = ["area", "-date"]
+
+
+class ScottishWaterForecastAccuracy(models.Model):
+    """Accuracy of Scotland-wide water level forecasts."""
+
+    date = models.DateField()
+    model_type = models.CharField(max_length=10)
+    predicted_percentage = models.FloatField()
+    actual_percentage = models.FloatField(null=True, blank=True)
+    percentage_error = models.FloatField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("date", "model_type")
+        ordering = ["-date"]
+
+    def __str__(self) -> str:  # pragma: no cover - simple representation
+        return f"{self.date} {self.model_type}: {self.predicted_percentage}%"

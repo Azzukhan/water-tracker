@@ -18,6 +18,7 @@ from .models import (
     YorkshireWaterPredictionAccuracy,
     SouthernWaterForecastAccuracy,
     ScottishWaterPredictionAccuracy,
+    ScottishWaterForecastAccuracy,
     ScottishWaterRegionalForecast,
 )
 
@@ -146,4 +147,10 @@ class SouthernWaterForecastAccuracySerializer(serializers.ModelSerializer):
 class ScottishWaterPredictionAccuracySerializer(serializers.ModelSerializer):
     class Meta:
         model = ScottishWaterPredictionAccuracy
+        fields = "__all__"
+
+
+class ScottishWaterForecastAccuracySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ScottishWaterForecastAccuracy
         fields = "__all__"
