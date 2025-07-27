@@ -20,6 +20,7 @@ from .views import (
     YorkshireWaterPredictionAccuracyViewSet,
     SouthernWaterForecastAccuracyViewSet,
     ScottishWaterPredictionAccuracyViewSet,
+    ScottishWaterForecastAccuracyViewSet,
     EnglandwaterRegionSummaryAPIView,
 )
 
@@ -45,6 +46,9 @@ router.register(
 )
 router.register(
     r"scottishwater-prediction-accuracy", ScottishWaterPredictionAccuracyViewSet
+)
+router.register(
+    r"scottishwater-forecast-accuracy", ScottishWaterForecastAccuracyViewSet
 )
 
 urlpatterns = [

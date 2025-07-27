@@ -25,6 +25,7 @@ from .models import (
     YorkshireWaterPredictionAccuracy,
     SouthernWaterForecastAccuracy,
     ScottishWaterPredictionAccuracy,
+    ScottishWaterForecastAccuracy,
 )
 from .serializers import (
     ScottishWaterAverageLevelSerializer,
@@ -46,6 +47,7 @@ from .serializers import (
     YorkshireWaterPredictionAccuracySerializer,
     SouthernWaterForecastAccuracySerializer,
     ScottishWaterPredictionAccuracySerializer,
+    ScottishWaterForecastAccuracySerializer,
 )
 
 
@@ -216,6 +218,14 @@ class ScottishWaterPredictionAccuracyViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ScottishWaterPredictionAccuracySerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["area", "model_type", "date"]
+    pagination_class = None
+
+
+class ScottishWaterForecastAccuracyViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = ScottishWaterForecastAccuracy.objects.all().order_by("-date")
+    serializer_class = ScottishWaterForecastAccuracySerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["model_type", "date"]
     pagination_class = None
 
 

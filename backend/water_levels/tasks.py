@@ -1099,3 +1099,35 @@ def calculate_scottishwater_accuracy():
             rec.percentage_error = round(error, 2)
             rec.save()
     return "scottish accuracy updated"
+
+
+@shared_task
+def calculate_scottish_forecast_accuracy():
+    """Calculate accuracy of Scotland-wide forecasts."""
+    from .models import (
+        ScottishWaterForecast,
+        ScottishWaterAverageLevel,
+        ScottishWaterForecastAccuracy,
+    )
+
+    today = datetime.today().date()
+    forecasts = ScottishWaterForecast.objects.filter(date__lte=today)
+    for f in forecasts:
+        actual = ScottishWaterAverageLevel.objects.filter(date=f.date).first()
+        if actual:
+            error = (
+                abs((actual.current - f.predicted_percentage) / actual.current)
+                * 100
+            )
+            ScottishWaterForecastAccuracy.objects.update_or_create(
+                date=f.date,
+                model_type=f.model_type,
+                defaults={
+                    "predicted_percentage": f.predicted_percentage,
+                    "actual_percentage": actual.current,
+                    "percentage_error": round(error, 2),
+                },
+            )
+        else:
+            print(f"Actual data missing for {f.date} {f.model_type}")
+    return "scottish forecast accuracy updated"
