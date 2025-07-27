@@ -317,8 +317,7 @@ class SouthernWaterForecastAccuracy(models.Model):
 
 
 class ScottishWaterPredictionAccuracy(models.Model):
-    """Accuracy of Scottish Water predictions (placeholder)."""
-
+    """Accuracy of Scottish Water regional forecasts."""
     area = models.CharField(max_length=100)
     date = models.DateField()
     model_type = models.CharField(max_length=10)
@@ -330,6 +329,10 @@ class ScottishWaterPredictionAccuracy(models.Model):
     class Meta:
         unique_together = ("area", "date", "model_type")
         ordering = ["area", "-date"]
+
+    def __str__(self):
+        return f"{self.area} {self.date} {self.model_type}: {self.predicted_value}%"
+
 
 
 class ScottishWaterForecastAccuracy(models.Model):

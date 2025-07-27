@@ -45,11 +45,9 @@ interface ChartPoint {
 
 const filterByPeriod = (data: ChartPoint[], period: string): ChartPoint[] => {
   if (!data.length) return [];
-
   let months = 2;
   if (period === "3m") months = 3;
   else if (period === "4m") months = 4;
-
   let lastRealDate = new Date(data[data.length - 1].date);
   for (let i = data.length - 1; i >= 0; i--) {
     if (data[i].actual !== null) {
@@ -73,6 +71,7 @@ export function ScottishRegionalLSTMChart({ area }: { area: string }) {
     actual: number | null;
     error: number | null;
   } | null>(null);
+
   const data = useMemo(() => filterByPeriod(allData, period), [allData, period]);
 
   useEffect(() => {
@@ -85,12 +84,21 @@ export function ScottishRegionalLSTMChart({ area }: { area: string }) {
             `${API_BASE}/api/water-levels/scottishwater-prediction-accuracy/?area=${area}&model_type=LSTM`
           ),
         ]);
-        const [histData, forecastData, accData] = await Promise.all([
+        const [histData, rawForecastData, accData] = await Promise.all([
           histRes.json(),
           forecastRes.json(),
           accRes.json(),
         ]);
-        if (Array.isArray(histData) && Array.isArray(forecastData)) {
+        if (
+          Array.isArray(histData) &&
+          Array.isArray(rawForecastData)
+        ) {
+          // Only last 4 forecasts (like Severn Trent/Scotland overall)
+          const forecastData = [...rawForecastData]
+            .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+            .slice(-4);
+
+          // Merge by date, combine actual/predicted values
           const map = new Map<string, ChartPoint>();
           histData.forEach((e: HistoricalEntry) => {
             map.set(e.date, {
@@ -104,23 +112,37 @@ export function ScottishRegionalLSTMChart({ area }: { area: string }) {
             });
           });
           forecastData.forEach((e: ForecastEntry) => {
-            map.set(e.date, {
-              date: e.date,
-              actual: null,
-              predicted: e.predicted_level,
-              upperBound: Math.min(e.predicted_level + 5, 100),
-              lowerBound: Math.max(e.predicted_level - 5, 0),
-              displayDate: new Date(e.date).toLocaleDateString("en-GB", {
-                month: "short",
-                day: "numeric",
-              }),
+            const existing = map.get(e.date);
+            const displayDate = new Date(e.date).toLocaleDateString("en-GB", {
+              month: "short",
+              day: "numeric",
             });
+            if (existing) {
+              map.set(e.date, {
+                ...existing,
+                predicted: e.predicted_level,
+                upperBound: Math.min(e.predicted_level + 5, 100),
+                lowerBound: Math.max(e.predicted_level - 5, 0),
+                displayDate,
+              });
+            } else {
+              map.set(e.date, {
+                date: e.date,
+                actual: null,
+                predicted: e.predicted_level,
+                upperBound: Math.min(e.predicted_level + 5, 100),
+                lowerBound: Math.max(e.predicted_level - 5, 0),
+                displayDate,
+              });
+            }
           });
+
           const combined = Array.from(map.values()).sort(
             (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
           );
           setAllData(combined);
 
+          // Avg prediction & trend
           if (forecastData.length) {
             const avg =
               forecastData.reduce((s, d) => s + d.predicted_level, 0) /
@@ -132,6 +154,7 @@ export function ScottishRegionalLSTMChart({ area }: { area: string }) {
             setTrend(tr);
           }
 
+          // Accuracy block (most recent entry)
           if (Array.isArray(accData) && accData.length > 0) {
             setAccuracy({
               predicted: accData[0].predicted_value,
@@ -183,18 +206,18 @@ export function ScottishRegionalLSTMChart({ area }: { area: string }) {
             <div>
               <h4 className="font-semibold text-purple-900 mb-1">AI Model Information</h4>
               <p className="text-sm text-purple-800">
-                Forecast generated using an LSTM model trained on historical Severn Trent data.
+                Forecast generated using an LSTM model trained on historical Scottish Water regional data.
               </p>
             </div>
+          </div>
         </div>
-      </div>
 
         {accuracy &&
           accuracy.predicted !== null &&
           accuracy.actual !== null &&
           accuracy.error !== null && (
             <p className="mb-4 text-red-600 font-semibold">
-              Last week's prediction: {accuracy.predicted.toFixed(1)}% | Actual: {accuracy.actual.toFixed(1)}% | Accuracy: {(100 - accuracy.error).toFixed(1)}%
+              Last week's prediction: {accuracy.predicted?.toFixed(1)}% | Actual: {accuracy.actual?.toFixed(1)}% | Accuracy: {(100 - (accuracy.error || 0)).toFixed(1)}%
             </p>
           )}
 
@@ -215,15 +238,15 @@ export function ScottishRegionalLSTMChart({ area }: { area: string }) {
                     return (
                       <div className="bg-white p-4 border border-gray-200 rounded-lg shadow-lg">
                         <p className="font-semibold text-gray-900">{label}</p>
-                        {d.actual && (
+                        {d.actual !== null && (
                           <p className="text-blue-600">Actual: {d.actual.toFixed(1)}%</p>
                         )}
-                        {d.predicted && (
+                        {d.predicted !== null && (
                           <>
                             <p className="text-purple-600">Predicted: {d.predicted.toFixed(1)}%</p>
                             {showUncertainty && (
                               <p className="text-gray-600 text-sm">
-                                Range: {d.lowerBound.toFixed(1)}% - {d.upperBound.toFixed(1)}%
+                                Range: {d.lowerBound?.toFixed(1)}% - {d.upperBound?.toFixed(1)}%
                               </p>
                             )}
                           </>

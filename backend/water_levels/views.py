@@ -213,13 +213,10 @@ class SouthernWaterForecastAccuracyViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = None
 
 
-class ScottishWaterPredictionAccuracyViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = ScottishWaterPredictionAccuracy.objects.all().order_by("-date")
-    serializer_class = ScottishWaterPredictionAccuracySerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ["area", "model_type", "date"]
-    pagination_class = None
-
+from rest_framework import viewsets
+from django_filters.rest_framework import DjangoFilterBackend
+from .models import ScottishWaterForecastAccuracy, ScottishWaterPredictionAccuracy
+from .serializers import ScottishWaterForecastAccuracySerializer, ScottishWaterPredictionAccuracySerializer
 
 class ScottishWaterForecastAccuracyViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = ScottishWaterForecastAccuracy.objects.all().order_by("-date")
@@ -227,6 +224,14 @@ class ScottishWaterForecastAccuracyViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["model_type", "date"]
     pagination_class = None
+
+class ScottishWaterPredictionAccuracyViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = ScottishWaterPredictionAccuracy.objects.all().order_by("area", "-date")
+    serializer_class = ScottishWaterPredictionAccuracySerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["area", "model_type", "date"]
+    pagination_class = None
+
 
 
 class EnglandwaterRegionSummaryAPIView(generics.GenericAPIView):

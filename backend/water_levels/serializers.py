@@ -144,10 +144,13 @@ class SouthernWaterForecastAccuracySerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+from .models import ScottishWaterPredictionAccuracy
+
 class ScottishWaterPredictionAccuracySerializer(serializers.ModelSerializer):
     class Meta:
         model = ScottishWaterPredictionAccuracy
         fields = "__all__"
+
 
 
 class ScottishWaterForecastAccuracySerializer(serializers.ModelSerializer):

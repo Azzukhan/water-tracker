@@ -45,11 +45,9 @@ interface ChartPoint {
 
 const filterByPeriod = (data: ChartPoint[], period: string): ChartPoint[] => {
   if (!data.length) return [];
-
   let months = 2;
   if (period === "3m") months = 3;
   else if (period === "4m") months = 4;
-
   let lastRealDate = new Date(data[data.length - 1].date);
   for (let i = data.length - 1; i >= 0; i--) {
     if (data[i].actual !== null) {
@@ -73,6 +71,7 @@ export function ScottishRegionalARIMAChart({ area }: { area: string }) {
     actual: number | null;
     error: number | null;
   } | null>(null);
+
   const data = useMemo(() => filterByPeriod(allData, period), [allData, period]);
 
   useEffect(() => {
@@ -85,12 +84,21 @@ export function ScottishRegionalARIMAChart({ area }: { area: string }) {
             `${API_BASE}/api/water-levels/scottishwater-prediction-accuracy/?area=${area}&model_type=ARIMA`
           ),
         ]);
-        const [histData, forecastData, accData] = await Promise.all([
+        const [histData, rawForecastData, accData] = await Promise.all([
           histRes.json(),
           forecastRes.json(),
           accRes.json(),
         ]);
-        if (Array.isArray(histData) && Array.isArray(forecastData)) {
+        if (
+          Array.isArray(histData) &&
+          Array.isArray(rawForecastData)
+        ) {
+          // Only last 4 forecasts (like Severn Trent logic)
+          const forecastData = [...rawForecastData]
+            .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+            .slice(-4);
+
+          // Merge by date, keep actual/predicted keys clear
           const map = new Map<string, ChartPoint>();
           histData.forEach((e: HistoricalEntry) => {
             map.set(e.date, {
@@ -104,23 +112,37 @@ export function ScottishRegionalARIMAChart({ area }: { area: string }) {
             });
           });
           forecastData.forEach((e: ForecastEntry) => {
-            map.set(e.date, {
-              date: e.date,
-              actual: null,
-              predicted: e.predicted_level,
-              upperBound: Math.min(e.predicted_level + 5, 100),
-              lowerBound: Math.max(e.predicted_level - 5, 0),
-              displayDate: new Date(e.date).toLocaleDateString("en-GB", {
-                month: "short",
-                day: "numeric",
-              }),
+            const existing = map.get(e.date);
+            const displayDate = new Date(e.date).toLocaleDateString("en-GB", {
+              month: "short",
+              day: "numeric",
             });
+            if (existing) {
+              map.set(e.date, {
+                ...existing,
+                predicted: e.predicted_level,
+                upperBound: Math.min(e.predicted_level + 5, 100),
+                lowerBound: Math.max(e.predicted_level - 5, 0),
+                displayDate,
+              });
+            } else {
+              map.set(e.date, {
+                date: e.date,
+                actual: null,
+                predicted: e.predicted_level,
+                upperBound: Math.min(e.predicted_level + 5, 100),
+                lowerBound: Math.max(e.predicted_level - 5, 0),
+                displayDate,
+              });
+            }
           });
+
           const combined = Array.from(map.values()).sort(
             (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
           );
           setAllData(combined);
 
+          // Set average prediction & trend
           if (forecastData.length) {
             const avg =
               forecastData.reduce((s, d) => s + d.predicted_level, 0) /
@@ -132,6 +154,7 @@ export function ScottishRegionalARIMAChart({ area }: { area: string }) {
             setTrend(tr);
           }
 
+          // Set accuracy stats
           if (Array.isArray(accData) && accData.length > 0) {
             setAccuracy({
               predicted: accData[0].predicted_value,
@@ -154,7 +177,9 @@ export function ScottishRegionalARIMAChart({ area }: { area: string }) {
     <Card className="shadow-lg border-0">
       <CardHeader>
         <div className="flex items-center justify-between space-y-4 sm:space-y-0">
-          <CardTitle className="text-xl font-bold">Scottish Water Regional Forecast - ARIMA</CardTitle>
+          <CardTitle className="text-xl font-bold">
+            Scottish Water Regional Forecast - ARIMA
+          </CardTitle>
           <div className="flex items-center space-x-3 sm:ml-4">
             <Select value={period} onValueChange={setPeriod}>
               <SelectTrigger className="w-32">
@@ -183,18 +208,18 @@ export function ScottishRegionalARIMAChart({ area }: { area: string }) {
             <div>
               <h4 className="font-semibold text-purple-900 mb-1">AI Model Information</h4>
               <p className="text-sm text-purple-800">
-                Forecast generated using an ARIMA model trained on historical Scottish Water data.
+                Forecast generated using an ARIMA model trained on historical Scottish Water regional data.
               </p>
             </div>
+          </div>
         </div>
-      </div>
 
         {accuracy &&
           accuracy.predicted !== null &&
           accuracy.actual !== null &&
           accuracy.error !== null && (
             <p className="mb-4 text-red-600 font-semibold">
-              Last week's prediction: {accuracy.predicted.toFixed(1)}% | Actual: {accuracy.actual.toFixed(1)}% | Accuracy: {(100 - accuracy.error).toFixed(1)}%
+              Last week's prediction: {accuracy.predicted?.toFixed(1)}% | Actual: {accuracy.actual?.toFixed(1)}% | Accuracy: {(100 - (accuracy.error || 0)).toFixed(1)}%
             </p>
           )}
 
@@ -215,15 +240,15 @@ export function ScottishRegionalARIMAChart({ area }: { area: string }) {
                     return (
                       <div className="bg-white p-4 border border-gray-200 rounded-lg shadow-lg">
                         <p className="font-semibold text-gray-900">{label}</p>
-                        {d.actual && (
+                        {d.actual !== null && (
                           <p className="text-blue-600">Actual: {d.actual.toFixed(1)}%</p>
                         )}
-                        {d.predicted && (
+                        {d.predicted !== null && (
                           <>
                             <p className="text-purple-600">Predicted: {d.predicted.toFixed(1)}%</p>
                             {showUncertainty && (
                               <p className="text-gray-600 text-sm">
-                                Range: {d.lowerBound.toFixed(1)}% - {d.upperBound.toFixed(1)}%
+                                Range: {d.lowerBound?.toFixed(1)}% - {d.upperBound?.toFixed(1)}%
                               </p>
                             )}
                           </>
@@ -259,7 +284,9 @@ export function ScottishRegionalARIMAChart({ area }: { area: string }) {
               <span className="text-sm text-gray-600">Avg. Predicted Level</span>
               <TrendingUp className="h-4 w-4 text-purple-600" />
             </div>
-            <div className="text-2xl font-bold text-purple-600">{avgPrediction.toFixed(1)}%</div>
+            <div className="text-2xl font-bold text-purple-600">
+              {avgPrediction.toFixed(1)}%
+            </div>
           </div>
 
           <div className="p-4 bg-blue-50 rounded-lg">
@@ -271,7 +298,11 @@ export function ScottishRegionalARIMAChart({ area }: { area: string }) {
                 <TrendingUp className="h-4 w-4 text-red-600 rotate-180" />
               )}
             </div>
-            <div className={`text-2xl font-bold ${trend > 0 ? "text-green-600" : "text-red-600"}`}>
+            <div
+              className={`text-2xl font-bold ${
+                trend > 0 ? "text-green-600" : "text-red-600"
+              }`}
+            >
               {trend > 0 ? "+" : ""}
               {trend.toFixed(1)}%
             </div>

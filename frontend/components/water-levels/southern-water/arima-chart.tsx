@@ -45,12 +45,10 @@ interface ChartPoint {
 
 const filterByPeriod = (data: ChartPoint[], period: string): ChartPoint[] => {
   if (!data.length) return [];
-
-  let realMonths = 3; // default = 9 month view
+  let realMonths = 3;
   if (period === "12m") realMonths = 6;
   else if (period === "15m") realMonths = 9;
   else if (period === "18m") realMonths = 12;
-
   let lastRealDate = new Date(data[data.length - 1].date);
   for (let i = data.length - 1; i >= 0; i--) {
     if (data[i].actual !== null) {
@@ -65,7 +63,6 @@ const filterByPeriod = (data: ChartPoint[], period: string): ChartPoint[] => {
 
 export function SouthernARIMAChart({ reservoir }: { reservoir: string }) {
   const [allData, setAllData] = useState<ChartPoint[]>([]);
-  // default to 9 month view (3 real + 6 forecast)
   const [period, setPeriod] = useState("9m");
   const [avgPrediction, setAvgPrediction] = useState(0);
   const [trend, setTrend] = useState(0);
@@ -75,6 +72,7 @@ export function SouthernARIMAChart({ reservoir }: { reservoir: string }) {
     actual: number | null;
     error: number | null;
   } | null>(null);
+
   const data = useMemo(() => filterByPeriod(allData, period), [allData, period]);
 
   useEffect(() => {
@@ -83,16 +81,34 @@ export function SouthernARIMAChart({ reservoir }: { reservoir: string }) {
         const [histRes, forecastRes, accRes] = await Promise.all([
           fetch(`${API_BASE}/api/water-levels/southernwater-reservoirs/?reservoir=${reservoir}`),
           fetch(`${API_BASE}/api/water-levels/southernwater/${reservoir}/ARIMA`),
-          fetch(
-            `${API_BASE}/api/water-levels/southernwater-prediction-accuracy/?reservoir=${reservoir}&model_type=ARIMA`
-          ),
+          fetch(`${API_BASE}/api/water-levels/southernwater-prediction-accuracy/?reservoir=${reservoir}&model_type=ARIMA`),
         ]);
-        const [histData, forecastData, accData] = await Promise.all([
+        const [histData, rawForecastData, accData] = await Promise.all([
           histRes.json(),
           forecastRes.json(),
           accRes.json(),
         ]);
-        if (Array.isArray(histData) && Array.isArray(forecastData)) {
+        if (Array.isArray(histData) && Array.isArray(rawForecastData)) {
+          // Find the latest actual date
+          const lastActualDate =
+            histData.length > 0
+              ? histData.reduce((a, b) =>
+                  new Date(b.date) > new Date(a.date) ? b : a
+                ).date
+              : null;
+
+          // Show only forecasts > 7 days after last actual, and only 4 points
+          const forecastData = lastActualDate
+            ? rawForecastData
+                .filter((f) => {
+                  const diffDays = (new Date(f.date).getTime() - new Date(lastActualDate).getTime()) / (1000 * 60 * 60 * 24);
+                  return diffDays > 7;
+                })
+                .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+                .slice(0, 4)
+            : [];
+
+          // Merge actuals and forecasts by date in a map
           const map = new Map<string, ChartPoint>();
           histData.forEach((e: HistoricalEntry) => {
             map.set(e.date, {
@@ -106,23 +122,26 @@ export function SouthernARIMAChart({ reservoir }: { reservoir: string }) {
             });
           });
           forecastData.forEach((e: ForecastEntry) => {
+            const displayDate = new Date(e.date).toLocaleDateString("en-GB", {
+              month: "short",
+              day: "numeric",
+            });
             map.set(e.date, {
               date: e.date,
               actual: null,
               predicted: e.predicted_level,
               upperBound: Math.min(e.predicted_level + 5, 100),
               lowerBound: Math.max(e.predicted_level - 5, 0),
-              displayDate: new Date(e.date).toLocaleDateString("en-GB", {
-                month: "short",
-                day: "numeric",
-              }),
+              displayDate,
             });
           });
+
           const combined = Array.from(map.values()).sort(
-            (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+            (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
           );
           setAllData(combined);
 
+          // Avg/trend for displayed forecasts only
           if (forecastData.length) {
             const avg =
               forecastData.reduce((s, d) => s + d.predicted_level, 0) /
@@ -134,6 +153,7 @@ export function SouthernARIMAChart({ reservoir }: { reservoir: string }) {
             setTrend(tr);
           }
 
+          // Accuracy (most recent)
           if (Array.isArray(accData) && accData.length > 0) {
             setAccuracy({
               predicted: accData[0].predicted_level,
@@ -189,15 +209,15 @@ export function SouthernARIMAChart({ reservoir }: { reservoir: string }) {
                 Forecast generated using an ARIMA model trained on historical Southern Water data.
               </p>
             </div>
+          </div>
         </div>
-      </div>
 
         {accuracy &&
           accuracy.predicted !== null &&
           accuracy.actual !== null &&
           accuracy.error !== null && (
             <p className="mb-4 text-red-600 font-semibold">
-              Last week's prediction: {accuracy.predicted.toFixed(1)}% | Actual: {accuracy.actual.toFixed(1)}% | Accuracy: {(100 - accuracy.error).toFixed(1)}%
+              Last week's prediction: {accuracy.predicted?.toFixed(1)}% | Actual: {accuracy.actual?.toFixed(1)}% | Accuracy: {(100 - (accuracy.error || 0)).toFixed(1)}%
             </p>
           )}
 
@@ -218,15 +238,15 @@ export function SouthernARIMAChart({ reservoir }: { reservoir: string }) {
                     return (
                       <div className="bg-white p-4 border border-gray-200 rounded-lg shadow-lg">
                         <p className="font-semibold text-gray-900">{label}</p>
-                        {d.actual && (
+                        {d.actual !== null && (
                           <p className="text-blue-600">Actual: {d.actual.toFixed(1)}%</p>
                         )}
-                        {d.predicted && (
+                        {d.predicted !== null && (
                           <>
                             <p className="text-purple-600">Predicted: {d.predicted.toFixed(1)}%</p>
                             {showUncertainty && (
                               <p className="text-gray-600 text-sm">
-                                Range: {d.lowerBound.toFixed(1)}% - {d.upperBound.toFixed(1)}%
+                                Range: {d.lowerBound?.toFixed(1)}% - {d.upperBound?.toFixed(1)}%
                               </p>
                             )}
                           </>
