@@ -309,6 +309,7 @@ class SouthernWaterForecastAccuracy(models.Model):
     actual_level = models.FloatField(null=True, blank=True)
     percentage_error = models.FloatField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    forecast_date = models.DateField(null=True, blank=True)
 
     class Meta:
         unique_together = ("reservoir", "date", "model_type")

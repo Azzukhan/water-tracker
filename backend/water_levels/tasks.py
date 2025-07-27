@@ -464,6 +464,35 @@ def run_yorkshire_lstm_prediction_task():
 
 @shared_task
 def fetch_southern_water_levels():
+    import requests, re
+    import pandas as pd
+    from datetime import datetime, date
+
+    # Helper for robust date parsing
+    def parse_southern_date(date_str):
+        date_str = date_str.replace(",", "").strip()
+        # Fix compact (e.g. 3Jul => 3 Jul)
+        match = re.match(r"^(\d{1,2})([A-Za-z]{3})$", date_str)
+        if match:
+            day, month = match.groups()
+            date_str = f"{day} {month}"
+        parts = date_str.split()
+        # If no year, infer by month per water year rule
+        if len(parts) == 2:
+            day, month = parts
+            month = month[:3].title()
+            if month in ["Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]:
+                year = 2024
+            else:
+                year = 2025
+            date_str = f"{day} {month} {year}"
+        try:
+            dt = datetime.strptime(date_str, "%d %b %Y").date()
+            return dt
+        except Exception as e:
+            print(f"Failed to parse: '{date_str}' ({e})")
+            return None
+
     url = "https://www.southernwater.co.uk/about-us/environmental-performance/water-levels/reservoir-levels/"
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
     try:
@@ -475,36 +504,43 @@ def fetch_southern_water_levels():
 
     blocks = re.findall(r"addRows\(\[\s*(.*?)\s*\]\);", html, re.DOTALL)[:4]
     reservoir_names = ["Bewl", "Darwell", "Powdermill", "Weir Wood"]
-    water_year = 2024  # Adjust for your season
+
+    WATER_YEAR_START = date(2024, 7, 18)
+    WATER_YEAR_END = date(2025, 7, 10)
 
     for i, block in enumerate(blocks):
         rows = re.findall(r"\['(.*?)',\s*([\d.]+),\s*([\d.]+),\s*([\d.]+)\]", block)
+        if not rows:
+            print(f"No data found for {reservoir_names[i]}")
+            continue
+
         df = pd.DataFrame(rows, columns=["date", "actual", "average", "minimum"])
         df["actual"] = df["actual"].astype(float)
         df["average"] = df["average"].astype(float)
         df = df.reset_index(drop=True)
-        name = reservoir_names[i]
+
         for j, row in df.iterrows():
-            date_str = row["date"].replace(",", "").strip()
-            # If the date does not have a year, append the current water_year
-            if not any(char.isdigit() for char in date_str.split()[-1]):
-                date_str = f"{date_str} {water_year}"
-            try:
-                date = pd.to_datetime(date_str, dayfirst=True).date()
-            except Exception as e:
-                print(f"Failed to parse date: {date_str} ({e})")
-                continue  # skip this row if still fails
+            orig_date_str = row["date"]
+            dt = parse_southern_date(orig_date_str)
+            if not dt:
+                continue
+            # Only include dates in your custom water year
+            if not (WATER_YEAR_START <= dt <= WATER_YEAR_END):
+                continue
+
             current = row["actual"]
             avg = row["average"]
             diff = round(current - avg, 2)
-            change_week = round(current - df.loc[j - 1, "actual"], 2) if j > 0 else 0.0
+            change_week = (
+                round(current - df.loc[j - 1, "actual"], 2) if j > 0 else 0.0
+            )
             change_month = (
                 round(current - df.loc[j - 4, "actual"], 2) if j >= 4 else 0.0
             )
 
             SouthernWaterReservoirLevel.objects.update_or_create(
-                reservoir=name,
-                date=date,
+                reservoir=reservoir_names[i],
+                date=dt,
                 defaults={
                     "current_level": current,
                     "average_level": avg,
@@ -513,7 +549,12 @@ def fetch_southern_water_levels():
                     "difference_from_average": diff,
                 },
             )
+            print(f"Saved: {reservoir_names[i]}, {dt}, value: {current}")
+
+    print("Done updating Southern Water levels (custom water year).")
     return "done"
+
+
 
 
 @shared_task
@@ -1043,39 +1084,78 @@ def calculate_yorkshire_accuracy():
     return "yorkshire accuracy updated"
 
 
+from datetime import datetime, timedelta
+
 @shared_task
 def calculate_southernwater_accuracy():
-    """Calculate accuracy of Southern Water forecasts."""
+    """Calculate accuracy of Southern Water forecasts for the most recent actual value per reservoir and model."""
     from .models import (
         SouthernWaterReservoirForecast,
         SouthernWaterReservoirLevel,
         SouthernWaterForecastAccuracy,
     )
 
-    today = datetime.today().date()
-    forecasts = SouthernWaterReservoirForecast.objects.filter(date__lte=today)
-    for f in forecasts:
-        actual = SouthernWaterReservoirLevel.objects.filter(
-            reservoir=f.reservoir, date=f.date
-        ).first()
-        if actual:
-            error = (
-                abs((actual.current_level - f.predicted_level) / actual.current_level)
-                * 100
+    reservoirs = (
+        SouthernWaterReservoirLevel.objects.values_list('reservoir', flat=True).distinct()
+    )
+
+    for reservoir in reservoirs:
+        # Get latest actual value
+        latest_actual = (
+            SouthernWaterReservoirLevel.objects
+            .filter(reservoir=reservoir)
+            .order_by('-date')
+            .first()
+        )
+        if not latest_actual:
+            print(f"No actual data for {reservoir}")
+            continue
+
+        # Find available models for this reservoir's forecasts
+        model_types = (
+            SouthernWaterReservoirForecast.objects
+            .filter(reservoir=reservoir)
+            .values_list('model_type', flat=True)
+            .distinct()
+        )
+
+        for model in model_types:
+            # Find forecast closest to the latest actual date
+            candidates = (
+                SouthernWaterReservoirForecast.objects
+                .filter(reservoir=reservoir, model_type=model)
             )
+            if not candidates.exists():
+                print(f"No forecast for {reservoir} {model}")
+                continue
+
+            # Find the forecast with minimum abs(date difference)
+            closest = min(
+                candidates,
+                key=lambda f: abs((f.date - latest_actual.date).days)
+            )
+
+            actual_val = latest_actual.current_level
+            predicted_val = closest.predicted_level
+            try:
+                error = abs((actual_val - predicted_val) / actual_val) * 100
+            except ZeroDivisionError:
+                error = 0.0
+
             SouthernWaterForecastAccuracy.objects.update_or_create(
-                reservoir=f.reservoir,
-                date=f.date,
-                model_type=f.model_type,
+                reservoir=reservoir,
+                date=latest_actual.date,
+                model_type=model,
                 defaults={
-                    "predicted_level": f.predicted_level,
-                    "actual_level": actual.current_level,
+                    "predicted_level": predicted_val,
+                    "actual_level": actual_val,
                     "percentage_error": round(error, 2),
                 },
             )
-        else:
-            print(f"Actual data missing for {f.reservoir} {f.date} {f.model_type}")
+            print(f"Accuracy for {reservoir} {model} on {latest_actual.date}: pred={predicted_val} (forecast for {closest.date}), actual={actual_val}, error={round(error,2)}%")
+
     return "southern accuracy updated"
+
 
 
 @shared_task
@@ -1103,31 +1183,50 @@ def calculate_scottishwater_accuracy():
 
 @shared_task
 def calculate_scottish_forecast_accuracy():
-    """Calculate accuracy of Scotland-wide forecasts."""
+    """
+    Calculate accuracy ONLY for the latest available actual value.
+    """
     from .models import (
         ScottishWaterForecast,
         ScottishWaterAverageLevel,
         ScottishWaterForecastAccuracy,
     )
 
-    today = datetime.today().date()
-    forecasts = ScottishWaterForecast.objects.filter(date__lte=today)
+    # Find the latest actual date
+    latest_actual = (
+        ScottishWaterAverageLevel.objects.order_by("-date").first()
+    )
+    if not latest_actual:
+        print("No actual data found.")
+        return "no actuals"
+
+    # For this date, get all forecasts
+    forecasts = ScottishWaterForecast.objects.filter(date=latest_actual.date)
+    if not forecasts.exists():
+        print(f"No forecasts for {latest_actual.date}")
+        return "no forecasts"
+
     for f in forecasts:
-        actual = ScottishWaterAverageLevel.objects.filter(date=f.date).first()
-        if actual:
+        try:
             error = (
-                abs((actual.current - f.predicted_percentage) / actual.current)
+                abs((latest_actual.current - f.predicted_percentage) / latest_actual.current)
                 * 100
             )
-            ScottishWaterForecastAccuracy.objects.update_or_create(
-                date=f.date,
-                model_type=f.model_type,
-                defaults={
-                    "predicted_percentage": f.predicted_percentage,
-                    "actual_percentage": actual.current,
-                    "percentage_error": round(error, 2),
-                },
-            )
-        else:
-            print(f"Actual data missing for {f.date} {f.model_type}")
+        except ZeroDivisionError:
+            error = 0.0
+        ScottishWaterForecastAccuracy.objects.update_or_create(
+            date=f.date,
+            model_type=f.model_type,
+            defaults={
+                "predicted_percentage": f.predicted_percentage,
+                "actual_percentage": latest_actual.current,
+                "percentage_error": round(error, 2),
+            },
+        )
+        print(
+            f"Accuracy for {f.model_type} on {f.date}: "
+            f"Prediction={f.predicted_percentage}, "
+            f"Actual={latest_actual.current}, Error={round(error,2)}%"
+        )
+
     return "scottish forecast accuracy updated"
