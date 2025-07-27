@@ -68,18 +68,27 @@ export function ScottishRegionalARIMAChart({ area }: { area: string }) {
   const [avgPrediction, setAvgPrediction] = useState(0);
   const [trend, setTrend] = useState(0);
   const [showUncertainty, setShowUncertainty] = useState(true);
+  const [accuracy, setAccuracy] = useState<{
+    predicted: number;
+    actual: number;
+    error: number;
+  } | null>(null);
   const data = useMemo(() => filterByPeriod(allData, period), [allData, period]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [histRes, forecastRes] = await Promise.all([
+        const [histRes, forecastRes, accRes] = await Promise.all([
           fetch(`${API_BASE}/api/water-levels/scottish-regions?area=${area}`),
           fetch(`${API_BASE}/api/water-levels/scottishwater/regional/${area}/ARIMA/`),
+          fetch(
+            `${API_BASE}/api/water-levels/scottishwater-prediction-accuracy/?area=${area}&model_type=ARIMA`
+          ),
         ]);
-        const [histData, forecastData] = await Promise.all([
+        const [histData, forecastData, accData] = await Promise.all([
           histRes.json(),
           forecastRes.json(),
+          accRes.json(),
         ]);
         if (Array.isArray(histData) && Array.isArray(forecastData)) {
           const map = new Map<string, ChartPoint>();
@@ -121,6 +130,16 @@ export function ScottishRegionalARIMAChart({ area }: { area: string }) {
               forecastData[forecastData.length - 1].predicted_level -
               forecastData[0].predicted_level;
             setTrend(tr);
+          }
+
+          if (Array.isArray(accData) && accData.length > 0) {
+            setAccuracy({
+              predicted: accData[0].predicted_value,
+              actual: accData[0].actual_value,
+              error: accData[0].percentage_error,
+            });
+          } else {
+            setAccuracy(null);
           }
         }
       } catch {
@@ -167,8 +186,14 @@ export function ScottishRegionalARIMAChart({ area }: { area: string }) {
                 Forecast generated using an ARIMA model trained on historical Scottish Water data.
               </p>
             </div>
-          </div>
         </div>
+      </div>
+
+        {accuracy && (
+          <p className="mb-4 text-red-600 font-semibold">
+            Last week's prediction: {accuracy.predicted.toFixed(1)}% | Actual: {accuracy.actual.toFixed(1)}% | Accuracy: {(100 - accuracy.error).toFixed(1)}%
+          </p>
+        )}
 
         <div className="h-80 mb-6">
           <ResponsiveContainer width="100%" height="100%">
