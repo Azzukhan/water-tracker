@@ -46,9 +46,9 @@ interface ChartPoint {
 const filterByPeriod = (data: ChartPoint[], period: string): ChartPoint[] => {
   if (!data.length) return [];
 
-  let months = 4;
-  if (period === "8m") months = 8;
-  else if (period === "12m") months = 12;
+  let months = 5;
+  if (period === "3m") months = 8;
+  else if (period === "4m") months = 12;
 
   let lastRealDate = new Date(data[data.length - 1].date);
   for (let i = data.length - 1; i >= 0; i--) {
@@ -68,24 +68,39 @@ export function YorkshireRegressionChart() {
   const [avgPrediction, setAvgPrediction] = useState(0);
   const [trend, setTrend] = useState(0);
   const [showUncertainty, setShowUncertainty] = useState(true);
+  const [accuracy, setAccuracy] = useState<{
+    predicted: number | null;
+    actual: number | null;
+    error: number | null;
+  } | null>(null);
+  const [latestActual, setLatestActual] = useState<number | null>(null);
+  const [latestForecast, setLatestForecast] = useState<number | null>(null);
+
   const data = useMemo(() => filterByPeriod(allData, period), [allData, period]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [histRes, forecastRes] = await Promise.all([
+        const [histRes, forecastRes, accRes] = await Promise.all([
           fetch(`${API_BASE}/api/water-levels/yorkshire/reservoir-data/`),
           fetch(`${API_BASE}/api/water-levels/yorkshire-predictions/`),
+          fetch(`${API_BASE}/api/water-levels/yorkshire-prediction-accuracy/?model_type=REGRESSION`),
         ]);
-        const [histData, forecastData] = await Promise.all([
+        const [histData, rawForecastData, accData] = await Promise.all([
           histRes.json(),
           forecastRes.json(),
+          accRes.json(),
         ]);
-          const filtered = Array.isArray(forecastData)
-          ? forecastData.filter((f: any) => f.model_type === "REGRESSION")
+        // Only REGRESSION forecasts, last 4 only
+        const forecastData = Array.isArray(rawForecastData)
+          ? rawForecastData.filter((f: any) => f.model_type === "REGRESSION")
+              .sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime())
+              .slice(-4)
           : [];
-        if (Array.isArray(histData) && filtered.length) {
-          const map = new Map<string, ChartPoint>();
+
+        // Merge
+        const map = new Map<string, ChartPoint>();
+        if (Array.isArray(histData)) {
           histData.forEach((e: HistoricalEntry) => {
             map.set(e.report_date, {
               date: e.report_date,
@@ -97,34 +112,74 @@ export function YorkshireRegressionChart() {
               }),
             });
           });
-          filtered.forEach((e: ForecastEntry) => {
+        }
+        forecastData.forEach((e: ForecastEntry) => {
+          const existing = map.get(e.date);
+          const displayDate = new Date(e.date).toLocaleDateString("en-GB", {
+            month: "short",
+            day: "numeric",
+          });
+          if (existing) {
+            map.set(e.date, {
+              ...existing,
+              predicted: e.predicted_reservoir_percent,
+              upperBound: Math.min(e.predicted_reservoir_percent + 5, 100),
+              lowerBound: Math.max(e.predicted_reservoir_percent - 5, 0),
+              displayDate,
+            });
+          } else {
             map.set(e.date, {
               date: e.date,
               actual: null,
               predicted: e.predicted_reservoir_percent,
               upperBound: Math.min(e.predicted_reservoir_percent + 5, 100),
               lowerBound: Math.max(e.predicted_reservoir_percent - 5, 0),
-              displayDate: new Date(e.date).toLocaleDateString("en-GB", {
-                month: "short",
-                day: "numeric",
-              }),
+              displayDate,
             });
-          });
-          const combined = Array.from(map.values()).sort(
-            (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
-          );
-          setAllData(combined);
-
-          if (filtered.length) {
-            const avg =
-              filtered.reduce((s, d) => s + d.predicted_reservoir_percent, 0) /
-              filtered.length;
-            setAvgPrediction(avg);
-            const tr =
-              filtered[filtered.length - 1].predicted_reservoir_percent -
-              filtered[0].predicted_reservoir_percent;
-            setTrend(tr);
           }
+        });
+
+        const combined = Array.from(map.values()).sort(
+          (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+        );
+        setAllData(combined);
+
+        if (histData && histData.length) {
+          const latestHist = histData.reduce((a, b) =>
+            new Date(b.report_date) > new Date(a.report_date) ? b : a,
+          );
+          setLatestActual(latestHist.reservoir_level);
+        } else {
+          setLatestActual(null);
+        }
+
+        if (forecastData.length) {
+          const latestFor = forecastData.reduce((a, b) =>
+            new Date(b.date) > new Date(a.date) ? b : a,
+          );
+          setLatestForecast(latestFor.predicted_reservoir_percent);
+
+          const avg =
+            forecastData.reduce((s, d) => s + d.predicted_reservoir_percent, 0) /
+            forecastData.length;
+          setAvgPrediction(avg);
+
+          const tr =
+            forecastData[forecastData.length - 1].predicted_reservoir_percent -
+            forecastData[0].predicted_reservoir_percent;
+          setTrend(tr);
+        } else {
+          setLatestForecast(null);
+        }
+
+        if (Array.isArray(accData) && accData.length > 0) {
+          setAccuracy({
+            predicted: accData[0].predicted_reservoir_percent,
+            actual: accData[0].actual_reservoir_percent,
+            error: accData[0].reservoir_error,
+          });
+        } else {
+          setAccuracy(null);
         }
       } catch {
         setAllData([]);
@@ -145,9 +200,9 @@ export function YorkshireRegressionChart() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="2m">4 Months</SelectItem>
-                <SelectItem value="8m">8 Months</SelectItem>
-                <SelectItem value="12m">12 Months</SelectItem>
+                <SelectItem value="2m">8 Months</SelectItem>
+                <SelectItem value="3m">12 Months</SelectItem>
+                <SelectItem value="4m">16 Months</SelectItem>
               </SelectContent>
             </Select>
             <Button
@@ -172,6 +227,15 @@ export function YorkshireRegressionChart() {
             </div>
           </div>
         </div>
+
+        {accuracy &&
+          accuracy.predicted !== null &&
+          accuracy.actual !== null &&
+          accuracy.error !== null && (
+            <p className="mb-4 text-red-600 font-semibold">
+              Last week's prediction: {accuracy.predicted.toFixed(1)}% | Actual: {accuracy.actual.toFixed(1)}% | Accuracy: {(100 - accuracy.error).toFixed(1)}%
+            </p>
+          )}
 
         <div className="h-80 mb-6">
           <ResponsiveContainer width="100%" height="100%">

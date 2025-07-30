@@ -1,10 +1,16 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { API_BASE } from "@/lib/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { API_BASE } from "@/lib/api"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   LineChart,
   Line,
@@ -25,23 +31,25 @@ interface RawEntry {
 interface ChartPoint {
   date: string;
   level: number;
-  average: number;
   displayDate: string;
+  average: number;
 }
 
 const filterByPeriod = (data: ChartPoint[], period: string): ChartPoint[] => {
   if (!data.length) return [];
-
-  let days = 30;
+  let days = 90;
   switch (period) {
-    case "4m":
-      days = 120;
+    case "1m":
+      days = 30;
       break;
-    case "8m":
-      days = 240;
+    case "3m":
+      days = 90;
+      break;
+    case "6m":
+      days = 180;
       break;
     case "1y":
-      days = 265;
+      days = 365;
       break;
     case "2y":
       days = 730;
@@ -50,24 +58,21 @@ const filterByPeriod = (data: ChartPoint[], period: string): ChartPoint[] => {
       days = 1460;
       break;
   }
-
   const lastDate = new Date(data[data.length - 1].date);
   const start = new Date(lastDate);
   start.setDate(start.getDate() - days);
-
   return data.filter((d) => new Date(d.date) >= start);
 };
 
 export function YorkshireHistoryChart() {
   const [period, setPeriod] = useState("3m");
   const [zoomLevel, setZoomLevel] = useState(1);
-
   const [allData, setAllData] = useState<ChartPoint[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch(`${API_BASE}/api/water-levels/yorkshire/reservoir-data/`);
+        const res = await fetch(`${API_BASE}/api/water-levels/yorkshire/reservoir-data/`)
         const json: RawEntry[] = await res.json();
         if (Array.isArray(json)) {
           const sorted = json
@@ -89,7 +94,6 @@ export function YorkshireHistoryChart() {
         setAllData([]);
       }
     };
-
     fetchData();
   }, []);
 
@@ -98,9 +102,8 @@ export function YorkshireHistoryChart() {
   const handleExport = () => {
     const csvContent =
       "data:text/csv;charset=utf-8," +
-      "Date,Water Level (%),Average (%)\n" +
-      data.map((row) => `${row.date},${row.level},${row.average}`).join("\n");
-
+      "Date,Water Level (%)\n" +
+      data.map((row) => `${row.date},${row.level}`).join("\n");
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
@@ -116,23 +119,22 @@ export function YorkshireHistoryChart() {
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
           <div>
             <CardTitle className="text-xl font-bold">Historical Water Levels</CardTitle>
-            <p className="text-gray-600">Interactive chart with zoom and pan capabilities</p>
+            <p className="text-gray-600">Interactive chart with zoom and export</p>
           </div>
-
           <div className="flex items-center space-x-3">
             <Select value={period} onValueChange={setPeriod}>
               <SelectTrigger className="w-32">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="4m">4 Month</SelectItem>
-                <SelectItem value="8m">8 Months</SelectItem>
+                <SelectItem value="1m">1 Month</SelectItem>
+                <SelectItem value="3m">3 Months</SelectItem>
+                <SelectItem value="6m">6 Months</SelectItem>
                 <SelectItem value="1y">1 Year</SelectItem>
-                <SelectItem value="2y">2 Year</SelectItem>
+                <SelectItem value="2y">2 Years</SelectItem>
                 <SelectItem value="4y">4 Years</SelectItem>
               </SelectContent>
             </Select>
-
             <div className="flex items-center space-x-1">
               <Button variant="outline" size="sm" onClick={() => setZoomLevel(Math.max(0.5, zoomLevel - 0.25))}>
                 <ZoomOut className="h-4 w-4" />
@@ -141,7 +143,6 @@ export function YorkshireHistoryChart() {
                 <ZoomIn className="h-4 w-4" />
               </Button>
             </div>
-
             <Button variant="outline" size="sm" onClick={handleExport}>
               <Download className="h-4 w-4 mr-2" />
               Export
@@ -149,70 +150,36 @@ export function YorkshireHistoryChart() {
           </div>
         </div>
       </CardHeader>
-
       <CardContent>
         <div className="h-80 mb-6">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
               <XAxis dataKey="displayDate" tick={{ fontSize: 12 }} interval="preserveStartEnd" />
-              <YAxis
-                domain={["dataMin - 5", "dataMax + 5"]}
-                tick={{ fontSize: 12 }}
-                label={{ value: "Water Level (%)", angle: -90, position: "insideLeft" }}
-              />
+              <YAxis domain={["dataMin - 5", "dataMax + 5"]} tick={{ fontSize: 12 }} label={{ value: "Water Level (%)", angle: -90, position: "insideLeft" }} />
               <Tooltip
                 content={({ active, payload, label }) => {
                   if (active && payload && payload.length) {
                     return (
                       <div className="bg-white p-4 border border-gray-200 rounded-lg shadow-lg">
                         <p className="font-semibold text-gray-900">{label}</p>
-                        <p className="text-blue-600">Current Level: {payload[0].value}%</p>
-                        <p className="text-gray-600">Average: {payload[1].value}%</p>
+                        <p className="text-blue-600">Level: {payload[0].value.toFixed(1)}%</p>
                       </div>
                     );
                   }
                   return null;
                 }}
               />
-              <ReferenceLine
-                y={allData.length ? allData[0].average : 82}
-                stroke="#6b7280"
-                strokeDasharray="5 5"
-                label={{ value: "Average", position: "topRight" }}
-              />
-              <Line
-                type="monotone"
-                dataKey="level"
-                stroke="#2563eb"
-                strokeWidth={3}
-                dot={false}
-                activeDot={{ r: 6, fill: "#2563eb" }}
-              />
-              <Line
-                type="monotone"
-                dataKey="average"
-                stroke="#6b7280"
-                strokeWidth={2}
-                strokeDasharray="5 5"
-                dot={false}
-              />
+              <ReferenceLine y={allData.length ? allData[0].average : 0} stroke="#6b7280" strokeDasharray="5 5" label={{ value: "Average", position: "topRight" }} />
+              <Line type="monotone" dataKey="level" stroke="#2563eb" strokeWidth={3} dot={false} activeDot={{ r: 6, fill: "#2563eb" }} />
             </LineChart>
           </ResponsiveContainer>
         </div>
-
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0 p-4 bg-gray-50 rounded-lg">
-          <div className="flex items-center space-x-4 text-sm">
-            <div className="flex items-center space-x-2">
-              <div className="w-4 h-0.5 bg-blue-600"></div>
-              <span>Current Level</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-4 h-0.5 bg-gray-600 border-dashed"></div>
-              <span>Historical Average</span>
-            </div>
+          <div className="flex items-center space-x-2">
+            <div className="w-4 h-0.5 bg-blue-600"></div>
+            <span>Level</span>
           </div>
-
           <div className="flex items-center space-x-4 text-sm text-gray-600">
             <div className="flex items-center space-x-1">
               <Calendar className="h-4 w-4" />
@@ -222,33 +189,6 @@ export function YorkshireHistoryChart() {
             </div>
             <span>•</span>
             <span>{data.length} data points</span>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-          <div className="text-center p-3 bg-blue-50 rounded-lg">
-            <div className="text-2xl font-bold text-blue-600">
-              {data.length ? Math.max(...data.map((d) => d.level)).toFixed(1) : "0.0"}%
-            </div>
-            <div className="text-sm text-gray-600">Highest</div>
-          </div>
-          <div className="text-center p-3 bg-red-50 rounded-lg">
-            <div className="text-2xl font-bold text-red-600">
-              {data.length ? Math.min(...data.map((d) => d.level)).toFixed(1) : "0.0"}%
-            </div>
-            <div className="text-sm text-gray-600">Lowest</div>
-          </div>
-          <div className="text-center p-3 bg-green-50 rounded-lg">
-            <div className="text-2xl font-bold text-green-600">
-              {data.length ? (data.reduce((sum, d) => sum + d.level, 0) / data.length).toFixed(1) : "0.0"}%
-            </div>
-            <div className="text-sm text-gray-600">Average</div>
-          </div>
-          <div className="text-center p-3 bg-gray-50 rounded-lg">
-            <div className="text-2xl font-bold text-gray-600">
-              {data.length ? (Math.max(...data.map((d) => d.level)) - Math.min(...data.map((d) => d.level))).toFixed(1) : "0.0"}%
-            </div>
-            <div className="text-sm text-gray-600">Range</div>
           </div>
         </div>
       </CardContent>

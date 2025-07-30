@@ -1036,26 +1036,28 @@ def calculate_yorkshire_accuracy():
     """Calculate accuracy of Yorkshire Water predictions."""
     from .models import (
         YorkshireWaterPrediction,
-        YorkshireWaterReport,
+        YorkshireReservoirData,
         YorkshireWaterPredictionAccuracy,
     )
+    from datetime import datetime
 
     today = datetime.today().date()
     preds = YorkshireWaterPrediction.objects.filter(date__lte=today)
     for p in preds:
-        report = YorkshireWaterReport.objects.filter(report_month=p.date).first()
+        # Fixed field name
+        report = YorkshireReservoirData.objects.filter(report_date=p.date).first()
         if report:
             res_error = (
                 abs(
-                    (report.reservoir_percent - p.predicted_reservoir_percent)
-                    / report.reservoir_percent
+                    (report.reservoir_level - p.predicted_reservoir_percent)
+                    / report.reservoir_level
                 )
                 * 100
-                if report.reservoir_percent
+                if report.reservoir_level
                 else None
             )
             dem_error = None
-            if report.demand_megalitres_per_day:
+            if hasattr(report, "demand_megalitres_per_day") and report.demand_megalitres_per_day:
                 dem_error = (
                     abs(
                         (report.demand_megalitres_per_day - p.predicted_demand_mld)
@@ -1068,12 +1070,12 @@ def calculate_yorkshire_accuracy():
                 model_type=p.model_type,
                 defaults={
                     "predicted_reservoir_percent": p.predicted_reservoir_percent,
-                    "actual_reservoir_percent": report.reservoir_percent,
+                    "actual_reservoir_percent": report.reservoir_level,
                     "reservoir_error": (
                         round(res_error, 2) if res_error is not None else None
                     ),
                     "predicted_demand_mld": p.predicted_demand_mld,
-                    "actual_demand_mld": report.demand_megalitres_per_day,
+                    "actual_demand_mld": getattr(report, "demand_megalitres_per_day", None),
                     "demand_error": (
                         round(dem_error, 2) if dem_error is not None else None
                     ),
@@ -1082,6 +1084,7 @@ def calculate_yorkshire_accuracy():
         else:
             print(f"No report for {p.date}")
     return "yorkshire accuracy updated"
+
 
 
 from datetime import datetime, timedelta
