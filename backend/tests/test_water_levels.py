@@ -19,6 +19,8 @@ from water_levels.models import (
     SevernTrentForecastAccuracy,
     YorkshireWaterPredictionAccuracy,
     SouthernWaterForecastAccuracy,
+    ScottishWaterForecastAccuracy,
+    ScottishWaterPredictionAccuracy,
 )
 
 
@@ -290,4 +292,31 @@ def test_southernwater_accuracy(api_client):
         percentage_error=3.33,
     )
     resp = api_client.get("/api/water-levels/southernwater-prediction-accuracy/")
+    assert resp.status_code == 200
+
+
+@pytest.mark.django_db
+def test_scottishwater_forecast_accuracy(api_client):
+    ScottishWaterForecastAccuracy.objects.create(
+        date=datetime.date(2024, 1, 8),
+        model_type="ARIMA",
+        predicted_percentage=70.0,
+        actual_percentage=69.0,
+        percentage_error=1.43,
+    )
+    resp = api_client.get("/api/water-levels/scottishwater-forecast-accuracy/")
+    assert resp.status_code == 200
+
+
+@pytest.mark.django_db
+def test_scottishwater_prediction_accuracy(api_client):
+    ScottishWaterPredictionAccuracy.objects.create(
+        area="north",
+        date=datetime.date(2024, 1, 8),
+        model_type="ARIMA",
+        predicted_value=60.0,
+        actual_value=58.0,
+        percentage_error=3.33,
+    )
+    resp = api_client.get("/api/water-levels/scottishwater-prediction-accuracy/")
     assert resp.status_code == 200
