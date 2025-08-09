@@ -29,7 +29,7 @@ export function LiveHighlights() {
 
   return (
     <Card className="shadow-lg border-0 h-full flex flex-col">
-      <CardHeader className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white h-24 flex flex-col justify-center rounded-t-lg">
+      <CardHeader className="bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-blue-700 dark:to-cyan-700 text-white h-24 flex flex-col justify-center rounded-t-lg">
         <div className="flex items-center justify-between">
           <CardTitle className="text-2xl font-bold flex items-center">
             <div className="w-3 h-3 bg-green-400 rounded-full mr-3 animate-pulse"></div>
@@ -39,7 +39,7 @@ export function LiveHighlights() {
             Real-time
           </Badge>
         </div>
-        <p className="text-blue-100">Latest water and weather updates across the UK</p>
+        <p className="text-blue-100 dark:text-blue-200">Latest water and weather updates across the UK</p>
       </CardHeader>
 
       <CardContent className="p-6 flex flex-col flex-1">
@@ -49,31 +49,31 @@ export function LiveHighlights() {
             highlights.map((item, idx) => (
               <div
                 key={idx}
-                className="border rounded-xl p-6 border-red-200 bg-red-50 hover:shadow-md transition-all duration-300 group"
+                className="border rounded-xl p-6 border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950 hover:shadow-md transition-all duration-300 group"
               >
                 <div className="flex items-start space-x-4">
-                  <div className="p-3 rounded-full bg-red-600 bg-opacity-10">
-                    <AlertTriangle className="h-6 w-6 text-red-600" />
+                  <div className="p-3 rounded-full bg-red-600 bg-opacity-10 dark:bg-opacity-20">
+                    <AlertTriangle className="h-6 w-6 text-red-600 dark:text-red-400" />
                   </div>
 
                   <div className="flex-1 space-y-3">
                     <div className="flex items-start justify-between">
                       <Badge className="bg-red-600 text-white">Critical</Badge>
-                      <div className="flex items-center text-sm text-gray-500">
+                      <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
                         <Clock className="h-4 w-4 mr-1" />
                         {relativeTime(item.publishedAt)}
                       </div>
                     </div>
-                    <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                       {item.title}
                     </h3>
-                    <p className="text-gray-700 leading-relaxed">
+                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
                       {item.description}
                     </p>
                     <Button
                       variant="outline"
                       size="sm"
-                      className="group-hover:bg-blue-50 group-hover:border-blue-200 transition-colors"
+                      className="group-hover:bg-blue-50 group-hover:border-blue-200 dark:group-hover:bg-blue-900 dark:group-hover:border-blue-700 transition-colors"
                       asChild
                     >
                       <Link href={item.url} target="_blank" rel="noreferrer">
@@ -86,12 +86,12 @@ export function LiveHighlights() {
               </div>
             ))}
           {!loading && highlights.length === 0 && (
-            <p className="text-center text-gray-600">No high alert news.</p>
+            <p className="text-center text-gray-600 dark:text-gray-300">No high alert news.</p>
           )}
         </div>
 
         <div className="mt-8 text-center">
-          <Button className="bg-blue-600 hover:bg-blue-700" asChild>
+          <Button className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600" asChild>
             <Link href="/news">
               View All News Updates
               <ArrowRight className="ml-2 h-4 w-4" />
