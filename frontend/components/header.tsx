@@ -7,6 +7,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Menu, Droplets, Mail } from "lucide-react"
 import { EmergencyButton } from "@/components/emergency-button"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { ColorBlindToggle } from "@/components/color-blind-toggle"
 
 const navItems = [
   { name: "Home", href: "/" },
@@ -52,6 +53,7 @@ export function Header() {
           {/* Theme Toggle & Emergency Contact & Mobile Menu */}
           <div className="flex items-center space-x-3">
             <ThemeToggle className="hidden md:flex" />
+            <ColorBlindToggle className="hidden md:flex" />
 
             <div className="hidden md:flex">
               <EmergencyButton />
@@ -89,6 +91,7 @@ export function Header() {
 
                     <div className="pt-4 border-t dark:border-gray-700">
                       <ThemeToggle className="mb-3" />
+                      <ColorBlindToggle className="mb-3" />
 
                     <EmergencyButton fullWidth className="mb-3" />
                     <Button variant="outline" className="w-full" asChild>
