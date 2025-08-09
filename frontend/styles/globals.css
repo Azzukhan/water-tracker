@@ -82,6 +82,26 @@ body {
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
+
+  .color-blind {
+    --destructive: 26 100% 42%;
+    --destructive-foreground: 0 0% 98%;
+    --chart-1: 202 100% 35%;
+    --chart-2: 26 100% 42%;
+    --chart-3: 164 100% 31%;
+    --chart-4: 327 45% 64%;
+    --chart-5: 56 85% 60%;
+  }
+
+  .dark.color-blind {
+    --destructive: 26 100% 42%;
+    --destructive-foreground: 0 0% 98%;
+    --chart-1: 202 100% 60%;
+    --chart-2: 26 100% 55%;
+    --chart-3: 164 100% 45%;
+    --chart-4: 327 45% 72%;
+    --chart-5: 56 85% 65%;
+  }
 }
 
 @layer base {
