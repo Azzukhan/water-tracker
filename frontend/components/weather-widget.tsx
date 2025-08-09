@@ -114,7 +114,7 @@ export default function WeatherWidget() {
 
   return (
     <Card className="shadow-lg border-0 h-full flex flex-col">
-      <CardHeader className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white h-24 flex flex-col justify-center rounded-t-lg">
+      <CardHeader className="bg-gradient-to-r from-cyan-500 to-blue-500 dark:from-cyan-700 dark:to-blue-700 text-white h-24 flex flex-col justify-center rounded-t-lg">
         <CardTitle className="flex items-center justify-between text-xl">
           <span>Current Weather</span>
           <Badge variant="secondary" className="flex items-center gap-1 bg-white/20 text-white border-white/30">
@@ -122,45 +122,45 @@ export default function WeatherWidget() {
             Live
           </Badge>
         </CardTitle>
-        <p className="text-sm text-cyan-100">{weather.location}</p>
+        <p className="text-sm text-cyan-100 dark:text-cyan-200">{weather.location}</p>
       </CardHeader>
       <CardContent className="p-6 flex flex-col flex-1">
         <div className="flex-1">
           <div className="text-center mb-8">
             <div className="flex items-center justify-center mb-4">
-              <WeatherIcon className="h-16 w-16 text-blue-500" />
+              <WeatherIcon className="h-16 w-16 text-blue-500 dark:text-blue-400" />
             </div>
           <div className="space-y-2">
-            <div className="text-4xl font-bold text-gray-900">
+            <div className="text-4xl font-bold text-gray-900 dark:text-white">
               {Math.round(weather.temperature)}°C
             </div>
-            <div className="text-lg text-gray-600">{weather.condition}</div>
+            <div className="text-lg text-gray-600 dark:text-gray-300">{weather.condition}</div>
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4 mb-8">
-          <div className="bg-blue-50 rounded-lg p-4 text-center">
-            <Droplets className="h-6 w-6 text-blue-500 mx-auto mb-2" />
-            <div className="text-sm text-gray-600">Humidity</div>
-            <div className="text-lg font-semibold text-gray-900">{Math.round(weather.humidity)}%</div>
+          <div className="bg-blue-50 dark:bg-blue-900 rounded-lg p-4 text-center">
+            <Droplets className="h-6 w-6 text-blue-500 dark:text-blue-400 mx-auto mb-2" />
+            <div className="text-sm text-gray-600 dark:text-gray-300">Humidity</div>
+            <div className="text-lg font-semibold text-gray-900 dark:text-white">{Math.round(weather.humidity)}%</div>
           </div>
-          <div className="bg-green-50 rounded-lg p-4 text-center">
-            <Wind className="h-6 w-6 text-green-500 mx-auto mb-2" />
-            <div className="text-sm text-gray-600">Wind</div>
-            <div className="text-lg font-semibold text-gray-900">{Math.round(weather.wind_speed)} mph</div>
+          <div className="bg-green-50 dark:bg-green-900 rounded-lg p-4 text-center">
+            <Wind className="h-6 w-6 text-green-500 dark:text-green-400 mx-auto mb-2" />
+            <div className="text-sm text-gray-600 dark:text-gray-300">Wind</div>
+            <div className="text-lg font-semibold text-gray-900 dark:text-white">{Math.round(weather.wind_speed)} mph</div>
           </div>
-          <div className="bg-orange-50 rounded-lg p-4 text-center">
-            <Eye className="h-6 w-6 text-orange-500 mx-auto mb-2" />
-            <div className="text-sm text-gray-600">Visibility</div>
-            <div className="text-lg font-semibold text-gray-900">{Math.round(weather.visibility)} km</div>
+          <div className="bg-orange-50 dark:bg-orange-900 rounded-lg p-4 text-center">
+            <Eye className="h-6 w-6 text-orange-500 dark:text-orange-400 mx-auto mb-2" />
+            <div className="text-sm text-gray-600 dark:text-gray-300">Visibility</div>
+            <div className="text-lg font-semibold text-gray-900 dark:text-white">{Math.round(weather.visibility)} km</div>
           </div>
-          <div className="bg-red-50 rounded-lg p-4 text-center">
-            <Sun className="h-6 w-6 text-red-500 mx-auto mb-2" />
-            <div className="text-sm text-gray-600">UV Index</div>
-            <div className="text-lg font-semibold text-gray-900">{Math.round(weather.uv_index)}</div>
+          <div className="bg-red-50 dark:bg-red-900 rounded-lg p-4 text-center">
+            <Sun className="h-6 w-6 text-red-500 dark:text-red-400 mx-auto mb-2" />
+            <div className="text-sm text-gray-600 dark:text-gray-300">UV Index</div>
+            <div className="text-lg font-semibold text-gray-900 dark:text-white">{Math.round(weather.uv_index)}</div>
           </div>
         </div>
         <div className="mb-6">
-          <h3 className="font-semibold text-gray-900 mb-4 text-center">4-Day Forecast</h3>
+          <h3 className="font-semibold text-gray-900 dark:text-white mb-4 text-center">4-Day Forecast</h3>
           <div className="flex flex-col gap-3">
             {weather.daily.slice(0, 4).map((d, idx) => {
               const Icon = getWeatherIcon(d.icon);
@@ -168,28 +168,28 @@ export default function WeatherWidget() {
                 <div
                   key={idx}
                   className="
-                    grid 
+                    grid
                     grid-cols-[7rem,1fr,3.5rem]
-                    items-center 
-                    px-4 py-3 
-                    min-h-[48px] 
-                    rounded-xl 
-                    bg-white 
-                    shadow-sm 
-                    border border-gray-100
+                    items-center
+                    px-4 py-3
+                    min-h-[48px]
+                    rounded-xl
+                    bg-white dark:bg-gray-800
+                    shadow-sm
+                    border border-gray-100 dark:border-gray-700
                   "
                 >
                   {/* Icon and day (fixed width column) */}
                   <div className="flex items-center gap-2 w-28">
-                    <Icon className="h-6 w-6 text-blue-500" />
-                    <span className="font-medium text-gray-900">{d.day}</span>
+                    <Icon className="h-6 w-6 text-blue-500 dark:text-blue-400" />
+                    <span className="font-medium text-gray-900 dark:text-white">{d.day}</span>
                   </div>
                   {/* Condition (middle column) */}
-                  <div className="pl-4 text-gray-600 text-sm">{d.condition}</div>
+                  <div className="pl-4 text-gray-600 dark:text-gray-300 text-sm">{d.condition}</div>
                   {/* Temps (fixed width column, right-aligned) */}
-                  <div className="flex items-baseline justify-end gap-1 font-semibold text-gray-900 text-lg">
+                  <div className="flex items-baseline justify-end gap-1 font-semibold text-gray-900 dark:text-white text-lg">
                     {Math.round(d.high)}°
-                    <span className="text-gray-400 text-base font-normal ml-1">{Math.round(d.low)}°</span>
+                    <span className="text-gray-400 dark:text-gray-500 text-base font-normal ml-1">{Math.round(d.low)}°</span>
                   </div>
                 </div>
               );
@@ -197,7 +197,7 @@ export default function WeatherWidget() {
           </div>
         </div>
         </div>
-        <Button className="w-full bg-blue-600 hover:bg-blue-700" asChild>
+        <Button className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600" asChild>
           <Link href="/weather">
             Check Full Weather Report
             <svg className="ml-2 h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
