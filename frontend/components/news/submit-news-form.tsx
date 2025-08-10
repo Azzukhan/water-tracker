@@ -69,14 +69,14 @@ export function SubmitNewsForm() {
 
   if (submitStatus === "success") {
     return (
-      <Card className="shadow-lg border-0 bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
+      <Card className="shadow-lg border-0 bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 cb:bg-cbBluishGreen/20 cb:dark:bg-cbBluishGreen/30 cb:border-cbBluishGreen/30 cb:dark:border-cbBluishGreen/40">
         <CardContent className="p-6 text-center">
-          <CheckCircle className="h-16 w-16 text-green-600 dark:text-green-400 mx-auto mb-4" />
-          <h3 className="text-xl font-bold text-green-900 dark:text-green-100 mb-2">News Submitted Successfully!</h3>
-          <p className="text-green-800 dark:text-green-200 mb-4">
+          <CheckCircle className="h-16 w-16 text-green-600 dark:text-green-400 cb:text-cbBluishGreen mx-auto mb-4" />
+          <h3 className="text-xl font-bold text-green-900 dark:text-green-100 cb:text-cbBluishGreen mb-2">News Submitted Successfully!</h3>
+          <p className="text-green-800 dark:text-green-200 cb:text-cbBluishGreen mb-4">
             Thank you for your submission. Our editorial team will review your news story and publish it if approved.
           </p>
-          <Badge className="bg-green-600 text-white">Under Review</Badge>
+          <Badge className="bg-green-600 cb:bg-cbBluishGreen text-white">Under Review</Badge>
         </CardContent>
       </Card>
     )
@@ -84,12 +84,12 @@ export function SubmitNewsForm() {
 
   return (
     <Card className="shadow-lg border-0 sticky top-24">
-      <CardHeader className="bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-blue-700 dark:to-cyan-700 text-white">
+      <CardHeader className="bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-blue-700 dark:to-cyan-700 cb:from-cbBlue cb:to-cbSkyBlue text-white">
         <CardTitle className="text-xl font-bold flex items-center">
           <PlusCircle className="h-5 w-5 mr-2" />
           Submit News
         </CardTitle>
-        <p className="text-blue-100 dark:text-blue-200">Share water industry news with the community</p>
+        <p className="text-blue-100 dark:text-blue-200 cb:text-cbSkyBlue/80">Share water industry news with the community</p>
       </CardHeader>
 
       <CardContent className="p-6">
@@ -239,7 +239,7 @@ export function SubmitNewsForm() {
                       variant="ghost"
                       size="sm"
                       onClick={() => removeAttachment(index)}
-                      className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300"
+                      className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 cb:text-cbVermillion cb:hover:text-cbVermillion"
                     >
                       Remove
                     </Button>
@@ -250,7 +250,7 @@ export function SubmitNewsForm() {
           </div>
 
           {/* Submit Button */}
-          <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 dark:hover:bg-blue-500" disabled={isSubmitting}>
+          <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 dark:hover:bg-blue-500 cb:bg-cbBlue cb:hover:bg-cbBlue/80" disabled={isSubmitting}>
             {isSubmitting ? (
               <>
                 <div className="animate-spin h-4 w-4 mr-2 border-2 border-white border-t-transparent rounded-full"></div>
@@ -265,12 +265,12 @@ export function SubmitNewsForm() {
           </Button>
 
           {/* Guidelines */}
-          <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+          <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 cb:bg-cbBlue/20 cb:dark:bg-cbBlue/30 cb:border-cbBlue/40 cb:dark:border-cbBlue/60 rounded-lg">
             <div className="flex items-start space-x-3">
-              <AlertCircle className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5" />
+              <AlertCircle className="h-5 w-5 text-blue-600 dark:text-blue-400 cb:text-cbBlue mt-0.5" />
               <div className="text-sm">
-                <div className="font-medium text-blue-900 dark:text-blue-100 mb-1">Submission Guidelines</div>
-                <ul className="text-blue-800 dark:text-blue-200 space-y-1 text-xs">
+                <div className="font-medium text-blue-900 dark:text-blue-100 cb:text-cbBlue mb-1">Submission Guidelines</div>
+                <ul className="text-blue-800 dark:text-blue-200 cb:text-cbBlue space-y-1 text-xs">
                   <li>• Ensure all information is accurate and verifiable</li>
                   <li>• Include relevant sources and contact information</li>
                   <li>• News will be reviewed before publication</li>

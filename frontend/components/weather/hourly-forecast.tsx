@@ -35,7 +35,7 @@ export function HourlyForecast({ hourly }: HourlyForecastProps) {
                   className="flex-none w-24 flex flex-col items-center p-3 bg-white dark:bg-gray-800 rounded-lg shadow"
                 >
                   <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{formattedTime}</div>
-                  <WeatherIcon className="h-8 w-8 my-2 text-blue-500 dark:text-blue-400" />
+                  <WeatherIcon className="h-8 w-8 my-2 text-blue-500 dark:text-blue-400 cb:text-cbBlue" />
                   <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                     {hour.temperature != null ? `${Math.round(hour.temperature)}°C` : "-"}
                   </div>
