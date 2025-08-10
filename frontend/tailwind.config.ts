@@ -52,6 +52,7 @@ const config: Config = {
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
   			},
+
                         sidebar: {
                                 DEFAULT: 'hsl(var(--sidebar-background))',
                                 foreground: 'hsl(var(--sidebar-foreground))',
@@ -72,6 +73,7 @@ const config: Config = {
                 },
   		borderRadius: {
   			lg: 'var(--radius)',
+
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
   		},
@@ -101,8 +103,10 @@ const config: Config = {
   },
   plugins: [
     require("tailwindcss-animate"),
+
     plugin(({ addVariant }) => {
       addVariant("cb", '[data-cb="1"] &');
+
     }),
   ],
 };

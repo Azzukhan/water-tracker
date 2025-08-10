@@ -24,7 +24,7 @@ export function EmergencyButton({ fullWidth = false, className = "" }: Emergency
   return (
     <Button
       onClick={handleEmergencyClick}
-      className={`flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 font-bold rounded shadow hover:bg-red-100 transition ${fullWidth ? "w-full" : ""} ${className}`}
+        className={`flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 cb:bg-cbVermillion/20 cb:text-cbVermillion font-bold rounded shadow hover:bg-red-100 cb:hover:bg-cbVermillion/30 transition ${fullWidth ? "w-full" : ""} ${className}`}
       aria-label="Call Emergency Services, 999"
     >
       <Phone className="h-4 w-4" />

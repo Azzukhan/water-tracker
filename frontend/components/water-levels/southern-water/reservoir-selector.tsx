@@ -8,7 +8,6 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Grid, List, MapPin, Map, Search, ArrowDown, ArrowUp, Minus } from "lucide-react";
-import { useColorBlind } from "@/components/color-blind-provider";
 
 interface Reservoir {
   id: string;
@@ -27,35 +26,19 @@ const statusForLevel = (level: number) => {
   return "Low";
 };
 
-const getStatusColor = (status: string, colorBlind: boolean) => {
-  if (colorBlind) {
-    switch (status) {
-      case "High":
-      case "Above Average":
-        return "bg-[#0072B2]";
-      case "Normal":
-        return "bg-[#009E73]";
-      case "Below Average":
-        return "bg-[#E69F00]";
-      case "Low":
-        return "bg-[#D55E00]";
-      default:
-        return "bg-[#000000]";
-    }
-  }
+const getStatusColor = (status: string) => {
   switch (status) {
     case "High":
-      return "bg-blue-600";
     case "Above Average":
-      return "bg-green-600";
+      return "bg-blue-600 cb:bg-cbBlue";
     case "Normal":
-      return "bg-gray-600";
+      return "bg-green-600 cb:bg-cbBlueGreen";
     case "Below Average":
-      return "bg-orange-600";
+      return "bg-orange-600 cb:bg-cbOrange";
     case "Low":
-      return "bg-red-600";
+      return "bg-red-600 cb:bg-cbVermillion";
     default:
-      return "bg-gray-600";
+      return "bg-gray-600 cb:bg-cbGrey";
   }
 }
 
@@ -85,7 +68,6 @@ export function SouthernWaterReservoirSelector({
   const [viewMode, setViewMode] = useState<"list" | "grid" | "map">("grid");
   const [postcode, setPostcode] = useState("");
   const [filter, setFilter] = useState("");
-  const { colorBlind } = useColorBlind();
 
   useEffect(() => {
     fetch(`${API_BASE}/api/water-levels/southernwater-reservoirs/`)
@@ -204,7 +186,7 @@ export function SouthernWaterReservoirSelector({
                         const Icon = getStatusIcon(res.status)
                         return (
                           <Badge
-                            className={`ml-2 ${getStatusColor(res.status, colorBlind)} text-white flex items-center gap-1`}
+                            className={`ml-2 ${getStatusColor(res.status)} text-white flex items-center gap-1`}
                           >
                             <Icon className="h-3 w-3" aria-hidden="true" />
                             {res.level}%
@@ -234,7 +216,7 @@ export function SouthernWaterReservoirSelector({
                     {(() => {
                       const Icon = getStatusIcon(r.status)
                       return (
-                        <Badge className={`${getStatusColor(r.status, colorBlind)} text-white flex items-center gap-1`}>
+                        <Badge className={`${getStatusColor(r.status)} text-white flex items-center gap-1`}>
                           <Icon className="h-3 w-3" aria-hidden="true" />
                           {r.level}%
                         </Badge>
@@ -287,7 +269,7 @@ export function SouthernWaterReservoirSelector({
                       {(() => {
                         const Icon = getStatusIcon(r.status)
                         return (
-                          <Badge className={`${getStatusColor(r.status, colorBlind)} text-white flex items-center gap-1`}>
+                          <Badge className={`${getStatusColor(r.status)} text-white flex items-center gap-1`}>
                             <Icon className="h-3 w-3" aria-hidden="true" />
                             {r.status}
                           </Badge>
