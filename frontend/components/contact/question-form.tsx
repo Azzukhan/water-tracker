@@ -54,7 +54,7 @@ export function QuestionForm({ onSuccess }: { onSuccess?: () => void }) {
           onChange={(e) => setData({ ...data, question: e.target.value })}
         />
       </div>
-      <Button type="submit" disabled={loading} className="w-full bg-blue-600 hover:bg-blue-700 dark:hover:bg-blue-500">
+      <Button type="submit" disabled={loading} className="w-full bg-blue-600 cb:bg-cbBlue hover:bg-blue-700 cb:hover:bg-cbBlue/90 dark:hover:bg-blue-500 dark:cb:hover:bg-cbBlue/80">
         {loading ? "Submitting..." : "Submit"}
       </Button>
     </form>

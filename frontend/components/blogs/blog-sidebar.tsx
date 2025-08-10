@@ -91,7 +91,7 @@ export function BlogSidebar({
       <Card className="shadow-lg border-0">
         <CardHeader>
           <CardTitle className="text-lg font-bold flex items-center">
-            <Search className="h-5 w-5 mr-2 text-blue-600 dark:text-blue-400" />
+            <Search className="h-5 w-5 mr-2 text-blue-600 dark:text-blue-400 cb:text-cbBlue" />
             Search Articles
           </CardTitle>
         </CardHeader>
@@ -109,7 +109,7 @@ export function BlogSidebar({
               onChange={(e) => setQuery(e.target.value)}
               className="dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700"
             />
-            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 dark:hover:bg-blue-500">
+            <Button type="submit" className="w-full bg-blue-600 cb:bg-cbBlue hover:bg-blue-700 cb:hover:bg-cbBlue/90 dark:hover:bg-blue-500 dark:cb:hover:bg-cbBlue/80">
               <Search className="h-4 w-4 mr-2" />
               Search
             </Button>
@@ -118,10 +118,10 @@ export function BlogSidebar({
       </Card>
 
       {/* Newsletter Signup */}
-      <Card className="shadow-lg border-0 bg-gradient-to-br from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20">
+      <Card className="shadow-lg border-0 bg-gradient-to-br from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 cb:from-cbBluishGreen/10 cb:to-cbBlue/10 cb:dark:from-cbBluishGreen/20 cb:dark:to-cbBlue/20">
         <CardHeader>
           <CardTitle className="text-lg font-bold flex items-center">
-            <Mail className="h-5 w-5 mr-2 text-green-600 dark:text-green-400" />
+            <Mail className="h-5 w-5 mr-2 text-green-600 dark:text-green-400 cb:text-cbBluishGreen" />
             Weekly Water Tips
           </CardTitle>
           <p className="text-sm text-gray-600 dark:text-gray-400">Get expert advice delivered to your inbox</p>
@@ -136,7 +136,7 @@ export function BlogSidebar({
               className="dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700"
             />
             <Button
-              className="w-full bg-green-600 hover:bg-green-700 dark:hover:bg-green-500"
+              className="w-full bg-green-600 cb:bg-cbBluishGreen hover:bg-green-700 cb:hover:bg-cbBluishGreen/90 dark:hover:bg-green-500 dark:cb:hover:bg-cbBluishGreen/80"
               onClick={handleSubscribe}
             >
               Subscribe Free
@@ -150,7 +150,7 @@ export function BlogSidebar({
       <Card className="shadow-lg border-0">
         <CardHeader>
           <CardTitle className="text-lg font-bold flex items-center">
-            <TrendingUp className="h-5 w-5 mr-2 text-orange-600 dark:text-orange-400" />
+            <TrendingUp className="h-5 w-5 mr-2 text-orange-600 dark:text-orange-400 cb:text-cbOrange" />
             Most Popular
           </CardTitle>
         </CardHeader>
@@ -196,8 +196,8 @@ export function BlogSidebar({
                 }
                 className={`cursor-pointer transition-colors ${
                   selectedTopic === tag.name
-                    ? "bg-blue-600 text-white border-blue-600"
-                    : "hover:bg-blue-50 hover:border-blue-300 dark:hover:bg-blue-900/20 dark:hover:border-blue-700"
+                    ? "bg-blue-600 cb:bg-cbBlue text-white border-blue-600 cb:border-cbBlue"
+                    : "hover:bg-blue-50 hover:border-blue-300 cb:hover:bg-cbBlue/10 cb:hover:border-cbBlue dark:hover:bg-blue-900/20 dark:hover:border-blue-700"
                 }`}
               >
                 {tag.name} ({tag.count})
@@ -206,7 +206,7 @@ export function BlogSidebar({
             {selectedTopic && (
               <button
                 onClick={() => onSelectTopic?.(null)}
-                className="text-xs text-blue-600 dark:text-blue-400 underline ml-auto"
+                className="text-xs text-blue-600 dark:text-blue-400 cb:text-cbBlue underline ml-auto"
               >
                 Clear filter
               </button>
@@ -216,27 +216,27 @@ export function BlogSidebar({
       </Card>
 
       {/* Community Stats */}
-      <Card className="shadow-lg border-0 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20">
+      <Card className="shadow-lg border-0 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 cb:from-cbBlue/10 cb:to-cbPurple/10 cb:dark:from-cbBlue/20 cb:dark:to-cbPurple/20">
         <CardHeader>
           <CardTitle className="text-lg font-bold flex items-center">
-            <Users className="h-5 w-5 mr-2 text-purple-600 dark:text-purple-400" />
+            <Users className="h-5 w-5 mr-2 text-purple-600 dark:text-purple-400 cb:text-cbPurple" />
             Community Impact
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             <div className="text-center">
-              <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">2.3M</div>
+              <div className="text-2xl font-bold text-purple-600 dark:text-purple-400 cb:text-cbPurple">2.3M</div>
               <div className="text-sm text-gray-600 dark:text-gray-400">Litres saved this month</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">£45K</div>
+              <div className="text-2xl font-bold text-blue-600 dark:text-blue-400 cb:text-cbBlue">£45K</div>
               <div className="text-sm text-gray-600 dark:text-gray-400">Money saved by readers</div>
             </div>
             <div className="text-center">
               <div className="flex items-center justify-center space-x-1">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-4 w-4 text-yellow-500 fill-current" />
+                  <Star key={i} className="h-4 w-4 text-yellow-500 cb:text-cbYellow fill-current" />
                 ))}
               </div>
               <div className="text-sm text-gray-600 dark:text-gray-400">Average article rating</div>
@@ -247,11 +247,11 @@ export function BlogSidebar({
 
       {/* Call to Action */}
       <Dialog open={storyOpen} onOpenChange={setStoryOpen}>
-        <Card className="shadow-lg border-0 bg-gradient-to-br from-green-600 to-blue-600 dark:from-green-700 dark:to-blue-700 text-white">
+        <Card className="shadow-lg border-0 bg-gradient-to-br from-green-600 to-blue-600 dark:from-green-700 dark:to-blue-700 cb:from-cbBluishGreen cb:to-cbBlue dark:cb:from-cbBluishGreen dark:cb:to-cbBlue text-white">
           <CardContent className="p-6 text-center">
             <BookOpen className="h-12 w-12 mx-auto mb-4 text-white" />
             <h3 className="font-bold text-lg mb-2">Share Your Story</h3>
-            <p className="text-sm text-green-100 dark:text-green-200 mb-4">
+            <p className="text-sm text-green-100 dark:text-green-200 cb:text-cbBluishGreen mb-4">
               Have a water conservation success story? Share it with our community!
             </p>
             <DialogTrigger asChild>
@@ -290,7 +290,7 @@ export function BlogSidebar({
       </Dialog>
 
       <div className="mb-6 flex justify-end">
-        <Button className="bg-blue-600 text-white dark:hover:bg-blue-500" onClick={async () => {
+        <Button className="bg-blue-600 cb:bg-cbBlue text-white dark:hover:bg-blue-500 dark:cb:hover:bg-cbBlue/80" onClick={async () => {
           const sidebar = document.querySelector('.space-y-6');
           if (sidebar) {
             const canvas = await html2canvas(sidebar as HTMLElement);

@@ -41,14 +41,14 @@ export default function BlogPage() {
     <div className="container mx-auto px-4 py-8 space-y-10 mt-24">
       <BlogsHeader />
       <Card className="shadow-lg border-0">
-        <CardHeader className="bg-gradient-to-r from-green-600 to-blue-600 dark:from-green-700 dark:to-blue-700 text-white">
+        <CardHeader className="bg-gradient-to-r from-green-600 to-blue-600 dark:from-green-700 dark:to-blue-700 cb:from-cbBluishGreen cb:to-cbBlue dark:cb:from-cbBluishGreen dark:cb:to-cbBlue text-white">
           <CardTitle className="text-xl font-bold">Browse by Category</CardTitle>
-          <p className="text-green-100 dark:text-green-200">Explore topics that interest you most</p>
+          <p className="text-green-100 dark:text-green-200 cb:text-cbBluishGreen">Explore topics that interest you most</p>
         </CardHeader>
         <CardContent className="p-6">
           <div className="flex justify-end mb-4">
             <button
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 dark:hover:bg-blue-500 transition"
+              className="bg-blue-600 cb:bg-cbBlue text-white px-4 py-2 rounded hover:bg-blue-700 cb:hover:bg-cbBlue/90 dark:hover:bg-blue-500 dark:cb:hover:bg-cbBlue/80 transition"
               onClick={async () => {
                 const card = document.querySelector('.shadow-lg.border-0');
                 if (card) {
@@ -77,8 +77,8 @@ export default function BlogPage() {
                   aria-pressed={isSelected}
                   className={`p-4 rounded-lg border-2 w-full text-left transition-all duration-200 ${
                     isSelected
-                      ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-md"
-                      : "border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-gray-50 dark:hover:bg-gray-800"
+                      ? "border-blue-500 cb:border-cbBlue bg-blue-50 cb:bg-cbBlue/10 dark:bg-blue-900/20 shadow-md"
+                      : "border-gray-200 dark:border-gray-700 hover:border-blue-300 cb:hover:border-cbBlue dark:hover:border-blue-700 hover:bg-gray-50 cb:hover:bg-cbBlue/10 dark:hover:bg-gray-800"
                   }`}
                 >
                   <div className="text-center space-y-3">
@@ -101,18 +101,18 @@ export default function BlogPage() {
 
           {/* Selected Category Info */}
           {category !== "All Articles" && (
-            <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+            <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 cb:bg-cbBlue/10 cb:dark:bg-cbBlue/20 cb:border-cbBlue/30 cb:dark:border-cbBlue/40 rounded-lg">
               <div className="flex items-center space-x-3">
-                <div className="text-blue-600 dark:text-blue-400">
+                <div className="text-blue-600 dark:text-blue-400 cb:text-cbBlue">
                   {React.createElement(categories.find((c) => c.name === category)?.icon || Globe, {
                     className: "h-5 w-5",
                   })}
                 </div>
                 <div>
-                  <div className="font-medium text-blue-900 dark:text-blue-100">
+                  <div className="font-medium text-blue-900 dark:text-blue-100 cb:text-cbBlue cb:dark:text-cbBlue">
                     Viewing: {categories.find((c) => c.name === category)?.name}
                   </div>
-                  <div className="text-sm text-blue-700 dark:text-blue-300">
+                  <div className="text-sm text-blue-700 dark:text-blue-300 cb:text-cbBlue cb:dark:text-cbBlue">
                     {categories.find((c) => c.name === category)?.description}
                   </div>
                 </div>

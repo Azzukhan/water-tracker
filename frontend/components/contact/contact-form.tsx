@@ -58,14 +58,14 @@ export function ContactForm() {
 
   if (submitStatus === "success") {
     return (
-      <Card className="shadow-lg border-0 bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
+      <Card className="shadow-lg border-0 bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 cb:bg-cbBluishGreen/10 cb:dark:bg-cbBluishGreen/20 cb:border-cbBluishGreen/30 cb:dark:border-cbBluishGreen/40">
         <CardContent className="p-8 text-center">
-          <CheckCircle className="h-16 w-16 text-green-600 dark:text-green-400 mx-auto mb-4" />
-          <h3 className="text-2xl font-bold text-green-900 dark:text-green-100 mb-2">Message Sent Successfully!</h3>
-          <p className="text-green-800 dark:text-green-200 mb-4">
+          <CheckCircle className="h-16 w-16 text-green-600 dark:text-green-400 cb:text-cbBluishGreen cb:dark:text-cbBluishGreen mx-auto mb-4" />
+          <h3 className="text-2xl font-bold text-green-900 dark:text-green-100 cb:text-cbBluishGreen cb:dark:text-cbBluishGreen mb-2">Message Sent Successfully!</h3>
+          <p className="text-green-800 dark:text-green-200 cb:text-cbBluishGreen cb:dark:text-cbBluishGreen mb-4">
             Thank you for contacting us. We'll respond to your inquiry within 24 hours during business days.
           </p>
-          <div className="text-sm text-green-700 dark:text-green-300">
+          <div className="text-sm text-green-700 dark:text-green-300 cb:text-cbBluishGreen cb:dark:text-cbBluishGreen">
             Reference ID: <span className="font-mono">WTR-{Date.now().toString().slice(-6)}</span>
           </div>
         </CardContent>
@@ -202,7 +202,7 @@ export function ContactForm() {
             </div>
           </div>
           {/* BUTTON AND NOTICE - Always at the bottom */}
-          <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 dark:hover:bg-blue-500 py-3 mt-6" disabled={isSubmitting}>
+          <Button type="submit" className="w-full bg-blue-600 cb:bg-cbBlue hover:bg-blue-700 cb:hover:bg-cbBlue/90 dark:hover:bg-blue-500 dark:cb:hover:bg-cbBlue/80 py-3 mt-6" disabled={isSubmitting}>
             {isSubmitting ? (
               <>
                 <div className="animate-spin h-4 w-4 mr-2 border-2 border-white border-t-transparent rounded-full"></div>

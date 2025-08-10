@@ -65,12 +65,12 @@ export function ReportIssueForm() {
 
   if (submitStatus === "success") {
     return (
-      <Card className="shadow-lg border-0 bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
+      <Card className="shadow-lg border-0 bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 cb:bg-cbBluishGreen/10 cb:dark:bg-cbBluishGreen/20 cb:border-cbBluishGreen/30 cb:dark:border-cbBluishGreen/40">
         <CardContent className="p-8 text-center">
-          <CheckCircle className="h-12 w-12 text-green-600 dark:text-green-400 mx-auto mb-4" />
-          <h3 className="text-lg font-bold text-green-900 dark:text-green-100 mb-2">Issue Reported Successfully!</h3>
-          <p className="text-green-800 dark:text-green-200 text-sm mb-3">Your report has been submitted to the relevant water authority.</p>
-          <div className="text-xs text-green-700 dark:text-green-300">
+          <CheckCircle className="h-12 w-12 text-green-600 dark:text-green-400 cb:text-cbBluishGreen cb:dark:text-cbBluishGreen mx-auto mb-4" />
+          <h3 className="text-lg font-bold text-green-900 dark:text-green-100 cb:text-cbBluishGreen cb:dark:text-cbBluishGreen mb-2">Issue Reported Successfully!</h3>
+          <p className="text-green-800 dark:text-green-200 cb:text-cbBluishGreen cb:dark:text-cbBluishGreen text-sm mb-3">Your report has been submitted to the relevant water authority.</p>
+          <div className="text-xs text-green-700 dark:text-green-300 cb:text-cbBluishGreen cb:dark:text-cbBluishGreen">
             Report ID: <span className="font-mono">WQR-{Date.now().toString().slice(-6)}</span>
           </div>
         </CardContent>
@@ -80,12 +80,12 @@ export function ReportIssueForm() {
 
   return (
     <Card className="shadow-lg border-0 flex flex-col h-full min-h-[600px] lg:min-h-[720px]">
-      <CardHeader className="bg-gradient-to-r from-red-600 to-orange-600 dark:from-red-700 dark:to-orange-700 text-white">
+      <CardHeader className="bg-gradient-to-r from-red-600 to-orange-600 dark:from-red-700 dark:to-orange-700 cb:from-cbVermillion cb:to-cbOrange dark:cb:from-cbVermillion dark:cb:to-cbOrange text-white">
         <CardTitle className="text-2xl font-bold flex items-center">
           <AlertTriangle className="h-5 w-5 mr-2" />
           Report Water Issue
         </CardTitle>
-        <p className="text-red-100 dark:text-red-200 text-sm">Report water quality or service problems</p>
+        <p className="text-red-100 dark:text-red-200 cb:text-cbVermillion text-sm">Report water quality or service problems</p>
       </CardHeader>
       <CardContent className="p-8 flex flex-col flex-1">
         <form onSubmit={handleSubmit} className="flex flex-col flex-1">
@@ -189,7 +189,7 @@ export function ReportIssueForm() {
             </div>
           </div>
           {/* BUTTON AND NOTICE - Always at the bottom */}
-          <Button type="submit" className="w-full bg-red-600 hover:bg-red-700 dark:hover:bg-red-500 mt-6" disabled={isSubmitting}>
+          <Button type="submit" className="w-full bg-red-600 cb:bg-cbVermillion hover:bg-red-700 cb:hover:bg-cbVermillion/90 dark:hover:bg-red-500 dark:cb:hover:bg-cbVermillion/80 mt-6" disabled={isSubmitting}>
             {isSubmitting ? (
               <>
                 <div className="animate-spin h-4 w-4 mr-2 border-2 border-white border-t-transparent rounded-full"></div>
@@ -202,10 +202,10 @@ export function ReportIssueForm() {
               </>
             )}
           </Button>
-          <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg mt-4">
+          <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 cb:bg-cbVermillion/10 cb:dark:bg-cbVermillion/20 cb:border-cbVermillion/30 cb:dark:border-cbVermillion/40 rounded-lg mt-4">
             <div className="flex items-start space-x-2">
-              <AlertTriangle className="h-4 w-4 text-red-600 dark:text-red-400 mt-0.5" />
-              <div className="text-xs text-red-800 dark:text-red-200">
+              <AlertTriangle className="h-4 w-4 text-red-600 dark:text-red-400 cb:text-cbVermillion mt-0.5" />
+              <div className="text-xs text-red-800 dark:text-red-200 cb:text-cbVermillion">
                 <strong>Emergency?</strong> For immediate assistance with water emergencies, call 999 or your local
                 water authority directly.
               </div>

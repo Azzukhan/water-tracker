@@ -26,7 +26,7 @@ export function FeaturedBlog() {
   return (
     <Card className="shadow-xl border-0 overflow-hidden">
       <div className="relative h-64 lg:h-80 flex items-center justify-center bg-muted">
-        <Badge className="absolute top-4 left-4 bg-yellow-600 text-white z-10">Featured Article</Badge>
+        <Badge className="absolute top-4 left-4 bg-yellow-600 cb:bg-cbYellow text-white z-10">Featured Article</Badge>
         <CategoryIcon className={`h-24 w-24 ${categoryColor}`} />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
       </div>
@@ -38,7 +38,7 @@ export function FeaturedBlog() {
             <div>
               <div className="flex items-center space-x-3 mb-4">
                 <Badge
-                  className={`${categoryColor.replace('text-', 'bg-')} text-white flex items-center gap-1`}
+                  className={`${categoryColor.replace(/text-/g, 'bg-')} text-white flex items-center gap-1`}
                 >
                   <CategoryIcon className={`h-4 w-4 ${categoryColor}`} />
                   {featuredBlog.category}
@@ -89,7 +89,7 @@ export function FeaturedBlog() {
           <div className="lg:col-span-1 space-y-6">
             <div className="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
               <div className="text-center space-y-4">
-                <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto">
+                <div className="w-16 h-16 bg-blue-600 cb:bg-cbBlue rounded-full flex items-center justify-center mx-auto">
                   <User className="h-8 w-8 text-white" />
                 </div>
                 <div>
@@ -102,15 +102,15 @@ export function FeaturedBlog() {
               </div>
             </div>
 
-            <Button className="w-full bg-blue-600 hover:bg-blue-700 dark:hover:bg-blue-500 text-lg py-6">
+            <Button className="w-full bg-blue-600 cb:bg-cbBlue hover:bg-blue-700 cb:hover:bg-cbBlue/90 dark:hover:bg-blue-500 dark:cb:hover:bg-cbBlue/80 text-lg py-6">
               Read Full Article
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
 
-            <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+            <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 cb:bg-cbBluishGreen/10 cb:dark:bg-cbBluishGreen/20 cb:border-cbBluishGreen/30 cb:dark:border-cbBluishGreen/40 rounded-lg">
               <div className="text-center">
-                <div className="text-2xl font-bold text-green-700 dark:text-green-200 mb-1">40%</div>
-                <div className="text-sm text-green-600 dark:text-green-300">Average water savings reported by readers</div>
+                <div className="text-2xl font-bold text-green-700 dark:text-green-200 cb:text-cbBluishGreen mb-1">40%</div>
+                <div className="text-sm text-green-600 dark:text-green-300 cb:text-cbBluishGreen">Average water savings reported by readers</div>
               </div>
             </div>
           </div>

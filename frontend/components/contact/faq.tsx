@@ -221,12 +221,12 @@ export function FAQ() {
                       <div className="flex-1">
                         <div className="flex items-center space-x-3 mb-2">
                           <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{faq.question}</h3>
-                          {faq.popular && <Badge className="bg-orange-600 text-white text-xs">Popular</Badge>}
+                          {faq.popular && <Badge className="bg-orange-600 cb:bg-cbOrange text-white text-xs">Popular</Badge>}
                         </div>
                         <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
                           <span className="capitalize">{faq.category.replace("-", " ")}</span>
                           <div className="flex items-center space-x-1">
-                            <Star className="h-4 w-4 text-yellow-500" />
+                            <Star className="h-4 w-4 text-yellow-500 cb:text-cbYellow" />
                             <span>{helpfulCounts[faq.id]?.yes ?? faq.helpfulYes} found helpful</span>
                           </div>
                         </div>
