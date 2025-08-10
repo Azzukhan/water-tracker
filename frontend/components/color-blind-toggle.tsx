@@ -3,7 +3,7 @@
 import { Palette } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
-import { useColorBlind } from "@/components/color-blind-provider";
+import { useColorBlind } from "@/contexts/ColorBlindContext";
 
 export function ColorBlindToggle({ className }: { className?: string }) {
   const { isColorBlind, toggleColorBlind } = useColorBlind();
