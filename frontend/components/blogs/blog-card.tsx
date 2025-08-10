@@ -97,11 +97,24 @@ export function BlogCard({ post, isBookmarked = false, onBookmark }: BlogCardPro
               {formatDate(post.published)}
             </div>
             <div className="flex items-center gap-1">
-              <Button variant="ghost" size="icon" onClick={share}>
-                <Share2 className="h-4 w-4" />
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={share}
+                aria-label="Share this post"
+              >
+                <Share2 className="h-4 w-4" aria-hidden="true" />
               </Button>
-              <Button variant="ghost" size="icon" onClick={onBookmark}>
-                <Bookmark className={`h-4 w-4 ${isBookmarked ? "fill-current" : ""}`} />
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onBookmark}
+                aria-label={isBookmarked ? "Remove bookmark" : "Bookmark this post"}
+              >
+                <Bookmark
+                  className={`h-4 w-4 ${isBookmarked ? "fill-current" : ""}`}
+                  aria-hidden="true"
+                />
               </Button>
             </div>
           </div>

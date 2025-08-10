@@ -120,7 +120,7 @@ export default function WeatherPage() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [lastGoodWeather, setLastGoodWeather] = useState<WeatherData | null>(null);
   const searchTimeout = useRef<NodeJS.Timeout | null>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLUListElement>(null);
 
   useEffect(() => {
     let didCancel = false;
@@ -338,8 +338,12 @@ export default function WeatherPage() {
             <h1 className="text-3xl font-bold mb-4">Weather Forecast</h1>
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1 relative">
+                <label htmlFor="location-search" className="sr-only">
+                  Search location
+                </label>
                 <div className="flex flex-row gap-2">
                   <Input
+                    id="location-search"
                     type="text"
                     placeholder="Search for a location..."
                     value={searchQuery}
@@ -404,28 +408,32 @@ export default function WeatherPage() {
                 </div>
                 {/* Dropdown */}
                 {showDropdown && (
-                  <div
+                  <ul
                     ref={dropdownRef}
                     className="absolute z-20 w-full mt-1 bg-white rounded-md shadow-lg max-h-60 overflow-y-auto border border-gray-200"
+                    role="listbox"
                   >
                     {searchResults.length === 0 && !searchLoading ? (
-                      <div className="p-2 text-gray-500">No results found.</div>
+                      <li className="p-2 text-gray-500">No results found.</li>
                     ) : (
                       searchResults.map((loc, idx) => (
-                        <div
-                          key={`${loc.lat}-${loc.lon}-${idx}`}
-                          className="p-2 hover:bg-gray-100 cursor-pointer"
-                          onClick={() => {
-                            setLocation(loc);
-                            setShowDropdown(false);
-                            setSearchQuery("");
-                          }}
-                        >
-                          {loc.name}
-                        </div>
+                        <li key={`${loc.lat}-${loc.lon}-${idx}`}
+                            role="presentation">
+                          <button
+                            type="button"
+                            className="w-full text-left p-2 hover:bg-gray-100"
+                            onClick={() => {
+                              setLocation(loc);
+                              setShowDropdown(false);
+                              setSearchQuery("");
+                            }}
+                          >
+                            {loc.name}
+                          </button>
+                        </li>
                       ))
                     )}
-                  </div>
+                  </ul>
                 )}
                 {searchError && (
                   <div className="text-red-500 text-sm mt-1">{searchError}</div>

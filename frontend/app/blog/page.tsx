@@ -70,18 +70,20 @@ export default function BlogPage() {
               const isSelected = category === categoryItem.name;
 
               return (
-                <div
+                <button
+                  type="button"
                   key={categoryItem.id}
-                  className={`p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
+                  onClick={() => setCategory(categoryItem.name)}
+                  aria-pressed={isSelected}
+                  className={`p-4 rounded-lg border-2 w-full text-left transition-all duration-200 ${
                     isSelected
                       ? "border-blue-500 bg-blue-50 shadow-md"
                       : "border-gray-200 hover:border-blue-300 hover:bg-gray-50"
                   }`}
-                  onClick={() => setCategory(categoryItem.name)}
                 >
                   <div className="text-center space-y-3">
                     <div className={`w-12 h-12 ${categoryItem.color} rounded-lg flex items-center justify-center mx-auto`}>
-                      <CategoryIcon className="h-6 w-6 text-white" />
+                      <CategoryIcon className="h-6 w-6 text-white" aria-hidden="true" />
                     </div>
 
                     <div>
@@ -92,7 +94,7 @@ export default function BlogPage() {
                       </Badge>
                     </div>
                   </div>
-                </div>
+                </button>
               );
             })}
           </div>

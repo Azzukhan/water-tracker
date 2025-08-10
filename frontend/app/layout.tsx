@@ -6,6 +6,7 @@ import { Header } from "@/components/header"
 import Footer from "../components/footer"
 import { Toaster } from "@/components/ui/sonner"
 import { ColorBlindProvider } from "@/components/color-blind-provider"
+import { MainContent } from "@/components/main-content"
 
 
 export const metadata: Metadata = {
@@ -22,10 +23,13 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
+        <a href="#main-content" className="skip-link">
+          Skip to main content
+        </a>
         <ColorBlindProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
             <Header />
-            <main>{children}</main>
+            <MainContent>{children}</MainContent>
             <Footer />
             <Toaster />
           </ThemeProvider>
