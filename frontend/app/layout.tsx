@@ -27,7 +27,7 @@ export default function RootLayout({
           Skip to main content
         </a>
         <ColorBlindProvider>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <ThemeProvider>
             <Header />
             <MainContent>{children}</MainContent>
             <Footer />
