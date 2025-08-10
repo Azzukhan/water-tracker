@@ -135,17 +135,17 @@ export function SouthernWaterCurrent({ reservoir }: { reservoir: string }) {
                 </svg>
 
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <div className="text-4xl font-bold text-gray-900">
+                  <div className="text-4xl font-bold text-gray-900 dark:text-gray-100">
                     {currentData ? `${currentData.currentLevel}%` : "-"}
                   </div>
-                  <div className="text-sm text-gray-600">Full</div>
+                  <div className="text-sm text-gray-600 dark:text-gray-300">Full</div>
                   <Droplets className="h-6 w-6 text-blue-500 mt-2" />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <div className="text-lg font-semibold text-gray-900">Capacity: 1.2 billion litres</div>
-                <div className="flex items-center justify-center space-x-2 text-sm text-gray-600">
+                <div className="text-lg font-semibold text-gray-900 dark:text-gray-100">Capacity: 1.2 billion litres</div>
+                <div className="flex items-center justify-center space-x-2 text-sm text-gray-600 dark:text-gray-300">
                   <Calendar className="h-4 w-4" />
                   <span>Updated {currentData ? currentData.lastUpdated : "-"}</span>
                 </div>
@@ -155,49 +155,49 @@ export function SouthernWaterCurrent({ reservoir }: { reservoir: string }) {
             {/* Statistics */}
             <div className="space-y-6">
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Level Statistics</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Level Statistics</h3>
 
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                  <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
                     <div>
-                      <div className="text-sm text-gray-600">vs. Average</div>
-                      <div className="text-lg font-semibold text-gray-900">
+                      <div className="text-sm text-gray-600 dark:text-gray-300">vs. Average</div>
+                      <div className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                         {currentData && currentData.differenceFromAverage > 0 ? "+" : ""}
                         {currentData ? currentData.differenceFromAverage : "-"}%
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-sm text-gray-600">Average Level</div>
-                      <div className="text-lg font-semibold text-gray-900">{currentData ? currentData.averageLevel : "-"}%</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-300">Average Level</div>
+                      <div className="text-lg font-semibold text-gray-900 dark:text-gray-100">{currentData ? currentData.averageLevel : "-"}%</div>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
+                  <div className="flex items-center justify-between p-4 bg-blue-50 dark:bg-blue-900 rounded-lg">
                     <div>
-                      <div className="text-sm text-gray-600">7d Change</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-300">7d Change</div>
                       <div
                         className={`text-lg font-semibold flex items-center ${
                           trendMeta.direction === "rising"
                             ? "text-green-600"
                             : trendMeta.direction === "falling"
                             ? "text-red-600"
-                            : "text-gray-600"
+                            : "text-gray-600 dark:text-gray-300"
                         }`}
                       >
                         <TrendIcon className="h-4 w-4 mr-1" />
                         {currentData && currentData.changeWeek > 0 ? "+" : ""}
                         {currentData ? currentData.changeWeek : "-"}%
-                        <span className="ml-2 text-sm text-gray-600">
+                        <span className="ml-2 text-sm text-gray-600 dark:text-gray-300">
                           {trendMeta.angle.toFixed(1)}&deg; {trendMeta.direction}
                         </span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="p-4 bg-green-50 rounded-lg">
+                  <div className="p-4 bg-green-50 dark:bg-green-900 rounded-lg">
                     <div className="flex items-center justify-between">
                       <div>
-                        <div className="text-sm text-gray-600">Status</div>
+                        <div className="text-sm text-gray-600 dark:text-gray-300">Status</div>
                         <div className="text-lg font-semibold text-green-700">
                           {currentData
                             ? currentData.currentLevel >= 90
@@ -222,7 +222,7 @@ export function SouthernWaterCurrent({ reservoir }: { reservoir: string }) {
       <Card className="shadow-lg border-0">
         <CardHeader>
           <CardTitle className="text-lg font-semibold">7-Day Trend</CardTitle>
-          <p className="text-sm text-gray-600">Recent water level changes</p>
+          <p className="text-sm text-gray-600 dark:text-gray-300">Recent water level changes</p>
         </CardHeader>
         <CardContent>
           <div className="h-32 mb-4">
@@ -235,19 +235,19 @@ export function SouthernWaterCurrent({ reservoir }: { reservoir: string }) {
 
           <div className="space-y-3">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-600">Highest</span>
+              <span className="text-gray-600 dark:text-gray-300">Highest</span>
               <span className="font-semibold">
                 {stats.highest ? `${stats.highest.toFixed(0)}%` : "-"}
               </span>
             </div>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-600">Lowest</span>
+              <span className="text-gray-600 dark:text-gray-300">Lowest</span>
               <span className="font-semibold">
                 {stats.lowest ? `${stats.lowest.toFixed(0)}%` : "-"}
               </span>
             </div>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-600">Average</span>
+              <span className="text-gray-600 dark:text-gray-300">Average</span>
               <span className="font-semibold">
                 {stats.average ? `${stats.average.toFixed(0)}%` : "-"}
               </span>
@@ -255,7 +255,7 @@ export function SouthernWaterCurrent({ reservoir }: { reservoir: string }) {
           </div>
 
           {currentData && currentData.currentLevel < 70 && (
-            <div className="mt-4 p-3 bg-orange-50 border border-orange-200 rounded-lg">
+            <div className="mt-4 p-3 bg-orange-50 dark:bg-orange-900 border border-orange-200 rounded-lg">
               <div className="flex items-center space-x-2">
                 <Minus className="h-4 w-4 text-orange-600" />
                 <span className="text-sm font-medium text-orange-800">Below Normal Range</span>

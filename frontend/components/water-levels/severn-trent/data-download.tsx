@@ -106,7 +106,7 @@ export function SevernTrentDownload() {
               PDF
             </Button>
           </div>
-        {data.length === 0 && <p className="text-sm text-gray-500">No data</p>}
+        {data.length === 0 && <p className="text-sm text-gray-500 dark:text-gray-400">No data</p>}
       </CardContent>
     </Card>
   )

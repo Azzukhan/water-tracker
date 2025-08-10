@@ -62,10 +62,10 @@ export default function WaterLevelsPage() {
   return (
     <div className="container mx-auto px-4 py-8 space-y-10 mt-24">
       <div className="text-center space-y-2">
-        <h1 className="text-4xl lg:text-5xl font-bold">
+        <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-gray-100">
           UK Water Level Monitoring
         </h1>
-        <p className="text-xl text-gray-600">
+        <p className="text-xl text-gray-600 dark:text-gray-300">
           Real-time water level data, historical trends, and AI-powered
           predictions across the United Kingdom
         </p>

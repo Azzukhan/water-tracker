@@ -40,13 +40,13 @@ export function TrendChart({
       ? "text-green-600"
       : direction === "falling"
       ? "text-red-600"
-      : "text-gray-600"
+      : "text-gray-600 dark:text-gray-300"
 
   return (
     <Card className="shadow-lg border-0">
       <CardHeader>
         <CardTitle className="text-lg font-semibold">7-Day Trend</CardTitle>
-        <p className="text-sm text-gray-600">Recent water level changes</p>
+        <p className="text-sm text-gray-600 dark:text-gray-300">Recent water level changes</p>
       </CardHeader>
       <CardContent>
         <div className="h-32 mb-4">
@@ -60,19 +60,19 @@ export function TrendChart({
         <div className="flex items-center justify-around text-sm mb-4">
           <div className="text-center">
             <div className="font-semibold">{max.toFixed(0)}%</div>
-            <div className="text-gray-600">Max</div>
+            <div className="text-gray-600 dark:text-gray-300">Max</div>
           </div>
           <div className="text-center">
             <div className="font-semibold">{min.toFixed(0)}%</div>
-            <div className="text-gray-600">Min</div>
+            <div className="text-gray-600 dark:text-gray-300">Min</div>
           </div>
           <div className="text-center">
             <div className="font-semibold">{avg.toFixed(0)}%</div>
-            <div className="text-gray-600">Average</div>
+            <div className="text-gray-600 dark:text-gray-300">Average</div>
           </div>
         </div>
 
-        <div className="flex items-center justify-center text-gray-600 text-sm">
+        <div className="flex items-center justify-center text-gray-600 dark:text-gray-300 text-sm">
           <ArrowRight
             className={`h-4 w-4 mr-1 ${arrowClass}`}
             style={{ transform: `rotate(${angle}deg)` }}

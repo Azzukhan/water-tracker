@@ -244,8 +244,8 @@ export function EnglandARIMAChart({ region }: { region: string }) {
                   if (active && payload && payload.length) {
                     const d = payload[0].payload;
                     return (
-                      <div className="bg-white p-4 border border-gray-200 rounded-lg shadow-lg">
-                        <p className="font-semibold text-gray-900">{label}</p>
+                      <div className="bg-white dark:bg-gray-800 p-4 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg">
+                        <p className="font-semibold text-gray-900 dark:text-gray-100">{label}</p>
                         {d.actual && (
                           <p className="text-blue-600">
                             Actual: {d.actual.toFixed(1)}%
@@ -257,7 +257,7 @@ export function EnglandARIMAChart({ region }: { region: string }) {
                               Predicted: {d.predicted.toFixed(1)}%
                             </p>
                             {showUncertainty && (
-                              <p className="text-gray-600 text-sm">
+                              <p className="text-gray-600 dark:text-gray-300 text-sm">
                                 Range: {d.lowerBound?.toFixed(1)}% -{" "}
                                 {d.upperBound?.toFixed(1)}%
                               </p>
@@ -315,14 +315,14 @@ export function EnglandARIMAChart({ region }: { region: string }) {
           </ResponsiveContainer>
         </div>
         {actualSeries.length === 0 && (
-          <div className="text-center text-gray-500 p-6">
+          <div className="text-center text-gray-500 dark:text-gray-400 p-6">
             No historical data available for this period.
           </div>
         )}
         <div className="grid md:grid-cols-3 gap-4 mb-6">
           <div className="p-4 bg-purple-50 rounded-lg">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-600">
+              <span className="text-sm text-gray-600 dark:text-gray-300">
                 Avg. Predicted Level
               </span>
               <TrendingUp className="h-4 w-4 text-purple-600" />
@@ -331,9 +331,9 @@ export function EnglandARIMAChart({ region }: { region: string }) {
               {avgPrediction.toFixed(1)}%
             </div>
           </div>
-          <div className="p-4 bg-blue-50 rounded-lg">
+          <div className="p-4 bg-blue-50 dark:bg-blue-900 rounded-lg">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-600">
+              <span className="text-sm text-gray-600 dark:text-gray-300">
                 Trend Direction
               </span>
               {trend > 0 ? (
@@ -351,16 +351,16 @@ export function EnglandARIMAChart({ region }: { region: string }) {
               {trend.toFixed(1)}%
             </div>
           </div>
-          <div className="p-4 bg-gray-50 rounded-lg">
+          <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-600">Confidence</span>
+              <span className="text-sm text-gray-600 dark:text-gray-300">Confidence</span>
               <Badge variant="secondary">High</Badge>
             </div>
-            <div className="text-2xl font-bold text-gray-600">87%</div>
+            <div className="text-2xl font-bold text-gray-600 dark:text-gray-300">87%</div>
           </div>
         </div>
         {avgPrediction < 70 && (
-          <div className="p-4 bg-orange-50 border border-orange-200 rounded-lg">
+          <div className="p-4 bg-orange-50 dark:bg-orange-900 border border-orange-200 rounded-lg">
             <div className="flex items-start space-x-3">
               <AlertCircle className="h-5 w-5 text-orange-600 mt-0.5" />
               <div>
@@ -375,7 +375,7 @@ export function EnglandARIMAChart({ region }: { region: string }) {
             </div>
           </div>
         )}
-        <div className="flex flex-wrap items-center justify-center space-x-6 text-sm mt-6 p-4 bg-gray-50 rounded-lg">
+        <div className="flex flex-wrap items-center justify-center space-x-6 text-sm mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
           <div className="flex items-center space-x-2">
             <div className="w-4 h-0.5 bg-blue-600"></div>
             <span>Historical Data</span>

@@ -319,16 +319,16 @@ export default function WeatherPage() {
     );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-900">
       <Header />
       <main className="pt-20">
         <div className="container mx-auto px-4 py-8">
           {/* Page Header */}
           <div className="text-center mb-12">
-            <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+            <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-gray-100 mb-4">
               UK Weather Report
             </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
               Comprehensive weather data, forecasts, and environmental
               conditions across the United Kingdom
             </p>
@@ -348,7 +348,7 @@ export default function WeatherPage() {
                     placeholder="Search for a location..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
+                    className="w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
                     onFocus={() =>
                       searchResults.length > 0 && setShowDropdown(true)
                     }
@@ -410,18 +410,18 @@ export default function WeatherPage() {
                 {showDropdown && (
                   <ul
                     ref={dropdownRef}
-                    className="absolute z-20 w-full mt-1 bg-white rounded-md shadow-lg max-h-60 overflow-y-auto border border-gray-200"
+                    className="absolute z-20 w-full mt-1 bg-white dark:bg-gray-800 rounded-md shadow-lg max-h-60 overflow-y-auto border border-gray-200 dark:border-gray-700"
                     role="listbox"
                   >
                     {searchResults.length === 0 && !searchLoading ? (
-                      <li className="p-2 text-gray-500">No results found.</li>
+                      <li className="p-2 text-gray-500 dark:text-gray-400">No results found.</li>
                     ) : (
                       searchResults.map((loc, idx) => (
                         <li key={`${loc.lat}-${loc.lon}-${idx}`}
                             role="presentation">
                           <button
                             type="button"
-                            className="w-full text-left p-2 hover:bg-gray-100"
+                            className="w-full text-left p-2 hover:bg-gray-100 dark:hover:bg-gray-700"
                             onClick={() => {
                               setLocation(loc);
                               setShowDropdown(false);
@@ -492,7 +492,7 @@ export default function WeatherPage() {
               </Button>
             </div>
             {/* Show current location */}
-            <div className="mt-2 text-sm text-gray-600">
+            <div className="mt-2 text-sm text-gray-600 dark:text-gray-300">
               <span className="font-medium">Current location:</span>{" "}
               {location ? location.name : "-"}
             </div>

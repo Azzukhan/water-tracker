@@ -58,7 +58,7 @@ export function DataSources() {
             {dataSources.map((source, index) => (
               <div
                 key={index}
-                className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow duration-200"
+                className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:shadow-md transition-shadow duration-200"
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center space-x-3">
@@ -66,8 +66,8 @@ export function DataSources() {
                       <span className="text-white font-bold text-sm">{source.logo}</span>
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-900">{source.name}</h3>
-                      <p className="text-sm text-gray-600">{source.description}</p>
+                      <h3 className="font-semibold text-gray-900 dark:text-gray-100">{source.name}</h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-300">{source.description}</p>
                     </div>
                   </div>
                   <Button variant="outline" size="sm" asChild>
@@ -79,7 +79,7 @@ export function DataSources() {
 
                 <div className="space-y-3">
                   <div>
-                    <div className="text-sm text-gray-600 mb-2">Data Types:</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-300 mb-2">Data Types:</div>
                     <div className="flex flex-wrap gap-2">
                       {source.dataTypes.map((type, i) => (
                         <Badge key={i} variant="secondary" className="text-xs">
@@ -91,7 +91,7 @@ export function DataSources() {
 
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
-                      <div className="flex items-center space-x-2 text-gray-600">
+                      <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-300">
                         <Clock className="h-4 w-4" />
                         <span>Updates every {source.updateFrequency}</span>
                       </div>
@@ -109,7 +109,7 @@ export function DataSources() {
           </div>
 
           {/* Data Quality Indicators */}
-          <div className="mt-8 p-6 bg-green-50 border border-green-200 rounded-lg">
+          <div className="mt-8 p-6 bg-green-50 dark:bg-green-900 border border-green-200 rounded-lg">
             <div className="flex items-start space-x-3">
               <Shield className="h-6 w-6 text-green-600 mt-1" />
               <div>
@@ -141,7 +141,7 @@ export function DataSources() {
             <Download className="h-5 w-5 mr-2 text-blue-600" />
             Export Data & Reports
           </CardTitle>
-          <p className="text-gray-600">Download water level data in various formats</p>
+          <p className="text-gray-600 dark:text-gray-300">Download water level data in various formats</p>
         </CardHeader>
 
         <CardContent>
@@ -149,21 +149,21 @@ export function DataSources() {
             {exportFormats.map((format, index) => (
               <div
                 key={index}
-                className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow duration-200 cursor-pointer group"
+                className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow duration-200 cursor-pointer group"
                 onClick={() => handleExport(format.name)}
               >
                 <div className="text-center space-y-3">
                   <div className="text-3xl">{format.icon}</div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
+                    <h3 className="font-semibold text-gray-900 dark:text-gray-100 group-hover:text-blue-600 transition-colors">
                       {format.name}
                     </h3>
-                    <p className="text-sm text-gray-600">{format.description}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">{format.description}</p>
                   </div>
                   <Button
                     variant="outline"
                     size="sm"
-                    className="w-full group-hover:bg-blue-50 group-hover:border-blue-200"
+                    className="w-full group-hover:bg-blue-50 dark:bg-blue-900 group-hover:border-blue-200"
                   >
                     <Download className="h-4 w-4 mr-2" />
                     Download

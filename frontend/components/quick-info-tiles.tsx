@@ -8,7 +8,7 @@ const quickActions = [
     title: "Report Water Quality Issue",
     description: "Report contamination, taste, or odor issues in your area",
     icon: AlertTriangle,
-    color: "bg-red-50 border-red-200",
+    color: "bg-red-50 border-red-200 dark:bg-red-900 dark:border-red-700",
     iconColor: "text-red-600",
     buttonColor: "bg-red-600 hover:bg-red-700",
     href: "/contact",
@@ -17,7 +17,7 @@ const quickActions = [
     title: "Request New Connection",
     description: "Apply for new water supply or sewerage connections",
     icon: Plus,
-    color: "bg-blue-50 border-blue-200",
+    color: "bg-blue-50 border-blue-200 dark:bg-blue-900 dark:border-blue-700",
     iconColor: "text-blue-600",
     buttonColor: "bg-blue-600 hover:bg-blue-700",
     href: "/contact",
@@ -26,7 +26,7 @@ const quickActions = [
     title: "Water Saving Tips",
     description: "Learn how to conserve water and reduce your bills",
     icon: Lightbulb,
-    color: "bg-green-50 border-green-200",
+    color: "bg-green-50 border-green-200 dark:bg-green-900 dark:border-green-700",
     iconColor: "text-green-600",
     buttonColor: "bg-green-600 hover:bg-green-700",
     href: "/blog",
@@ -53,11 +53,11 @@ const additionalServices = [
 
 export function QuickInfoTiles() {
   return (
-    <section className="py-16 bg-white">
+    <section className="py-16 bg-white dark:bg-gray-900">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Quick Actions</h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">Quick Actions</h2>
+          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
             Get immediate help with water-related services and information
           </p>
         </div>
@@ -81,8 +81,8 @@ export function QuickInfoTiles() {
                   </div>
 
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-3">{action.title}</h3>
-                    <p className="text-gray-600 leading-relaxed">{action.description}</p>
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3">{action.title}</h3>
+                    <p className="text-gray-600 dark:text-gray-300 leading-relaxed">{action.description}</p>
                   </div>
 
                   <Button
@@ -103,19 +103,19 @@ export function QuickInfoTiles() {
         </div>
 
         {/* Additional Services */}
-        <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl p-8">
+        <div className="bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900 dark:to-cyan-900 rounded-2xl p-8">
           <div className="text-center mb-8">
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">Additional Services</h3>
-            <p className="text-gray-600">Comprehensive water management solutions</p>
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Additional Services</h3>
+            <p className="text-gray-600 dark:text-gray-300">Comprehensive water management solutions</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6 mb-8">
             {additionalServices.map((service, index) => (
               <div key={index} className="text-center group">
-                <div className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
-                  <service.icon className="h-8 w-8 text-blue-600 mx-auto mb-3 group-hover:scale-110 transition-transform duration-300" />
-                  <h4 className="font-semibold text-gray-900 mb-2">{service.title}</h4>
-                  <p className="text-sm text-gray-600">{service.description}</p>
+                <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
+                  <service.icon className="h-8 w-8 text-blue-600 dark:text-blue-400 mx-auto mb-3 group-hover:scale-110 transition-transform duration-300" />
+                  <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">{service.title}</h4>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">{service.description}</p>
                 </div>
               </div>
             ))}
@@ -124,10 +124,10 @@ export function QuickInfoTiles() {
           {/* Support CTAs */}
           <div className="grid md:grid-cols-2 gap-6">
             <div className="text-center">
-              <div className="bg-white rounded-xl p-6 shadow-sm">
-                <BookOpen className="h-12 w-12 text-green-600 mx-auto mb-4" />
-                <h4 className="font-bold text-gray-900 mb-2">Learn More</h4>
-                <p className="text-sm text-gray-600 mb-4">
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
+                <BookOpen className="h-12 w-12 text-green-600 dark:text-green-400 mx-auto mb-4" />
+                <h4 className="font-bold text-gray-900 dark:text-gray-100 mb-2">Learn More</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
                   Explore our educational blogs and guides for water conservation tips and industry insights.
                 </p>
                 <Button className="bg-green-600 hover:bg-green-700" asChild>
@@ -140,10 +140,10 @@ export function QuickInfoTiles() {
             </div>
 
             <div className="text-center">
-              <div className="bg-white rounded-xl p-6 shadow-sm">
-                <Phone className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-                <h4 className="font-bold text-gray-900 mb-2">Need Help?</h4>
-                <p className="text-sm text-gray-600 mb-4">
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
+                <Phone className="h-12 w-12 text-blue-600 dark:text-blue-400 mx-auto mb-4" />
+                <h4 className="font-bold text-gray-900 dark:text-gray-100 mb-2">Need Help?</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
                   Contact our support team for assistance with water issues, billing, or general inquiries.
                 </p>
                 <Button className="bg-blue-600 hover:bg-blue-700" asChild>

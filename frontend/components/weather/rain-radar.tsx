@@ -18,13 +18,13 @@ export function RainRadar() {
   </CardHeader>
   <CardContent className="p-6 flex flex-col flex-1">
     <div className="flex-1 flex flex-col justify-between">
-      <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-100">
+      <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
         <RainRadarMap />
       </div>
-      <p className="text-xs text-gray-500 text-center mt-4">Use scroll or the +/- controls to zoom</p>
+      <p className="text-xs text-gray-500 dark:text-gray-400 text-center mt-4">Use scroll or the +/- controls to zoom</p>
     </div>
-    <div className="p-4 bg-gray-50 rounded-lg mt-4">
-          <div className="text-sm text-gray-600">
+    <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg mt-4">
+          <div className="text-sm text-gray-600 dark:text-gray-300">
             <div className="font-medium mb-2">Radar Legend:</div>
             <div className="grid grid-cols-2 gap-2">
               <div className="flex items-center space-x-2">

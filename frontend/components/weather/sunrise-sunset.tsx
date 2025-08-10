@@ -35,12 +35,12 @@ export function SunriseSunset({ sun, moon }) {
           <div className="flex items-center gap-8 mb-6">
             <div className="flex flex-col items-center">
               <Sunrise className="h-8 w-8 text-yellow-500 mb-1" />
-              <span className="text-xs text-gray-500">Sunrise</span>
+              <span className="text-xs text-gray-500 dark:text-gray-400">Sunrise</span>
               <span className="font-semibold text-lg">{sunrise}</span>
             </div>
             <div className="flex flex-col items-center">
               <Sunset className="h-8 w-8 text-orange-500 mb-1" />
-              <span className="text-xs text-gray-500">Sunset</span>
+              <span className="text-xs text-gray-500 dark:text-gray-400">Sunset</span>
               <span className="font-semibold text-lg">{sunset}</span>
             </div>
           </div>
@@ -48,13 +48,13 @@ export function SunriseSunset({ sun, moon }) {
           <div className="flex flex-col items-center gap-3">
             <div className="flex items-center gap-2">
               <Moon className="h-6 w-6 text-indigo-500" />
-              <span className="font-medium text-gray-700">Phase:</span>
-              <span className="text-gray-900">{phase}</span>
+              <span className="font-medium text-gray-700 dark:text-gray-300">Phase:</span>
+              <span className="text-gray-900 dark:text-gray-100">{phase}</span>
             </div>
             <div className="flex items-center gap-2">
               <Clock className="h-6 w-6 text-gray-600" />
-              <span className="font-medium text-gray-700">Day Length:</span>
-              <span className="text-gray-900">{day_length}</span>
+              <span className="font-medium text-gray-700 dark:text-gray-300">Day Length:</span>
+              <span className="text-gray-900 dark:text-gray-100">{day_length}</span>
             </div>
           </div>
         </div>
