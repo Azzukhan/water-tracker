@@ -6,16 +6,16 @@
 
 * **Unified Reservoir Data:** Aggregates live reservoir level data from major providers (e.g. Severn Trent, Yorkshire Water, Southern Water, Environment Agency, SEPA) into one place, eliminating fragmented datasets and providing a national overview.
 * **AI-Powered Forecasts:** Provides dependable water level predictions using advanced algorithms – including ARIMA for statistical time-series forecasts, a regression-based machine learning model for straightforward trend analysis, and LSTM neural networks for complex pattern recognition. Forecasts are updated regularly (e.g. 4-week ahead projections) to help anticipate trends and potential shortages.
-* **Interactive Charts:** Visualizes historical vs. predicted reservoir levels with interactive line graphs. Users can hover over data points to see exact values and toggle different data series (actual levels, ARIMA forecast, LSTM forecast, etc.). These charts update dynamically via API calls as users navigate, and tooltips explain technical terms (like “ARIMA” or “LSTM”) for clarity.
+* **Interactive Charts:** Visualizes historical vs. predicted reservoir levels with interactive line graphs. Users can hover over data points to see exact values and toggle different data series (actual levels, ARIMA forecast, LSTM forecast, regression forecast etc.). These charts update dynamically via API calls as users navigate, and tooltips explain technical terms (like “ARIMA”, “LSTM” or "Regression" ) for clarity.
 * **Responsive & Accessible UI:** Offers a modern, responsive design using Next.js (React + TypeScript) to ensure a smooth user experience on any device. The interface follows accessible web standards, including ARIA labels and basic keyboard navigation support.
 * **Accessibility Modes:** Includes a dedicated dark mode for those sensitive to brightness, a color-blind mode with alternate palettes, and full keyboard navigation via Tab, Shift+Tab, Enter, and arrow keys so the entire site can be used without a mouse.
-* **Live Contextual Data:** Enhances reservoir info with real-time context — integrating weather forecasts (e.g. Met Office data) to link rainfall/drought conditions with reservoir response, live flood alerts (e.g. from BBC News) for situational awareness, and educational content on water conservation. This turns the dashboard into a one-stop resource for both technical users and the general public.
+* **Live Contextual Data:** Enhances reservoir info with real-time context — integrating weather forecasts (e.g. Tomorrow.io) to link rainfall/drought conditions with reservoir response, live flood alerts (e.g. from BBC News) for situational awareness, and educational content on water conservation. This turns the dashboard into a one-stop resource for both technical users and the public.
 * **Server-Side Rendering (SSR):** The Next.js front-end uses SSR for improved SEO and faster first-page load. Server-rendering ensures that search engines can crawl pre-rendered HTML and users see content immediately without waiting for heavy client-side JavaScript, resulting in better discoverability and performance. (Client-side interactivity is then handled by React after the initial load.)
 * **Robust Backend Architecture:** Powered by a Django backend that exposes a RESTful API (using Django REST Framework, a powerful toolkit for building web APIs). The backend handles data ingestion and forecasting logic, and includes a secure admin interface for managing data. It also offloads long-running tasks (like fetching new data or retraining models) to a Celery worker with a Redis queue, keeping the web app responsive. This design ensures smooth updates: data collection and model updates run asynchronously on a schedule, and the front-end simply requests the latest results via the API.
 
 ## Tech Stack
 
-* **Frontend:** Next.js (React + TypeScript) for the web interface and routing, enabling a fast, SSR-enabled React app. Styling uses modern CSS and possibly frameworks (Tailwind or similar) to support dark mode and responsiveness. Charts are implemented with Recharts/D3, and maps with Leaflet.
+* **Frontend:** Next.js (React + TypeScript) for the web interface and routing, enabling a fast, SSR-enabled React app. Styling uses modern CSS and possibly frameworks (Tailwind or similar) to support dark mode and responsiveness. Charts are implemented with Recharts, and rain maps with Leaflet.
 * **Backend:** Django (Python) with Django REST Framework for the API layer (providing browsable, well-structured REST endpoints). Data is stored in an SQL database – using SQLite by default for simplicity, with the option to switch to PostgreSQL in production. The Django ORM handles data models for reservoir levels and forecasts.
 * **AI/ML:** Python scientific stack for forecasting – e.g. **Statsmodels** for ARIMA, **TensorFlow/Keras** for LSTM models, and **scikit-learn** for additional regression-based models. These models are trained on historical data and their predictions are stored in the database for the frontend to fetch.
 * **Background Jobs:** **Celery + Redis** for asynchronous tasks. Celery schedules periodic jobs to scrape/update reservoir data from external sources and to retrain or update forecast models as new data arrives. This decouples heavy processing from user requests, so pages load quickly while data updates happen in the background.
@@ -24,12 +24,12 @@
 
 ## Setup and Installation
 
-**Prerequisites:** Make sure you have **Node.js** (for the frontend) and **Python 3.x** (for the backend) installed on your system. We also recommend having **Redis** installed or accessible if you plan to run background tasks. Optionally, Docker and Docker Compose can be used to run the entire stack in containers.
+**Prerequisites:** Make sure you have **Node.js** (for the frontend) and **Python 3.12** (for the backend) installed on your system. We also recommend having **Redis** installed or accessible if you plan to run background tasks. Optionally, Docker and Docker Compose can be used to run the entire stack in containers.
 
 **1. Clone the Repository:**
 
 ```bash
-git clone https://github.com/example/uk-water-tracker.git
+git clone https://github.com/Azzukhan/uk-water-tracker.git
 cd uk-water-tracker
 ```
 
@@ -106,7 +106,7 @@ If you want live data updates and forecast retraining in development, you'll nee
 
 ```bash
 # In backend directory, with venv activated and Redis running:
-celery -A <your_django_project_name> worker -B --loglevel=info
+celery -A uk-water-tracker worker -B --loglevel=info
 ```
 
 The `-B` flag also starts the Celery beat scheduler (if you have periodic tasks for data fetching). This will execute scheduled jobs (defined in Django settings or Celery config) such as scraping data sources or updating models. With this running, the system will continuously fetch new data in the background, and you’ll see logs for task execution. (Ensure the `CELERY_BROKER_URL` is set to your Redis instance.)
@@ -116,7 +116,7 @@ The `-B` flag also starts the Celery beat scheduler (if you have periodic tasks 
 **6. Verify Setup:**
 
 * Open [http://localhost:3000](http://localhost:3000) in your browser to view the frontend. It should load the dashboard. Navigate through different regions/companies to ensure it fetches data (check the browser dev console or Django logs for API requests).
-* Access [http://localhost:8000/api/](http://localhost:8000/api/) (or relevant endpoints) to verify the API is responding. For example, you might have endpoints like `/api/reservoirs/` or `/api/forecasts/` – hitting those should return JSON data.
+* Access [http://localhost:8000/api/](http://localhost:8000/api/) (or relevant endpoints) to verify the API is responding. For example, you might have endpoints like `/api/weather/stations/` or `api/water-levels/scottish-averages/` – hitting those should return JSON data.
 * If everything is configured, you should see current reservoir levels and charts with forecast overlays. Try toggling dark mode (if available) or navigate using the keyboard to test accessibility features.
 
 ## Running Tests
@@ -137,7 +137,7 @@ The UK Water Tracker is designed to be deployed with a **separated frontend and 
 
 * **Frontend (Next.js) Deployment – Vercel:** The React frontend is ideal for deployment on Vercel (the platform developed by the creators of Next.js). Vercel automates building and serving Next.js apps, offering excellent support for SSR and static optimizations. To deploy, connect your GitHub repository to Vercel and import the `frontend` project. Vercel will detect the Next.js app (via `package.json` and Next config) and set up a pipeline automatically. Configure environment variables on Vercel (via the project settings) such as `NEXT_PUBLIC_API_BASE_URL` to point to your production backend URL. Once set up, every push to your main branch will trigger Vercel to build and deploy the latest frontend. Vercel provides a global CDN and handles SSR on its edge network, so your app will load quickly for users.
 
-* **Backend (Django) Deployment – Railway:** The Python backend can be deployed to **Railway.app**, a cloud platform that streamlines infrastructure and deployment. Railway supports deploying Dockerized applications or using buildpacks for common languages. We provide a Dockerfile for the backend, which Railway can use to build and run the container. To deploy on Railway:
+* **Backend (Django) Deployment – Railway:** The Python backend can be deployed to **Railway.app**, a cloud platform that streamlines infrastructure and deployment. Railway supports deploying Dockerised applications or using buildpacks for common languages. We provide a Dockerfile for the backend, which Railway can use to build and run the container. To deploy on Railway:
 
   1. Create a new project on Railway and link your GitHub repo (or use the Railway CLI).
   2. If using Docker, ensure the Dockerfile is in the backend directory; Railway will auto-detect and build it. If not using Docker, Railway can detect a Django project—specify the start command (like using Gunicorn or Daphne for production).
@@ -149,7 +149,7 @@ Both Vercel and Railway support continuous deployment. After initial setup, any 
 * The `frontend/` directory is linked to Vercel, so pushing changes there triggers a frontend rebuild/deploy.
 * The `backend/` directory is linked to Railway, so pushing changes there triggers the backend rebuild/deploy.
 
-**Domain Configuration:** You may use a custom domain for the frontend (e.g. `ukwatertracker.example.com` on Vercel) and possibly a subdomain for the API (e.g. `api.ukwatertracker.example.com` pointing to Railway). If using separate domains, configure CORS in Django to allow requests from the frontend domain.
+**Domain Configuration:** You may use a custom domain for the frontend (e.g. `https://uk-water-tracker.vercel.app/` on Vercel) and possibly a subdomain for the API (e.g. `uk-water-tracker-production.up.railway.app` pointing to Railway). If using separate domains, configure CORS in Django to allow requests from the frontend domain.
 
 **Deployment Pipeline:** Use production-ready settings in deployment:
 
