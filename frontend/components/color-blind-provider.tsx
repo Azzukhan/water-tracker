@@ -16,21 +16,21 @@ export function ColorBlindProvider({ children }: { children: React.ReactNode }) 
 
   // Initialize from localStorage
   useEffect(() => {
-    const stored = localStorage.getItem("colorBlind");
+    const stored = localStorage.getItem("colorBlindMode");
     if (stored) {
       setColorBlind(stored === "true");
     }
   }, []);
 
-  // Persist and update html class
+  // Persist and update body attribute
   useEffect(() => {
-    const root = document.documentElement;
+    const body = document.body;
     if (colorBlind) {
-      root.classList.add("color-blind");
+      body.setAttribute("data-cb", "1");
     } else {
-      root.classList.remove("color-blind");
+      body.removeAttribute("data-cb");
     }
-    localStorage.setItem("colorBlind", colorBlind ? "true" : "false");
+    localStorage.setItem("colorBlindMode", colorBlind ? "true" : "false");
   }, [colorBlind]);
 
   return (
