@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
+import { useColorBlind } from "@/contexts/ColorBlindContext"
 import { API_BASE } from "@/lib/api"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -55,6 +56,7 @@ export function HistoryChart() {
   const [zoomLevel, setZoomLevel] = useState(1)
 
   const [allData, setAllData] = useState<ChartPoint[]>([])
+  const { isColorBlind } = useColorBlind()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -177,10 +179,10 @@ export function HistoryChart() {
               <Line
                 type="monotone"
                 dataKey="level"
-                stroke="#2563eb"
+                stroke={isColorBlind ? "#0072B2" : "#2563eb"}
                 strokeWidth={3}
                 dot={false}
-                activeDot={{ r: 6, fill: "#2563eb" }}
+                activeDot={{ r: 6, fill: isColorBlind ? "#0072B2" : "#2563eb" }}
               />
               <Line
                 type="monotone"
@@ -198,7 +200,10 @@ export function HistoryChart() {
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
           <div className="flex items-center space-x-4 text-sm">
             <div className="flex items-center space-x-2">
-              <div className="w-4 h-0.5 bg-blue-600"></div>
+              <div
+                className="w-4 h-0.5"
+                style={{ backgroundColor: isColorBlind ? "#0072B2" : "#2563eb" }}
+              ></div>
               <span>Current Level</span>
             </div>
             <div className="flex items-center space-x-2">
@@ -227,14 +232,14 @@ export function HistoryChart() {
             </div>
             <div className="text-sm text-gray-600 dark:text-gray-300">Highest</div>
           </div>
-          <div className="text-center p-3 bg-red-50 rounded-lg">
-            <div className="text-2xl font-bold text-red-600">
+          <div className="text-center p-3 bg-red-50 cb:bg-cbVermillion/10 rounded-lg">
+            <div className="text-2xl font-bold text-red-600 dark:text-red-400 cb:text-cbVermillion">
               {data.length ? Math.min(...data.map((d) => d.level)).toFixed(1) : "0.0"}%
             </div>
             <div className="text-sm text-gray-600 dark:text-gray-300">Lowest</div>
           </div>
-          <div className="text-center p-3 bg-green-50 dark:bg-green-900 rounded-lg">
-            <div className="text-2xl font-bold text-green-600">
+          <div className="text-center p-3 bg-green-50 cb:bg-cbBluishGreen/10 dark:bg-green-900 cb:dark:bg-cbBluishGreen/20 rounded-lg">
+            <div className="text-2xl font-bold text-green-600 dark:text-green-400 cb:text-cbBluishGreen">
               {data.length ? (data.reduce((sum, d) => sum + d.level, 0) / data.length).toFixed(1) : "0.0"}%
             </div>
             <div className="text-sm text-gray-600 dark:text-gray-300">Average</div>

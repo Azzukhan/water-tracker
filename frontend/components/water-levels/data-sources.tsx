@@ -97,7 +97,7 @@ export function DataSources() {
                       </div>
                     </div>
                     <div>
-                      <div className="flex items-center space-x-2 text-green-600">
+                      <div className="flex items-center space-x-2 text-green-600 dark:text-green-400 cb:text-cbBluishGreen">
                         <CheckCircle className="h-4 w-4" />
                         <span>{source.reliability} uptime</span>
                       </div>
@@ -109,23 +109,23 @@ export function DataSources() {
           </div>
 
           {/* Data Quality Indicators */}
-          <div className="mt-8 p-6 bg-green-50 dark:bg-green-900 border border-green-200 rounded-lg">
+          <div className="mt-8 p-6 bg-green-50 cb:bg-cbBluishGreen/10 dark:bg-green-900 cb:dark:bg-cbBluishGreen/20 border border-green-200 rounded-lg">
             <div className="flex items-start space-x-3">
-              <Shield className="h-6 w-6 text-green-600 mt-1" />
+              <Shield className="h-6 w-6 text-green-600 dark:text-green-400 cb:text-cbBluishGreen mt-1" />
               <div>
                 <h3 className="font-semibold text-green-900 mb-2">Data Quality Assurance</h3>
                 <div className="grid md:grid-cols-3 gap-4 text-sm">
                   <div>
                     <div className="font-medium text-green-800">Real-time Validation</div>
-                    <div className="text-green-700">Automated quality checks on all incoming data</div>
+                    <div className="text-green-700 dark:text-green-400 cb:text-cbBluishGreen">Automated quality checks on all incoming data</div>
                   </div>
                   <div>
                     <div className="font-medium text-green-800">Cross-verification</div>
-                    <div className="text-green-700">Multiple source validation for accuracy</div>
+                    <div className="text-green-700 dark:text-green-400 cb:text-cbBluishGreen">Multiple source validation for accuracy</div>
                   </div>
                   <div>
                     <div className="font-medium text-green-800">Historical Consistency</div>
-                    <div className="text-green-700">Trend analysis and anomaly detection</div>
+                    <div className="text-green-700 dark:text-green-400 cb:text-cbBluishGreen">Trend analysis and anomaly detection</div>
                   </div>
                 </div>
               </div>

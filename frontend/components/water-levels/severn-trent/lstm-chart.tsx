@@ -23,6 +23,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { Info, TrendingUp, AlertCircle } from "lucide-react";
+import { useColorBlind } from "@/contexts/ColorBlindContext";
 
 interface HistoricalEntry {
   date: string;
@@ -68,6 +69,7 @@ export function SevernTrentLSTMChart() {
   const [avgPrediction, setAvgPrediction] = useState(0);
   const [trend, setTrend] = useState(0);
   const [showUncertainty, setShowUncertainty] = useState(true);
+  const { isColorBlind } = useColorBlind();
   const [accuracy, setAccuracy] = useState<{
     predicted: number | null;
     actual: number | null;
@@ -232,7 +234,7 @@ export function SevernTrentLSTMChart() {
           accuracy.predicted !== null &&
           accuracy.actual !== null &&
           accuracy.error !== null && (
-            <p className="mb-4 text-red-600 font-semibold">
+            <p className="mb-4 text-red-600 dark:text-red-400 cb:text-cbVermillion font-semibold">
               Last week's prediction: {accuracy.predicted.toFixed(1)}% | Actual: {accuracy.actual.toFixed(1)}% | Accuracy: {(100 - accuracy.error).toFixed(1)}%
             </p>
           )}
@@ -259,7 +261,9 @@ export function SevernTrentLSTMChart() {
                         )}
                         {d.predicted && (
                           <>
-                            <p className="text-purple-600">Predicted: {d.predicted.toFixed(1)}%</p>
+                            <p style={{ color: isColorBlind ? "#009E73" : "#a855f7" }}>
+                              Predicted: {d.predicted.toFixed(1)}%
+                            </p>
                             {showUncertainty && (
                               <p className="text-gray-600 dark:text-gray-300 text-sm">
                                 Range: {d.lowerBound.toFixed(1)}% - {d.upperBound.toFixed(1)}%
@@ -274,18 +278,30 @@ export function SevernTrentLSTMChart() {
                 }}
               />
               {showUncertainty && (
-                <Area type="monotone" dataKey="upperBound" stroke="none" fill="#a855f7" fillOpacity={0.1} />
+                <Area
+                  type="monotone"
+                  dataKey="upperBound"
+                  stroke="none"
+                  fill={isColorBlind ? "#009E73" : "#a855f7"}
+                  fillOpacity={0.1}
+                />
               )}
               {showUncertainty && (
                 <Area type="monotone" dataKey="lowerBound" stroke="none" fill="#ffffff" fillOpacity={1} />
               )}
-              <Line type="monotone" dataKey="actual" stroke="#2563eb" strokeWidth={3} dot={{ r: 4 }} />
+              <Line
+                type="monotone"
+                dataKey="actual"
+                stroke={isColorBlind ? "#0072B2" : "#2563eb"}
+                strokeWidth={3}
+                dot={{ r: 4 }}
+              />
               <Line
                 type="monotone"
                 dataKey="predicted"
-                stroke="#a855f7"
+                stroke={isColorBlind ? "#009E73" : "#a855f7"}
                 strokeWidth={3}
-                strokeDasharray="5 5"
+                strokeDasharray={isColorBlind ? "4 2" : "5 5"}
                 dot={{ r: 4 }}
               />
             </LineChart>
@@ -296,21 +312,29 @@ export function SevernTrentLSTMChart() {
           <div className="p-4 bg-purple-50 rounded-lg">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm text-gray-600 dark:text-gray-300">Avg. Predicted Level</span>
-              <TrendingUp className="h-4 w-4 text-purple-600" />
+              <TrendingUp
+                className="h-4 w-4"
+                style={{ color: isColorBlind ? "#009E73" : "#a855f7" }}
+              />
             </div>
-            <div className="text-2xl font-bold text-purple-600">{avgPrediction.toFixed(1)}%</div>
+            <div
+              className="text-2xl font-bold"
+              style={{ color: isColorBlind ? "#009E73" : "#a855f7" }}
+            >
+              {avgPrediction.toFixed(1)}%
+            </div>
           </div>
 
           <div className="p-4 bg-blue-50 dark:bg-blue-900 rounded-lg">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm text-gray-600 dark:text-gray-300">Trend Direction</span>
               {trend > 0 ? (
-                <TrendingUp className="h-4 w-4 text-green-600" />
+                <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400 cb:text-cbBluishGreen" />
               ) : (
-                <TrendingUp className="h-4 w-4 text-red-600 rotate-180" />
+                <TrendingUp className="h-4 w-4 text-red-600 dark:text-red-400 cb:text-cbVermillion rotate-180" />
               )}
             </div>
-            <div className={`text-2xl font-bold ${trend > 0 ? "text-green-600" : "text-red-600"}`}>
+            <div className={`text-2xl font-bold ${trend > 0 ? "text-green-600 dark:text-green-400 cb:text-cbBluishGreen" : "text-red-600 dark:text-red-400 cb:text-cbVermillion"}`}>
               {trend > 0 ? "+" : ""}
               {trend.toFixed(1)}%
             </div>
@@ -326,9 +350,9 @@ export function SevernTrentLSTMChart() {
         </div>
 
         {avgPrediction < 70 && (
-          <div className="p-4 bg-orange-50 dark:bg-orange-900 border border-orange-200 rounded-lg">
+          <div className="p-4 bg-orange-50 cb:bg-cbOrange/10 dark:bg-orange-900 cb:dark:bg-cbOrange/20 border border-orange-200 rounded-lg">
             <div className="flex items-start space-x-3">
-              <AlertCircle className="h-5 w-5 text-orange-600 mt-0.5" />
+              <AlertCircle className="h-5 w-5 text-orange-600 dark:text-orange-500 cb:text-cbOrange mt-0.5" />
               <div>
                 <h4 className="font-semibold text-orange-900 mb-1">Low Level Alert</h4>
                 <p className="text-sm text-orange-800">
@@ -341,11 +365,17 @@ export function SevernTrentLSTMChart() {
 
         <div className="flex flex-wrap items-center justify-center space-x-6 text-sm mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
           <div className="flex items-center space-x-2">
-            <div className="w-4 h-0.5 bg-blue-600"></div>
+            <div
+              className="w-4 h-0.5"
+              style={{ backgroundColor: isColorBlind ? "#0072B2" : "#2563eb" }}
+            ></div>
             <span>Historical Data</span>
           </div>
           <div className="flex items-center space-x-2">
-            <div className="w-4 h-0.5 bg-purple-600 border-dashed"></div>
+            <div
+              className="w-4 h-0.5 border-t border-dashed"
+              style={{ borderColor: isColorBlind ? "#009E73" : "#a855f7" }}
+            ></div>
             <span>Prediction</span>
           </div>
         </div>

@@ -37,9 +37,9 @@ export function TrendChart({
   )
   const arrowClass =
     direction === "rising"
-      ? "text-green-600"
+      ? "text-green-600 dark:text-green-400 cb:text-cbBluishGreen"
       : direction === "falling"
-      ? "text-red-600"
+      ? "text-red-600 dark:text-red-400 cb:text-cbVermillion"
       : "text-gray-600 dark:text-gray-300"
 
   return (
