@@ -71,17 +71,17 @@ export function PredictionChart() {
   const [period, setPeriod] = useState("4w")
   const [showUncertainty, setShowUncertainty] = useState(true)
 
-  const { colorBlind } = useColorBlind()
+  const { isColorBlind } = useColorBlind()
 
   const data = generatePredictionData(period)
   const predictionData = data.filter((d) => d.type === "prediction")
   const avgPrediction = predictionData.reduce((sum, d) => sum + (d.predicted || 0), 0) / predictionData.length
   const trend = predictionData[predictionData.length - 1]?.predicted! - predictionData[0]?.predicted!
 
-  const actualColor = colorBlind ? "#0072B2" : "#2563eb"
-  const predictedColor = colorBlind ? "#E69F00" : "#a855f7"
-  const areaColor = colorBlind ? "#CC79A7" : "#a855f7"
-  const trendColor = colorBlind ? (trend > 0 ? "#009E73" : "#D55E00") : undefined
+  const actualColor = isColorBlind ? "#0072B2" : "#2563eb"
+  const predictedColor = isColorBlind ? "#E69F00" : "#a855f7"
+  const areaColor = isColorBlind ? "#CC79A7" : "#a855f7"
+  const trendColor = isColorBlind ? (trend > 0 ? "#009E73" : "#D55E00") : undefined
 
   return (
     <Card className="shadow-lg border-0">
@@ -198,7 +198,7 @@ export function PredictionChart() {
                 dataKey="predicted"
                 stroke={predictedColor}
                 strokeWidth={3}
-                strokeDasharray={colorBlind ? "6 3" : "5 5"}
+                strokeDasharray={isColorBlind ? "6 3" : "5 5"}
                 dot={{ fill: predictedColor, r: 4 }}
                 connectNulls={false}
               />
@@ -222,20 +222,20 @@ export function PredictionChart() {
               {trend > 0 ? (
                 <TrendingUp
                   className="h-4 w-4"
-                  style={{ color: colorBlind ? "#009E73" : undefined }}
+                  style={{ color: isColorBlind ? "#009E73" : undefined }}
                 />
               ) : (
                 <TrendingUp
                   className="h-4 w-4 rotate-180"
-                  style={{ color: colorBlind ? "#D55E00" : undefined }}
+                  style={{ color: isColorBlind ? "#D55E00" : undefined }}
                 />
               )}
             </div>
             <div
               className={`text-2xl font-bold ${
-                !colorBlind ? (trend > 0 ? "text-green-600" : "text-red-600") : ""
+                !isColorBlind ? (trend > 0 ? "text-green-600" : "text-red-600") : ""
               }`}
-              style={{ color: colorBlind ? (trend > 0 ? "#009E73" : "#D55E00") : undefined }}
+              style={{ color: isColorBlind ? (trend > 0 ? "#009E73" : "#D55E00") : undefined }}
             >
               {trend > 0 ? "+" : ""}
               {trend.toFixed(1)}%

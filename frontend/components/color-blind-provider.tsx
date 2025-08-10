@@ -3,38 +3,35 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 interface ColorBlindContextValue {
-  colorBlind: boolean;
-  setColorBlind: (value: boolean) => void;
+  isColorBlind: boolean;
+  toggleColorBlind: () => void;
 }
 
 const ColorBlindContext = createContext<ColorBlindContextValue | undefined>(
-  undefined
+  undefined,
 );
 
 export function ColorBlindProvider({ children }: { children: React.ReactNode }) {
-  const [colorBlind, setColorBlind] = useState(false);
+  const [isColorBlind, setIsColorBlind] = useState(false);
 
   // Initialize from localStorage
   useEffect(() => {
-    const stored = localStorage.getItem("colorBlindMode");
+    const stored = localStorage.getItem("colorBlindEnabled");
     if (stored) {
-      setColorBlind(stored === "true");
+      setIsColorBlind(stored === "true");
     }
   }, []);
 
-  // Persist and update body attribute
+  // Persist and update root class
   useEffect(() => {
-    const body = document.body;
-    if (colorBlind) {
-      body.setAttribute("data-cb", "1");
-    } else {
-      body.removeAttribute("data-cb");
-    }
-    localStorage.setItem("colorBlindMode", colorBlind ? "true" : "false");
-  }, [colorBlind]);
+    document.documentElement.classList.toggle("color-blind", isColorBlind);
+    localStorage.setItem("colorBlindEnabled", isColorBlind ? "true" : "false");
+  }, [isColorBlind]);
+
+  const toggleColorBlind = () => setIsColorBlind((v) => !v);
 
   return (
-    <ColorBlindContext.Provider value={{ colorBlind, setColorBlind }}>
+    <ColorBlindContext.Provider value={{ isColorBlind, toggleColorBlind }}>
       {children}
     </ColorBlindContext.Provider>
   );
