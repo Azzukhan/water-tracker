@@ -49,16 +49,16 @@ export function LiveHighlights() {
             highlights.map((item, idx) => (
               <div
                 key={idx}
-                className="border rounded-xl p-6 border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950 hover:shadow-md transition-all duration-300 group"
+                className="border rounded-xl p-6 border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950 cb:border-cbVermillion/30 cb:bg-cbVermillion/10 cb:dark:border-cbVermillion/40 cb:dark:bg-cbVermillion/20 hover:shadow-md transition-all duration-300 group"
               >
                 <div className="flex items-start space-x-4">
-                  <div className="p-3 rounded-full bg-red-600 bg-opacity-10 dark:bg-opacity-20">
-                    <AlertTriangle className="h-6 w-6 text-red-600 dark:text-red-400" />
+                  <div className="p-3 rounded-full bg-red-600 cb:bg-cbVermillion bg-opacity-10 dark:bg-opacity-20">
+                    <AlertTriangle className="h-6 w-6 text-red-600 dark:text-red-400 cb:text-cbVermillion" />
                   </div>
 
                   <div className="flex-1 space-y-3">
                     <div className="flex items-start justify-between">
-                      <Badge className="bg-red-600 text-white">Critical</Badge>
+                      <Badge className="bg-red-600 cb:bg-cbVermillion text-white">Critical</Badge>
                       <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
                         <Clock className="h-4 w-4 mr-1" />
                         {relativeTime(item.publishedAt)}
