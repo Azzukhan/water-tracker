@@ -83,7 +83,7 @@ body {
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
-  .color-blind {
+  body[data-cb="1"] {
     --destructive: 26 100% 42%;
     --destructive-foreground: 0 0% 98%;
     --chart-1: 202 100% 35%;
@@ -93,7 +93,7 @@ body {
     --chart-5: 56 85% 60%;
   }
 
-  .dark.color-blind {
+  html.dark body[data-cb="1"] {
     --destructive: 26 100% 42%;
     --destructive-foreground: 0 0% 98%;
     --chart-1: 202 100% 60%;
