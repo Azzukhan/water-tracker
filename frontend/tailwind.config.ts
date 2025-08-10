@@ -105,7 +105,7 @@ const config: Config = {
     require("tailwindcss-animate"),
 
     plugin(({ addVariant }) => {
-      addVariant("cb", '[data-cb="1"] &');
+      addVariant("cb", ".color-blind &");
 
     }),
   ],

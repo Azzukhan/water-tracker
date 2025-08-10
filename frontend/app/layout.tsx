@@ -5,7 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { Header } from "@/components/header"
 import Footer from "../components/footer"
 import { Toaster } from "@/components/ui/sonner"
-import { ColorBlindProvider } from "@/components/color-blind-provider"
+import { ColorBlindProvider } from "@/contexts/ColorBlindContext"
 import { MainContent } from "@/components/main-content"
 
 
