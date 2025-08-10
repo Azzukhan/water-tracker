@@ -114,11 +114,11 @@ export default function WeatherWidget() {
 
   return (
     <Card className="shadow-lg border-0 h-full flex flex-col">
-      <CardHeader className="bg-gradient-to-r from-cyan-500 to-blue-500 dark:from-cyan-700 dark:to-blue-700 text-white h-24 flex flex-col justify-center rounded-t-lg">
+      <CardHeader className="bg-gradient-to-r from-cyan-500 to-blue-500 dark:from-cyan-700 dark:to-blue-700 cb:from-cbSkyBlue cb:to-cbBlue text-white h-24 flex flex-col justify-center rounded-t-lg">
         <CardTitle className="flex items-center justify-between text-xl">
           <span>Current Weather</span>
           <Badge variant="secondary" className="flex items-center gap-1 bg-white/20 text-white border-white/30">
-            <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+            <span className="w-2 h-2 bg-green-400 cb:bg-cbBluishGreen rounded-full animate-pulse" />
             Live
           </Badge>
         </CardTitle>
@@ -128,7 +128,7 @@ export default function WeatherWidget() {
         <div className="flex-1">
           <div className="text-center mb-8">
             <div className="flex items-center justify-center mb-4">
-              <WeatherIcon className="h-16 w-16 text-blue-500 dark:text-blue-400" />
+              <WeatherIcon className="h-16 w-16 text-blue-500 dark:text-blue-400 cb:text-cbBlue" />
             </div>
           <div className="space-y-2">
             <div className="text-4xl font-bold text-gray-900 dark:text-white">
@@ -138,23 +138,23 @@ export default function WeatherWidget() {
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4 mb-8">
-          <div className="bg-blue-50 dark:bg-blue-900 rounded-lg p-4 text-center">
-            <Droplets className="h-6 w-6 text-blue-500 dark:text-blue-400 mx-auto mb-2" />
+          <div className="bg-blue-50 dark:bg-blue-900 rounded-lg p-4 text-center cb:bg-cbSkyBlue/10 cb:dark:bg-cbSkyBlue/20">
+            <Droplets className="h-6 w-6 text-blue-500 dark:text-blue-400 cb:text-cbSkyBlue mx-auto mb-2" />
             <div className="text-sm text-gray-600 dark:text-gray-300">Humidity</div>
             <div className="text-lg font-semibold text-gray-900 dark:text-white">{Math.round(weather.humidity)}%</div>
           </div>
-          <div className="bg-green-50 dark:bg-green-900 rounded-lg p-4 text-center">
-            <Wind className="h-6 w-6 text-green-500 dark:text-green-400 mx-auto mb-2" />
+          <div className="bg-green-50 dark:bg-green-900 rounded-lg p-4 text-center cb:bg-cbBluishGreen/10 cb:dark:bg-cbBluishGreen/20">
+            <Wind className="h-6 w-6 text-green-500 dark:text-green-400 cb:text-cbBluishGreen mx-auto mb-2" />
             <div className="text-sm text-gray-600 dark:text-gray-300">Wind</div>
             <div className="text-lg font-semibold text-gray-900 dark:text-white">{Math.round(weather.wind_speed)} mph</div>
           </div>
-          <div className="bg-orange-50 dark:bg-orange-900 rounded-lg p-4 text-center">
-            <Eye className="h-6 w-6 text-orange-500 dark:text-orange-400 mx-auto mb-2" />
+          <div className="bg-orange-50 dark:bg-orange-900 rounded-lg p-4 text-center cb:bg-cbOrange/10 cb:dark:bg-cbOrange/20">
+            <Eye className="h-6 w-6 text-orange-500 dark:text-orange-400 cb:text-cbOrange mx-auto mb-2" />
             <div className="text-sm text-gray-600 dark:text-gray-300">Visibility</div>
             <div className="text-lg font-semibold text-gray-900 dark:text-white">{Math.round(weather.visibility)} km</div>
           </div>
-          <div className="bg-red-50 dark:bg-red-900 rounded-lg p-4 text-center">
-            <Sun className="h-6 w-6 text-red-500 dark:text-red-400 mx-auto mb-2" />
+          <div className="bg-red-50 dark:bg-red-900 rounded-lg p-4 text-center cb:bg-cbVermillion/10 cb:dark:bg-cbVermillion/20">
+            <Sun className="h-6 w-6 text-red-500 dark:text-red-400 cb:text-cbVermillion mx-auto mb-2" />
             <div className="text-sm text-gray-600 dark:text-gray-300">UV Index</div>
             <div className="text-lg font-semibold text-gray-900 dark:text-white">{Math.round(weather.uv_index)}</div>
           </div>

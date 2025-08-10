@@ -7,7 +7,7 @@ export function NewsHeader() {
       <div className="flex items-center justify-center mb-6">
         <div className="relative">
           <Newspaper className="h-16 w-16 text-blue-600 dark:text-blue-400" />
-          <div className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center">
+          <div className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 cb:bg-cbVermillion rounded-full flex items-center justify-center">
             <span className="text-white text-xs font-bold">24</span>
           </div>
         </div>
@@ -22,7 +22,7 @@ export function NewsHeader() {
       <div className="grid md:grid-cols-3 gap-6 max-w-2xl mx-auto">
         <div className="text-center">
           <div className="flex items-center justify-center mb-2">
-            <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400 mr-2" />
+            <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400 cb:text-cbBluishGreen mr-2" />
             <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">156</span>
           </div>
           <div className="text-sm text-gray-600 dark:text-gray-400">Stories This Month</div>
@@ -46,10 +46,10 @@ export function NewsHeader() {
       </div>
 
       {/* Breaking News Banner */}
-      <div className="mt-8 p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg max-w-4xl mx-auto">
+      <div className="mt-8 p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 cb:bg-cbVermillion/10 cb:dark:bg-cbVermillion/20 cb:border-cbVermillion/30 cb:dark:border-cbVermillion/40 rounded-lg max-w-4xl mx-auto">
         <div className="flex items-center justify-center space-x-3">
-          <Badge className="bg-red-600 text-white animate-pulse">BREAKING</Badge>
-          <span className="text-red-800 dark:text-red-200 font-medium">
+          <Badge className="bg-red-600 cb:bg-cbVermillion text-white animate-pulse">BREAKING</Badge>
+          <span className="text-red-800 dark:text-red-200 cb:text-cbVermillion font-medium">
             Scottish Water announces investment for national water security
           </span>
         </div>

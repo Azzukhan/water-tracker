@@ -52,27 +52,28 @@ const config: Config = {
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
   			},
-  			sidebar: {
-  				DEFAULT: 'hsl(var(--sidebar-background))',
-  				foreground: 'hsl(var(--sidebar-foreground))',
-  				primary: 'hsl(var(--sidebar-primary))',
-  				'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
-  				accent: 'hsl(var(--sidebar-accent))',
-  				'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
-  				border: 'hsl(var(--sidebar-border))',
+
+                        sidebar: {
+                                DEFAULT: 'hsl(var(--sidebar-background))',
+                                foreground: 'hsl(var(--sidebar-foreground))',
+                                primary: 'hsl(var(--sidebar-primary))',
+                                'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
+                                accent: 'hsl(var(--sidebar-accent))',
+                                'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
+                                border: 'hsl(var(--sidebar-border))',
                                 ring: 'hsl(var(--sidebar-ring))'
                         },
-                        cbOrange: '#E69F00',
-                        cbSkyBlue: '#56B4E9',
-                        cbBlueGreen: '#009E73',
-                        cbYellow: '#F0E442',
-                        cbBlue: '#0072B2',
-                        cbVermillion: '#D55E00',
-                        cbPurple: '#CC79A7',
-                        cbGrey: '#999999'
+                        cbBlue: "#0072B2",
+                        cbSkyBlue: "#56B4E9",
+                        cbBluishGreen: "#009E73",
+                        cbOrange: "#E69F00",
+                        cbYellow: "#F0E442",
+                        cbVermillion: "#D55E00",
+                        cbPurple: "#CC79A7"
                 },
-                borderRadius: {
-                        lg: 'var(--radius)',
+  		borderRadius: {
+  			lg: 'var(--radius)',
+
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
   		},
@@ -102,8 +103,10 @@ const config: Config = {
   },
   plugins: [
     require("tailwindcss-animate"),
-    plugin(function({ addVariant }) {
-      addVariant("cb", ".color-blind &");
+
+    plugin(({ addVariant }) => {
+      addVariant("cb", '[data-cb="1"] &');
+
     }),
   ],
 };

@@ -8,27 +8,33 @@ const quickActions = [
     title: "Report Water Quality Issue",
     description: "Report contamination, taste, or odor issues in your area",
     icon: AlertTriangle,
-    color: "bg-red-50 border-red-200 dark:bg-red-900 dark:border-red-700",
-    iconColor: "text-red-600",
-    buttonColor: "bg-red-600 hover:bg-red-700",
+    color:
+      "bg-red-50 border-red-200 dark:bg-red-900 dark:border-red-700 cb:bg-cbVermillion/10 cb:border-cbVermillion/30 cb:dark:bg-cbVermillion/20 cb:dark:border-cbVermillion/40",
+    iconColor: "text-red-600 cb:text-cbVermillion",
+    buttonColor:
+      "bg-red-600 hover:bg-red-700 cb:bg-cbVermillion cb:hover:bg-cbVermillion/90",
     href: "/contact",
   },
   {
     title: "Request New Connection",
     description: "Apply for new water supply or sewerage connections",
     icon: Plus,
-    color: "bg-blue-50 border-blue-200 dark:bg-blue-900 dark:border-blue-700",
-    iconColor: "text-blue-600",
-    buttonColor: "bg-blue-600 hover:bg-blue-700",
+    color:
+      "bg-blue-50 border-blue-200 dark:bg-blue-900 dark:border-blue-700 cb:bg-cbBlue/10 cb:border-cbBlue/30 cb:dark:bg-cbBlue/20 cb:dark:border-cbBlue/40",
+    iconColor: "text-blue-600 cb:text-cbBlue",
+    buttonColor:
+      "bg-blue-600 hover:bg-blue-700 cb:bg-cbBlue cb:hover:bg-cbBlue/90",
     href: "/contact",
   },
   {
     title: "Water Saving Tips",
     description: "Learn how to conserve water and reduce your bills",
     icon: Lightbulb,
-    color: "bg-green-50 border-green-200 dark:bg-green-900 dark:border-green-700",
-    iconColor: "text-green-600",
-    buttonColor: "bg-green-600 hover:bg-green-700",
+    color:
+      "bg-green-50 border-green-200 dark:bg-green-900 dark:border-green-700 cb:bg-cbBluishGreen/10 cb:border-cbBluishGreen/30 cb:dark:bg-cbBluishGreen/20 cb:dark:border-cbBluishGreen/40",
+    iconColor: "text-green-600 cb:text-cbBluishGreen",
+    buttonColor:
+      "bg-green-600 hover:bg-green-700 cb:bg-cbBluishGreen cb:hover:bg-cbBluishGreen/90",
     href: "/blog",
   },
 ]

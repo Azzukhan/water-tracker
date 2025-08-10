@@ -49,19 +49,19 @@ export function NewsList({ items }: NewsListProps) {
 
   const severityMap = {
     high: {
-      icon: <AlertTriangle className="h-4 w-4 text-red-600" />,
+      icon: <AlertTriangle className="h-4 w-4 text-red-600 cb:text-cbVermillion" />,
       label: "High",
-      className: "text-red-600",
+      className: "text-red-600 cb:text-cbVermillion",
     },
     medium: {
-      icon: <Bell className="h-4 w-4 text-orange-600" />,
+      icon: <Bell className="h-4 w-4 text-orange-600 cb:text-cbOrange" />,
       label: "Medium",
-      className: "text-orange-600",
+      className: "text-orange-600 cb:text-cbOrange",
     },
     low: {
-      icon: <Info className="h-4 w-4 text-green-600" />,
+      icon: <Info className="h-4 w-4 text-green-600 cb:text-cbBluishGreen" />,
       label: "Low",
-      className: "text-green-600",
+      className: "text-green-600 cb:text-cbBluishGreen",
     },
   } as const
 
