@@ -178,4 +178,4 @@ By following these guidelines, you help maintain a high-quality codebase and mak
 * Thanks to UK water agencies (Severn Trent, Yorkshire Water, Southern Water, the Environment Agency, SEPA) for making reservoir data available. This project wouldn’t be possible without their data.
 * The forecasting models build upon techniques and libraries from the open-source community (including Statsmodels, TensorFlow, and scikit-learn).
 * Leaflet and Recharts made it possible to deliver rich interactive visuals easily – we appreciate their developers and maintainers for these great tools.
-* Finally, this project was initially developed as part of an MSc dissertation by Mohammed Afjal Khan (2025) under the supervision of **Alasdair Lambert**, and we acknowledge the academic guidance and support behind its inception.
+* Finally, this project was initially developed as part of an MSc dissertation by **Mohammed Afjal Khan** (2025) under the supervision of **Alasdair Lambert**, and we acknowledge the academic guidance and support behind its inception.
