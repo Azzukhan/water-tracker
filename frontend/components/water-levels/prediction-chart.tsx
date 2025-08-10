@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge"
 import { Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, ComposedChart } from "recharts"
 import { Brain, TrendingUp, AlertCircle, Info } from "lucide-react"
+import { useColorBlind } from "@/components/color-blind-provider"
 
 // Generate AI prediction data
 const generatePredictionData = (period: string) => {
@@ -70,10 +71,17 @@ export function PredictionChart() {
   const [period, setPeriod] = useState("4w")
   const [showUncertainty, setShowUncertainty] = useState(true)
 
+  const { colorBlind } = useColorBlind()
+
   const data = generatePredictionData(period)
   const predictionData = data.filter((d) => d.type === "prediction")
   const avgPrediction = predictionData.reduce((sum, d) => sum + (d.predicted || 0), 0) / predictionData.length
   const trend = predictionData[predictionData.length - 1]?.predicted! - predictionData[0]?.predicted!
+
+  const actualColor = colorBlind ? "#0072B2" : "#2563eb"
+  const predictedColor = colorBlind ? "#E69F00" : "#a855f7"
+  const areaColor = colorBlind ? "#CC79A7" : "#a855f7"
+  const trendColor = colorBlind ? (trend > 0 ? "#009E73" : "#D55E00") : undefined
 
   return (
     <Card className="shadow-lg border-0">
@@ -142,10 +150,16 @@ export function PredictionChart() {
                     return (
                       <div className="bg-white dark:bg-gray-800 p-4 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg">
                         <p className="font-semibold text-gray-900 dark:text-gray-100">{label}</p>
-                        {data.actual && <p className="text-blue-600">Actual: {data.actual.toFixed(1)}%</p>}
+                        {data.actual && (
+                          <p style={{ color: actualColor }}>
+                            Actual: {data.actual.toFixed(1)}%
+                          </p>
+                        )}
                         {data.predicted && (
                           <>
-                            <p className="text-purple-600">Predicted: {data.predicted.toFixed(1)}%</p>
+                            <p style={{ color: predictedColor }}>
+                              Predicted: {data.predicted.toFixed(1)}%
+                            </p>
                             {showUncertainty && (
                               <p className="text-gray-600 dark:text-gray-300 text-sm">
                                 Range: {data.lowerBound.toFixed(1)}% - {data.upperBound.toFixed(1)}%
@@ -162,7 +176,7 @@ export function PredictionChart() {
 
               {/* Uncertainty Band */}
               {showUncertainty && (
-                <Area type="monotone" dataKey="upperBound" stroke="none" fill="#a855f7" fillOpacity={0.1} />
+                <Area type="monotone" dataKey="upperBound" stroke="none" fill={areaColor} fillOpacity={0.1} />
               )}
               {showUncertainty && (
                 <Area type="monotone" dataKey="lowerBound" stroke="none" fill="#ffffff" fillOpacity={1} />
@@ -172,9 +186,9 @@ export function PredictionChart() {
               <Line
                 type="monotone"
                 dataKey="actual"
-                stroke="#2563eb"
+                stroke={actualColor}
                 strokeWidth={3}
-                dot={{ fill: "#2563eb", r: 4 }}
+                dot={{ fill: actualColor, r: 4 }}
                 connectNulls={false}
               />
 
@@ -182,10 +196,10 @@ export function PredictionChart() {
               <Line
                 type="monotone"
                 dataKey="predicted"
-                stroke="#a855f7"
+                stroke={predictedColor}
                 strokeWidth={3}
-                strokeDasharray="5 5"
-                dot={{ fill: "#a855f7", r: 4 }}
+                strokeDasharray={colorBlind ? "6 3" : "5 5"}
+                dot={{ fill: predictedColor, r: 4 }}
                 connectNulls={false}
               />
             </ComposedChart>
@@ -206,12 +220,23 @@ export function PredictionChart() {
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm text-gray-600 dark:text-gray-300">Trend Direction</span>
               {trend > 0 ? (
-                <TrendingUp className="h-4 w-4 text-green-600" />
+                <TrendingUp
+                  className="h-4 w-4"
+                  style={{ color: colorBlind ? "#009E73" : undefined }}
+                />
               ) : (
-                <TrendingUp className="h-4 w-4 text-red-600 rotate-180" />
+                <TrendingUp
+                  className="h-4 w-4 rotate-180"
+                  style={{ color: colorBlind ? "#D55E00" : undefined }}
+                />
               )}
             </div>
-            <div className={`text-2xl font-bold ${trend > 0 ? "text-green-600" : "text-red-600"}`}>
+            <div
+              className={`text-2xl font-bold ${
+                !colorBlind ? (trend > 0 ? "text-green-600" : "text-red-600") : ""
+              }`}
+              style={{ color: colorBlind ? (trend > 0 ? "#009E73" : "#D55E00") : undefined }}
+            >
               {trend > 0 ? "+" : ""}
               {trend.toFixed(1)}%
             </div>
@@ -245,16 +270,19 @@ export function PredictionChart() {
         {/* Legend */}
         <div className="flex flex-wrap items-center justify-center space-x-6 text-sm mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
           <div className="flex items-center space-x-2">
-            <div className="w-4 h-0.5 bg-blue-600"></div>
+            <div className="w-4 h-0.5" style={{ backgroundColor: actualColor }}></div>
             <span>Historical Data</span>
           </div>
           <div className="flex items-center space-x-2">
-            <div className="w-4 h-0.5 bg-purple-600 border-dashed"></div>
+            <div
+              className="w-4 h-0.5 border-t border-dashed"
+              style={{ borderColor: predictedColor }}
+            ></div>
             <span>AI Prediction</span>
           </div>
           {showUncertainty && (
             <div className="flex items-center space-x-2">
-              <div className="w-4 h-2 bg-purple-600 opacity-20"></div>
+              <div className="w-4 h-2 opacity-20" style={{ backgroundColor: areaColor }}></div>
               <span>Uncertainty Band</span>
             </div>
           )}
