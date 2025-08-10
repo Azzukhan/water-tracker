@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import plugin from "tailwindcss/plugin";
 
 const config: Config = {
     darkMode: ["class"],
@@ -10,9 +11,9 @@ const config: Config = {
   ],
   theme: {
   	extend: {
-  		colors: {
-  			background: 'hsl(var(--background))',
-  			foreground: 'hsl(var(--foreground))',
+                colors: {
+                        background: 'hsl(var(--background))',
+                        foreground: 'hsl(var(--foreground))',
   			card: {
   				DEFAULT: 'hsl(var(--card))',
   				foreground: 'hsl(var(--card-foreground))'
@@ -59,11 +60,19 @@ const config: Config = {
   				accent: 'hsl(var(--sidebar-accent))',
   				'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
   				border: 'hsl(var(--sidebar-border))',
-  				ring: 'hsl(var(--sidebar-ring))'
-  			}
-  		},
-  		borderRadius: {
-  			lg: 'var(--radius)',
+                                ring: 'hsl(var(--sidebar-ring))'
+                        },
+                        cbOrange: '#E69F00',
+                        cbSkyBlue: '#56B4E9',
+                        cbBlueGreen: '#009E73',
+                        cbYellow: '#F0E442',
+                        cbBlue: '#0072B2',
+                        cbVermillion: '#D55E00',
+                        cbPurple: '#CC79A7',
+                        cbGrey: '#999999'
+                },
+                borderRadius: {
+                        lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
   		},
@@ -91,6 +100,11 @@ const config: Config = {
   		}
   	}
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    plugin(function({ addVariant }) {
+      addVariant("cb", ".color-blind &");
+    }),
+  ],
 };
 export default config;

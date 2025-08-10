@@ -23,12 +23,12 @@ export function YorkshireReservoirChart() {
       .catch(() => setDataPoints([]));
   }, []);
 
-  const { colorBlind } = useColorBlind();
+  const { isColorBlind } = useColorBlind();
 
-  const border = colorBlind ? "#0072B2" : "rgb(37,99,235)";
-  const background = colorBlind ? "rgba(0,114,178,0.5)" : "rgba(37,99,235,0.5)";
-  const dash = colorBlind ? [6, 3] : [];
-  const pointStyle = colorBlind ? "triangle" : "circle";
+  const border = isColorBlind ? "#0072B2" : "rgb(37,99,235)";
+  const background = isColorBlind ? "rgba(0,114,178,0.5)" : "rgba(37,99,235,0.5)";
+  const dash = isColorBlind ? [6, 3] : [];
+  const pointStyle = isColorBlind ? "triangle" : "circle";
 
   const chartData = {
     labels: dataPoints.map((d) =>
