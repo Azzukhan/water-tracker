@@ -62,8 +62,13 @@ export function Header() {
             {/* Mobile Menu */}
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
-                <Button variant="outline" size="icon" className="lg:hidden">
-                  <Menu className="h-5 w-5" />
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="lg:hidden"
+                  aria-label="Open navigation menu"
+                >
+                  <Menu className="h-5 w-5" aria-hidden="true" />
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-80">

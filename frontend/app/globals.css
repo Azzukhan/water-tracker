@@ -56,4 +56,10 @@
   body {
     @apply bg-background text-foreground;
   }
+  :focus-visible {
+    @apply outline-2 outline-blue-600 dark:outline-blue-500 outline-offset-2;
+  }
+  .skip-link {
+    @apply sr-only focus:not-sr-only absolute top-4 left-4 z-50 rounded-md bg-blue-600 text-white px-4 py-2;
+  }
 }
