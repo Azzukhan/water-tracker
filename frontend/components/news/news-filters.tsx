@@ -91,24 +91,24 @@ export function NewsFilters({ values, onValuesChange }: NewsFiltersProps) {
 
   return (
     <Card className="shadow-lg border-0">
-      <CardHeader className="bg-gradient-to-r from-slate-600 to-gray-700 text-white">
+      <CardHeader className="bg-gradient-to-r from-slate-600 to-gray-700 dark:from-slate-700 dark:to-gray-800 text-white">
         <CardTitle className="text-xl font-bold flex items-center">
           <Filter className="h-5 w-5 mr-2" />
           Filter News
         </CardTitle>
-        <p className="text-slate-200">Find specific news stories and updates</p>
+        <p className="text-slate-200 dark:text-slate-300">Find specific news stories and updates</p>
       </CardHeader>
 
       <CardContent className="p-6">
         {/* Search Bar */}
         <div className="mb-6">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
             <Input
               placeholder="Search news headlines, companies, or keywords..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
+              className="pl-10 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700"
             />
           </div>
         </div>
@@ -190,12 +190,12 @@ export function NewsFilters({ values, onValuesChange }: NewsFiltersProps) {
         {/* Active Filters */}
         {activeFilters.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-4">
-            <span className="text-sm text-gray-600 mr-2">Active filters:</span>
+            <span className="text-sm text-gray-600 dark:text-gray-400 mr-2">Active filters:</span>
             {activeFilters.map((filter, index) => (
               <Badge
                 key={`${filter}-${index}`}
                 variant="secondary"
-                className="cursor-pointer hover:bg-red-100 hover:text-red-800 transition-colors"
+                className="cursor-pointer hover:bg-red-100 hover:text-red-800 dark:hover:bg-red-900/30 dark:hover:text-red-300 transition-colors"
                 onClick={() => removeFilter(filter as string)}
               >
                 {filter}
@@ -207,20 +207,20 @@ export function NewsFilters({ values, onValuesChange }: NewsFiltersProps) {
 
         {/* Quick Filters */}
         <div className="flex flex-wrap gap-2">
-          <span className="text-sm text-gray-600 mr-2">Quick filters:</span>
-          <Button variant="outline" size="sm" onClick={() => setSelectedCategory("Storm")} className="text-xs">
+          <span className="text-sm text-gray-600 dark:text-gray-400 mr-2">Quick filters:</span>
+          <Button variant="outline" size="sm" onClick={() => setSelectedCategory("Storm")} className="text-xs dark:bg-gray-800 dark:text-gray-100">
             Emergency Alerts
           </Button>
-          <Button variant="outline" size="sm" onClick={() => setSelectedCategory("Investment")} className="text-xs">
+          <Button variant="outline" size="sm" onClick={() => setSelectedCategory("Investment")} className="text-xs dark:bg-gray-800 dark:text-gray-100">
             Investments
           </Button>
-          <Button variant="outline" size="sm" onClick={() => setDateRange("This Week")} className="text-xs">
+          <Button variant="outline" size="sm" onClick={() => setDateRange("This Week")} className="text-xs dark:bg-gray-800 dark:text-gray-100">
             This Week
           </Button>
-          <Button variant="outline" size="sm" onClick={() => setSelectedCategory("Water Quality")} className="text-xs">
+          <Button variant="outline" size="sm" onClick={() => setSelectedCategory("Water Quality")} className="text-xs dark:bg-gray-800 dark:text-gray-100">
             Water Quality
           </Button>
-          <Button variant="outline" size="sm" onClick={() => setSelectedCategory("Storm")} className="text-xs">
+          <Button variant="outline" size="sm" onClick={() => setSelectedCategory("Storm")} className="text-xs dark:bg-gray-800 dark:text-gray-100">
             Storm News
           </Button>
         </div>

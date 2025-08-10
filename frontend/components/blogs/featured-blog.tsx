@@ -51,26 +51,26 @@ export function FeaturedBlog() {
                 ))}
               </div>
 
-              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 leading-tight mb-4">{featuredBlog.title}</h2>
+              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-gray-100 leading-tight mb-4">{featuredBlog.title}</h2>
 
-              <p className="text-lg text-gray-700 leading-relaxed">{featuredBlog.excerpt}</p>
+              <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">{featuredBlog.excerpt}</p>
             </div>
 
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-6 text-sm text-gray-600">
-                <div className="flex items-center space-x-2">
-                  <User className="h-4 w-4" />
-                  <span>{featuredBlog.author}</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Clock className="h-4 w-4" />
-                  <span>{featuredBlog.readTime}</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Eye className="h-4 w-4" />
-                  <span>{featuredBlog.readCount.toLocaleString()} reads</span>
-                </div>
+              <div className="flex items-center space-x-2">
+                <User className="h-4 w-4" />
+                <span>{featuredBlog.author}</span>
               </div>
+              <div className="flex items-center space-x-2">
+                <Clock className="h-4 w-4" />
+                <span>{featuredBlog.readTime}</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Eye className="h-4 w-4" />
+                <span>{featuredBlog.readCount.toLocaleString()} reads</span>
+              </div>
+            </div>
 
               <div className="flex items-center space-x-2">
                 <Button variant="outline" size="sm">
@@ -87,30 +87,30 @@ export function FeaturedBlog() {
 
           {/* Author Info & CTA */}
           <div className="lg:col-span-1 space-y-6">
-            <div className="p-6 bg-gray-50 rounded-lg">
+            <div className="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
               <div className="text-center space-y-4">
                 <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto">
                   <User className="h-8 w-8 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900">{featuredBlog.author}</h3>
-                  <p className="text-sm text-gray-600">{featuredBlog.authorRole}</p>
-                  <p className="text-xs text-gray-500 mt-2">
+                  <h3 className="font-semibold text-gray-900 dark:text-gray-100">{featuredBlog.author}</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">{featuredBlog.authorRole}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
                     Published {new Date(featuredBlog.publishDate).toLocaleDateString("en-GB")}
                   </p>
                 </div>
               </div>
             </div>
 
-            <Button className="w-full bg-blue-600 hover:bg-blue-700 text-lg py-6">
+            <Button className="w-full bg-blue-600 hover:bg-blue-700 dark:hover:bg-blue-500 text-lg py-6">
               Read Full Article
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
 
-            <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+            <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
               <div className="text-center">
-                <div className="text-2xl font-bold text-green-700 mb-1">40%</div>
-                <div className="text-sm text-green-600">Average water savings reported by readers</div>
+                <div className="text-2xl font-bold text-green-700 dark:text-green-200 mb-1">40%</div>
+                <div className="text-sm text-green-600 dark:text-green-300">Average water savings reported by readers</div>
               </div>
             </div>
           </div>

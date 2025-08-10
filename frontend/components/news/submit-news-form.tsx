@@ -69,11 +69,11 @@ export function SubmitNewsForm() {
 
   if (submitStatus === "success") {
     return (
-      <Card className="shadow-lg border-0 bg-green-50 border-green-200">
+      <Card className="shadow-lg border-0 bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
         <CardContent className="p-6 text-center">
-          <CheckCircle className="h-16 w-16 text-green-600 mx-auto mb-4" />
-          <h3 className="text-xl font-bold text-green-900 mb-2">News Submitted Successfully!</h3>
-          <p className="text-green-800 mb-4">
+          <CheckCircle className="h-16 w-16 text-green-600 dark:text-green-400 mx-auto mb-4" />
+          <h3 className="text-xl font-bold text-green-900 dark:text-green-100 mb-2">News Submitted Successfully!</h3>
+          <p className="text-green-800 dark:text-green-200 mb-4">
             Thank you for your submission. Our editorial team will review your news story and publish it if approved.
           </p>
           <Badge className="bg-green-600 text-white">Under Review</Badge>
@@ -84,19 +84,19 @@ export function SubmitNewsForm() {
 
   return (
     <Card className="shadow-lg border-0 sticky top-24">
-      <CardHeader className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white">
+      <CardHeader className="bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-blue-700 dark:to-cyan-700 text-white">
         <CardTitle className="text-xl font-bold flex items-center">
           <PlusCircle className="h-5 w-5 mr-2" />
           Submit News
         </CardTitle>
-        <p className="text-blue-100">Share water industry news with the community</p>
+        <p className="text-blue-100 dark:text-blue-200">Share water industry news with the community</p>
       </CardHeader>
 
       <CardContent className="p-6">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Headline */}
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">News Headline *</label>
+            <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">News Headline *</label>
             <Input
               placeholder="Enter news headline..."
               value={formData.headline}
@@ -107,7 +107,7 @@ export function SubmitNewsForm() {
 
           {/* Summary */}
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">Summary *</label>
+            <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">Summary *</label>
             <Textarea
               placeholder="Brief summary of the news story..."
               rows={4}
@@ -119,7 +119,7 @@ export function SubmitNewsForm() {
 
           {/* Company */}
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">Company/Organization *</label>
+            <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">Company/Organization *</label>
             <Select
               value={formData.company}
               onValueChange={(value) => setFormData((prev) => ({ ...prev, company: value }))}
@@ -177,7 +177,7 @@ export function SubmitNewsForm() {
 
           {/* Source */}
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">News Source</label>
+            <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">News Source</label>
           <Input
             placeholder="e.g., Company Press Release, BBC News..."
             value={formData.source}
@@ -187,7 +187,7 @@ export function SubmitNewsForm() {
 
         {/* Contact Name */}
         <div>
-          <label className="block text-sm font-medium text-gray-900 mb-2">Contact Name *</label>
+          <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">Contact Name *</label>
           <Input
             placeholder="Your name"
             value={formData.contactName}
@@ -198,7 +198,7 @@ export function SubmitNewsForm() {
 
         {/* Contact Email */}
         <div>
-          <label className="block text-sm font-medium text-gray-900 mb-2">Contact Email *</label>
+          <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">Contact Email *</label>
             <Input
               type="email"
               placeholder="your.email@example.com"
@@ -210,10 +210,10 @@ export function SubmitNewsForm() {
 
           {/* File Attachments */}
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">Attachments</label>
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
-              <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-              <div className="text-sm text-gray-600 mb-2">Upload images, documents, or press releases</div>
+            <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">Attachments</label>
+            <div className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-4 text-center">
+              <Upload className="h-8 w-8 text-gray-400 dark:text-gray-500 mx-auto mb-2" />
+              <div className="text-sm text-gray-600 dark:text-gray-300 mb-2">Upload images, documents, or press releases</div>
               <input
                 type="file"
                 multiple
@@ -233,13 +233,13 @@ export function SubmitNewsForm() {
             {formData.attachments.length > 0 && (
               <div className="mt-3 space-y-2">
                 {formData.attachments.map((file, index) => (
-                  <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                    <span className="text-sm text-gray-700 truncate">{file.name}</span>
+                  <div key={index} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-800 rounded">
+                    <span className="text-sm text-gray-700 dark:text-gray-300 truncate">{file.name}</span>
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => removeAttachment(index)}
-                      className="text-red-600 hover:text-red-800"
+                      className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300"
                     >
                       Remove
                     </Button>
@@ -250,7 +250,7 @@ export function SubmitNewsForm() {
           </div>
 
           {/* Submit Button */}
-          <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700" disabled={isSubmitting}>
+          <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 dark:hover:bg-blue-500" disabled={isSubmitting}>
             {isSubmitting ? (
               <>
                 <div className="animate-spin h-4 w-4 mr-2 border-2 border-white border-t-transparent rounded-full"></div>
@@ -265,12 +265,12 @@ export function SubmitNewsForm() {
           </Button>
 
           {/* Guidelines */}
-          <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+          <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
             <div className="flex items-start space-x-3">
-              <AlertCircle className="h-5 w-5 text-blue-600 mt-0.5" />
+              <AlertCircle className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5" />
               <div className="text-sm">
-                <div className="font-medium text-blue-900 mb-1">Submission Guidelines</div>
-                <ul className="text-blue-800 space-y-1 text-xs">
+                <div className="font-medium text-blue-900 dark:text-blue-100 mb-1">Submission Guidelines</div>
+                <ul className="text-blue-800 dark:text-blue-200 space-y-1 text-xs">
                   <li>• Ensure all information is accurate and verifiable</li>
                   <li>• Include relevant sources and contact information</li>
                   <li>• News will be reviewed before publication</li>

@@ -65,12 +65,12 @@ export function ReportIssueForm() {
 
   if (submitStatus === "success") {
     return (
-      <Card className="shadow-lg border-0 bg-green-50 border-green-200">
+      <Card className="shadow-lg border-0 bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
         <CardContent className="p-8 text-center">
-          <CheckCircle className="h-12 w-12 text-green-600 mx-auto mb-4" />
-          <h3 className="text-lg font-bold text-green-900 mb-2">Issue Reported Successfully!</h3>
-          <p className="text-green-800 text-sm mb-3">Your report has been submitted to the relevant water authority.</p>
-          <div className="text-xs text-green-700">
+          <CheckCircle className="h-12 w-12 text-green-600 dark:text-green-400 mx-auto mb-4" />
+          <h3 className="text-lg font-bold text-green-900 dark:text-green-100 mb-2">Issue Reported Successfully!</h3>
+          <p className="text-green-800 dark:text-green-200 text-sm mb-3">Your report has been submitted to the relevant water authority.</p>
+          <div className="text-xs text-green-700 dark:text-green-300">
             Report ID: <span className="font-mono">WQR-{Date.now().toString().slice(-6)}</span>
           </div>
         </CardContent>
@@ -80,19 +80,19 @@ export function ReportIssueForm() {
 
   return (
     <Card className="shadow-lg border-0 flex flex-col h-full min-h-[600px] lg:min-h-[720px]">
-      <CardHeader className="bg-gradient-to-r from-red-600 to-orange-600 text-white">
+      <CardHeader className="bg-gradient-to-r from-red-600 to-orange-600 dark:from-red-700 dark:to-orange-700 text-white">
         <CardTitle className="text-2xl font-bold flex items-center">
           <AlertTriangle className="h-5 w-5 mr-2" />
           Report Water Issue
         </CardTitle>
-        <p className="text-red-100 text-sm">Report water quality or service problems</p>
+        <p className="text-red-100 dark:text-red-200 text-sm">Report water quality or service problems</p>
       </CardHeader>
       <CardContent className="p-8 flex flex-col flex-1">
         <form onSubmit={handleSubmit} className="flex flex-col flex-1">
           {/* GROWABLE FIELDS */}
           <div className="flex-1 flex flex-col space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">Issue Type *</label>
+              <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">Issue Type *</label>
               <Select
                 value={issueData.issueType}
                 onValueChange={(value) => setIssueData((prev) => ({ ...prev, issueType: value }))}
@@ -113,7 +113,7 @@ export function ReportIssueForm() {
               </Select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">Severity *</label>
+              <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">Severity *</label>
               <Select
                 value={issueData.severity}
                 onValueChange={(value) => setIssueData((prev) => ({ ...prev, severity: value }))}
@@ -130,7 +130,7 @@ export function ReportIssueForm() {
               </Select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">Location *</label>
+              <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">Location *</label>
               <Input
                 placeholder="Street address or landmark"
                 value={issueData.location}
@@ -139,7 +139,7 @@ export function ReportIssueForm() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">Postcode *</label>
+              <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">Postcode *</label>
               <Input
                 placeholder="e.g., SW1A 1AA"
                 value={issueData.postcode}
@@ -148,7 +148,7 @@ export function ReportIssueForm() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">Description *</label>
+              <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">Description *</label>
               <Textarea
                 placeholder="Describe the issue in detail..."
                 rows={3}
@@ -158,7 +158,7 @@ export function ReportIssueForm() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">Your Name</label>
+              <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">Your Name</label>
               <Input
                 placeholder="Contact name"
                 value={issueData.contactName}
@@ -166,7 +166,7 @@ export function ReportIssueForm() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">Phone Number</label>
+              <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">Phone Number</label>
               <Input
                 type="tel"
                 placeholder="Contact phone"
@@ -175,10 +175,10 @@ export function ReportIssueForm() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">Photos (Optional)</label>
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
-                <Camera className="h-6 w-6 text-gray-400 mx-auto mb-2" />
-                <div className="text-xs text-gray-600 mb-2">Upload photos of the issue</div>
+              <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">Photos (Optional)</label>
+              <div className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-4 text-center">
+                <Camera className="h-6 w-6 text-gray-400 dark:text-gray-500 mx-auto mb-2" />
+                <div className="text-xs text-gray-600 dark:text-gray-300 mb-2">Upload photos of the issue</div>
                 <input type="file" multiple accept="image/*" className="hidden" id="issue-photo-upload" />
                 <Button variant="outline" size="sm" asChild>
                   <label htmlFor="issue-photo-upload" className="cursor-pointer">
@@ -189,7 +189,7 @@ export function ReportIssueForm() {
             </div>
           </div>
           {/* BUTTON AND NOTICE - Always at the bottom */}
-          <Button type="submit" className="w-full bg-red-600 hover:bg-red-700 mt-6" disabled={isSubmitting}>
+          <Button type="submit" className="w-full bg-red-600 hover:bg-red-700 dark:hover:bg-red-500 mt-6" disabled={isSubmitting}>
             {isSubmitting ? (
               <>
                 <div className="animate-spin h-4 w-4 mr-2 border-2 border-white border-t-transparent rounded-full"></div>
@@ -202,10 +202,10 @@ export function ReportIssueForm() {
               </>
             )}
           </Button>
-          <div className="p-3 bg-red-50 border border-red-200 rounded-lg mt-4">
+          <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg mt-4">
             <div className="flex items-start space-x-2">
-              <AlertTriangle className="h-4 w-4 text-red-600 mt-0.5" />
-              <div className="text-xs text-red-800">
+              <AlertTriangle className="h-4 w-4 text-red-600 dark:text-red-400 mt-0.5" />
+              <div className="text-xs text-red-800 dark:text-red-200">
                 <strong>Emergency?</strong> For immediate assistance with water emergencies, call 999 or your local
                 water authority directly.
               </div>

@@ -149,7 +149,7 @@ export function AgencyContacts() {
         <CardTitle className="text-2xl font-bold">
           UK Water Agency Contacts
         </CardTitle>
-        <p className="text-gray-300">
+        <p className="text-gray-300 dark:text-gray-400">
           Direct contact information for regional water authorities
         </p>
       </CardHeader>
@@ -181,7 +181,7 @@ export function AgencyContacts() {
           {paginatedAgencies.map((agency, index) => (
             <div
               key={index}
-              className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow duration-200 flex flex-col h-full min-h-[350px]"
+              className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:shadow-md transition-shadow duration-200 flex flex-col h-full min-h-[350px] bg-white dark:bg-gray-800"
             >
               {/* Main card content: fills space above buttons */}
               <div className="flex-1 flex flex-col space-y-4">
@@ -196,8 +196,8 @@ export function AgencyContacts() {
                       </span>
                     </div>
                     <div>
-                      <h3 className="font-bold text-gray-900">{agency.name}</h3>
-                      <p className="text-sm text-gray-600">
+                      <h3 className="font-bold text-gray-900 dark:text-gray-100">{agency.name}</h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
                         {agency.description}
                       </p>
                     </div>
@@ -207,19 +207,19 @@ export function AgencyContacts() {
                 {/* Region */}
                 <div className="flex items-center space-x-2">
                   <MapPin className="h-4 w-4 text-gray-500" />
-                  <span className="text-sm text-gray-600">{agency.region}</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">{agency.region}</span>
                 </div>
 
                 {/* Contact Information */}
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
-                      <Phone className="h-4 w-4 text-blue-500" />
+                      <Phone className="h-4 w-4 text-blue-500 dark:text-blue-400" />
                       <span className="text-sm font-medium">General</span>
                     </div>
                     <a
                       href={`tel:${agency.phone}`}
-                      className="text-sm font-mono text-blue-600 hover:underline"
+                      className="text-sm font-mono text-blue-600 dark:text-blue-400 hover:underline"
                     >
                       {agency.phone}
                     </a>
@@ -227,12 +227,12 @@ export function AgencyContacts() {
 
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
-                      <Phone className="h-4 w-4 text-red-500" />
+                      <Phone className="h-4 w-4 text-red-500 dark:text-red-400" />
                       <span className="text-sm font-medium">Emergency</span>
                     </div>
                     <a
                       href={`tel:${agency.emergency}`}
-                      className="text-sm font-mono text-red-600 hover:underline"
+                      className="text-sm font-mono text-red-600 dark:text-red-400 hover:underline"
                     >
                       {agency.emergency}
                     </a>
@@ -240,12 +240,12 @@ export function AgencyContacts() {
 
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
-                      <Mail className="h-4 w-4 text-green-500" />
+                      <Mail className="h-4 w-4 text-green-500 dark:text-green-400" />
                       <span className="text-sm font-medium">Email</span>
                     </div>
                     <a
                       href={`mailto:${agency.email}`}
-                      className="text-sm text-green-600 hover:underline truncate"
+                      className="text-sm text-green-600 dark:text-green-400 hover:underline truncate"
                     >
                       Contact
                     </a>
@@ -255,7 +255,7 @@ export function AgencyContacts() {
                 {/* Hours */}
                 <div className="flex items-center space-x-2">
                   <Clock className="h-4 w-4 text-gray-500 mt-0.5" />
-                  <div className="text-xs text-gray-600 space-y-0.5">
+                  <div className="text-xs text-gray-600 dark:text-gray-400 space-y-0.5">
                     {agency.hours.split(",").map((part, idx) => (
                       <div key={idx}>{part.trim()}</div>
                     ))}
@@ -290,7 +290,7 @@ export function AgencyContacts() {
 
         {/* Pagination */}
         <div className="flex items-center justify-between mt-6">
-          <div className="text-sm text-gray-600">
+          <div className="text-sm text-gray-600 dark:text-gray-400">
             Showing {startIndex + 1}-
             {Math.min(startIndex + itemsPerPage, filteredAgencies.length)} of{" "}
             {filteredAgencies.length} agencies
@@ -318,26 +318,26 @@ export function AgencyContacts() {
         </div>
 
         {/* Additional Information */}
-        <div className="mt-8 p-6 bg-blue-50 border border-blue-200 rounded-lg">
+        <div className="mt-8 p-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
           <div className="flex items-center space-x-3">
-            <MapPin className="h-6 w-6 text-blue-600 mt-1" />
+            <MapPin className="h-6 w-6 text-blue-600 dark:text-blue-400 mt-1" />
             <div>
-              <h3 className="font-semibold text-blue-900 mb-2">
+              <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">
                 Finding Your Water Company
               </h3>
-              <p className="text-blue-800 text-sm mb-3">
+              <p className="text-blue-800 dark:text-blue-200 text-sm mb-3">
                 Not sure which water company serves your area? Use your postcode
                 to find your local water authority.
               </p>
               <Button
-                className="bg-blue-600 hover:bg-blue-700"
+                className="bg-blue-600 hover:bg-blue-700 dark:hover:bg-blue-500"
                 onClick={handleFindMyCompany}
                 disabled={locating}
               >
                 {locating ? "Finding..." : "Find My Water Company"}
               </Button>
               {localCompany && (
-                <p className="text-blue-800 text-sm mt-3">
+                <p className="text-blue-800 dark:text-blue-200 text-sm mt-3">
                   Your local company: {localCompany}
                 </p>
               )}
