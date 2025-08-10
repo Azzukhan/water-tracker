@@ -13,7 +13,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Grid, List } from "lucide-react";
+import { Grid, List, ArrowDown, ArrowUp, Minus } from "lucide-react";
+import { useColorBlind } from "@/components/color-blind-provider";
 
 interface Props {
   region: string;
@@ -34,7 +35,22 @@ const statusForLevel = (level: number) => {
   return "Low";
 };
 
-const getStatusColor = (status: string) => {
+const getStatusColor = (status: string, colorBlind: boolean) => {
+  if (colorBlind) {
+    switch (status) {
+      case "High":
+      case "Above Average":
+        return "bg-[#0072B2]";
+      case "Normal":
+        return "bg-[#009E73]";
+      case "Below Average":
+        return "bg-[#E69F00]";
+      case "Low":
+        return "bg-[#D55E00]";
+      default:
+        return "bg-[#000000]";
+    }
+  }
   switch (status) {
     case "High":
       return "bg-blue-600";
@@ -51,10 +67,24 @@ const getStatusColor = (status: string) => {
   }
 };
 
+const getStatusIcon = (status: string) => {
+  switch (status) {
+    case "High":
+    case "Above Average":
+      return ArrowUp;
+    case "Below Average":
+    case "Low":
+      return ArrowDown;
+    default:
+      return Minus;
+  }
+};
+
 export function EnglandRegionSelector({ region, onSelect }: Props) {
   const [regions, setRegions] = useState<RegionInfo[]>([]);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [filter, setFilter] = useState("");
+  const { colorBlind } = useColorBlind();
 
   useEffect(() => {
     fetch(`${API_BASE}/api/water-levels/groundwater/summary/`)
@@ -141,9 +171,17 @@ export function EnglandRegionSelector({ region, onSelect }: Props) {
                   <h3 className="font-semibold text-gray-900 dark:text-gray-100 capitalize">
                     {r.name}
                   </h3>
-                  <Badge className={`${getStatusColor(r.status)} text-white`}>
-                    {r.level.toFixed(1)}%
-                  </Badge>
+                  {(() => {
+                    const Icon = getStatusIcon(r.status);
+                    return (
+                      <Badge
+                        className={`${getStatusColor(r.status, colorBlind)} text-white flex items-center gap-1`}
+                      >
+                        <Icon className="h-3 w-3" aria-hidden="true" />
+                        {r.level.toFixed(1)}%
+                      </Badge>
+                    );
+                  })()}
                 </div>
               </div>
             ))}
@@ -164,9 +202,17 @@ export function EnglandRegionSelector({ region, onSelect }: Props) {
               >
                 <div className="flex items-center justify-between">
                   <span className="capitalize">{r.name}</span>
-                  <Badge className={`${getStatusColor(r.status)} text-white`}>
-                    {r.level.toFixed(1)}%
-                  </Badge>
+                  {(() => {
+                    const Icon = getStatusIcon(r.status);
+                    return (
+                      <Badge
+                        className={`${getStatusColor(r.status, colorBlind)} text-white flex items-center gap-1`}
+                      >
+                        <Icon className="h-3 w-3" aria-hidden="true" />
+                        {r.level.toFixed(1)}%
+                      </Badge>
+                    );
+                  })()}
                 </div>
               </div>
             ))}

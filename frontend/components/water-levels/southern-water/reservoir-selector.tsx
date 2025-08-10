@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Grid, List, MapPin, Map, Search } from "lucide-react";
+import { Grid, List, MapPin, Map, Search, ArrowDown, ArrowUp, Minus } from "lucide-react";
+import { useColorBlind } from "@/components/color-blind-provider";
 
 interface Reservoir {
   id: string;
@@ -26,7 +27,22 @@ const statusForLevel = (level: number) => {
   return "Low";
 };
 
-const getStatusColor = (status: string) => {
+const getStatusColor = (status: string, colorBlind: boolean) => {
+  if (colorBlind) {
+    switch (status) {
+      case "High":
+      case "Above Average":
+        return "bg-[#0072B2]";
+      case "Normal":
+        return "bg-[#009E73]";
+      case "Below Average":
+        return "bg-[#E69F00]";
+      case "Low":
+        return "bg-[#D55E00]";
+      default:
+        return "bg-[#000000]";
+    }
+  }
   switch (status) {
     case "High":
       return "bg-blue-600";
@@ -43,6 +59,19 @@ const getStatusColor = (status: string) => {
   }
 }
 
+const getStatusIcon = (status: string) => {
+  switch (status) {
+    case "High":
+    case "Above Average":
+      return ArrowUp;
+    case "Below Average":
+    case "Low":
+      return ArrowDown;
+    default:
+      return Minus;
+  }
+}
+
 interface ReservoirSelectorProps {
   selectedReservoir: string;
   onSelect: (name: string) => void;
@@ -56,6 +85,7 @@ export function SouthernWaterReservoirSelector({
   const [viewMode, setViewMode] = useState<"list" | "grid" | "map">("grid");
   const [postcode, setPostcode] = useState("");
   const [filter, setFilter] = useState("");
+  const { colorBlind } = useColorBlind();
 
   useEffect(() => {
     fetch(`${API_BASE}/api/water-levels/southernwater-reservoirs/`)
@@ -170,7 +200,17 @@ export function SouthernWaterReservoirSelector({
                   <SelectItem key={res.id} value={res.id}>
                     <div className="flex items-center justify-between w-full">
                       <span>{res.name}</span>
-                      <Badge className={`ml-2 ${getStatusColor(res.status)} text-white`}>{res.level}%</Badge>
+                      {(() => {
+                        const Icon = getStatusIcon(res.status)
+                        return (
+                          <Badge
+                            className={`ml-2 ${getStatusColor(res.status, colorBlind)} text-white flex items-center gap-1`}
+                          >
+                            <Icon className="h-3 w-3" aria-hidden="true" />
+                            {res.level}%
+                          </Badge>
+                        )
+                      })()}
                     </div>
                   </SelectItem>
                 ))}
@@ -191,9 +231,15 @@ export function SouthernWaterReservoirSelector({
                 >
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="font-semibold text-gray-900 dark:text-gray-100">{r.name}</h3>
-                    <Badge className={`${getStatusColor(r.status)} text-white`}>
-                      {r.level}%
-                    </Badge>
+                    {(() => {
+                      const Icon = getStatusIcon(r.status)
+                      return (
+                        <Badge className={`${getStatusColor(r.status, colorBlind)} text-white flex items-center gap-1`}>
+                          <Icon className="h-3 w-3" aria-hidden="true" />
+                          {r.level}%
+                        </Badge>
+                      )
+                    })()}
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-600 dark:text-gray-300">
@@ -238,9 +284,15 @@ export function SouthernWaterReservoirSelector({
                           <div className="bg-blue-600 h-2 rounded-full" style={{ width: `${r.level}%` }}></div>
                         </div>
                       </div>
-                      <Badge className={`${getStatusColor(r.status)} text-white`}>
-                        {r.status}
-                      </Badge>
+                      {(() => {
+                        const Icon = getStatusIcon(r.status)
+                        return (
+                          <Badge className={`${getStatusColor(r.status, colorBlind)} text-white flex items-center gap-1`}>
+                            <Icon className="h-3 w-3" aria-hidden="true" />
+                            {r.status}
+                          </Badge>
+                        )
+                      })()}
                     </div>
                   </div>
                 </div>

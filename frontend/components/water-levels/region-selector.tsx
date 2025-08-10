@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { MapPin, Search, Map, List, Grid } from "lucide-react"
+import { MapPin, Search, Map, List, Grid, ArrowDown, ArrowUp, Minus } from "lucide-react"
+import { useColorBlind } from "@/components/color-blind-provider"
 
 interface Region {
   id: string
@@ -26,7 +27,22 @@ const statusForLevel = (level: number) => {
   return "Low"
 }
 
-const getStatusColor = (status: string) => {
+const getStatusColor = (status: string, colorBlind: boolean) => {
+  if (colorBlind) {
+    switch (status) {
+      case "High":
+      case "Above Average":
+        return "bg-[#0072B2]"
+      case "Normal":
+        return "bg-[#009E73]"
+      case "Below Average":
+        return "bg-[#E69F00]"
+      case "Low":
+        return "bg-[#D55E00]"
+      default:
+        return "bg-[#000000]"
+    }
+  }
   switch (status) {
     case "High":
       return "bg-blue-600"
@@ -43,6 +59,19 @@ const getStatusColor = (status: string) => {
   }
 }
 
+const getStatusIcon = (status: string) => {
+  switch (status) {
+    case "High":
+    case "Above Average":
+      return ArrowUp
+    case "Below Average":
+    case "Low":
+      return ArrowDown
+    default:
+      return Minus
+  }
+}
+
 interface RegionSelectorProps {
   selectedRegion: string
   onSelect: (id: string) => void
@@ -53,6 +82,7 @@ export function RegionSelector({ selectedRegion, onSelect }: RegionSelectorProps
   const [viewMode, setViewMode] = useState<"list" | "grid" | "map">("grid")
   const [postcode, setPostcode] = useState("")
   const [filter, setFilter] = useState("")
+  const { colorBlind } = useColorBlind()
 
   useEffect(() => {
     Promise.all([
@@ -189,7 +219,17 @@ export function RegionSelector({ selectedRegion, onSelect }: RegionSelectorProps
                 <SelectItem key={region.id} value={region.id}>
                   <div className="flex items-center justify-between w-full">
                     <span>{region.name}</span>
-                    <Badge className={`ml-2 ${getStatusColor(region.status)} text-white`}>{region.level}%</Badge>
+                    {(() => {
+                      const Icon = getStatusIcon(region.status)
+                      return (
+                        <Badge
+                          className={`ml-2 ${getStatusColor(region.status, colorBlind)} text-white flex items-center gap-1`}
+                        >
+                          <Icon className="h-3 w-3" aria-hidden="true" />
+                          {region.level}%
+                        </Badge>
+                      )
+                    })()}
                   </div>
                 </SelectItem>
               ))}
@@ -212,7 +252,15 @@ export function RegionSelector({ selectedRegion, onSelect }: RegionSelectorProps
               >
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="font-semibold text-gray-900 dark:text-gray-100">{region.name}</h3>
-                  <Badge className={`${getStatusColor(region.status)} text-white`}>{region.level}%</Badge>
+                  {(() => {
+                    const Icon = getStatusIcon(region.status)
+                    return (
+                      <Badge className={`${getStatusColor(region.status, colorBlind)} text-white flex items-center gap-1`}>
+                        <Icon className="h-3 w-3" aria-hidden="true" />
+                        {region.level}%
+                      </Badge>
+                    )
+                  })()}
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-600 dark:text-gray-300">Status: {region.status}</span>
@@ -253,7 +301,15 @@ export function RegionSelector({ selectedRegion, onSelect }: RegionSelectorProps
                         <div className="bg-blue-600 h-2 rounded-full" style={{ width: `${region.level}%` }}></div>
                       </div>
                     </div>
-                    <Badge className={`${getStatusColor(region.status)} text-white`}>{region.status}</Badge>
+                    {(() => {
+                      const Icon = getStatusIcon(region.status)
+                      return (
+                        <Badge className={`${getStatusColor(region.status, colorBlind)} text-white flex items-center gap-1`}>
+                          <Icon className="h-3 w-3" aria-hidden="true" />
+                          {region.status}
+                        </Badge>
+                      )
+                    })()}
                   </div>
                 </div>
               </div>
