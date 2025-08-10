@@ -22,7 +22,7 @@ const agencies = [
     email: "help@scottishwater.co.uk",
     website: "scottishwater.co.uk",
     region: "Scotland",
-    color: "bg-blue-600",
+    color: "bg-blue-600 cb:bg-cbBlue",
     hours: "24/7 Emergency, 8AM-6PM General",
   },
   {
@@ -34,7 +34,7 @@ const agencies = [
     email: "flooding@sepa.org.uk",
     website: "sepa.org.uk",
     region: "Scotland",
-    color: "bg-indigo-700",
+    color: "bg-indigo-700 cb:bg-cbPurple",
     hours: "24/7 Incident Line, office hours general",
   },
   {
@@ -47,7 +47,7 @@ const agencies = [
     email: "customer.relations@severntrent.co.uk",
     website: "stwater.co.uk",
     region: "Midlands & Central England",
-    color: "bg-green-700",
+    color: "bg-green-700 cb:bg-cbBluishGreen",
     hours: "24/7 Emergency Line, general office hours for queries",
   },
   {
@@ -59,7 +59,7 @@ const agencies = [
     email: "customer.services@yorkshirewater.co.uk",
     website: "yorkshirewater.com",
     region: "Yorkshire, England",
-    color: "bg-blue-800",
+    color: "bg-blue-800 cb:bg-cbBlue",
     hours: "24/7 Emergencies, office hours for customer service",
   },
   {
@@ -71,7 +71,7 @@ const agencies = [
     email: "customer.services@southernwater.co.uk",
     website: "southernwater.co.uk",
     region: "South East England",
-    color: "bg-teal-700",
+    color: "bg-teal-700 cb:bg-cbBluishGreen",
     hours: "24/7 Emergency Line, office hours for queries",
   },
   {
@@ -84,7 +84,7 @@ const agencies = [
     email: "enquiries@environment-agency.gov.uk",
     website: "environment.data.gov.uk/hydrology/",
     region: "England",
-    color: "bg-emerald-700",
+    color: "bg-emerald-700 cb:bg-cbBluishGreen",
     hours:
       "24/7 Emergency Hotline, general enquiries Mon-Fri 8am–6pm",
   },
@@ -214,12 +214,12 @@ export function AgencyContacts() {
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
-                      <Phone className="h-4 w-4 text-blue-500 dark:text-blue-400" />
+                      <Phone className="h-4 w-4 text-blue-500 dark:text-blue-400 cb:text-cbBlue" />
                       <span className="text-sm font-medium">General</span>
                     </div>
                     <a
                       href={`tel:${agency.phone}`}
-                      className="text-sm font-mono text-blue-600 dark:text-blue-400 hover:underline"
+                      className="text-sm font-mono text-blue-600 dark:text-blue-400 cb:text-cbBlue hover:underline"
                     >
                       {agency.phone}
                     </a>
@@ -227,12 +227,12 @@ export function AgencyContacts() {
 
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
-                      <Phone className="h-4 w-4 text-red-500 dark:text-red-400" />
+                      <Phone className="h-4 w-4 text-red-500 dark:text-red-400 cb:text-cbVermillion" />
                       <span className="text-sm font-medium">Emergency</span>
                     </div>
                     <a
                       href={`tel:${agency.emergency}`}
-                      className="text-sm font-mono text-red-600 dark:text-red-400 hover:underline"
+                      className="text-sm font-mono text-red-600 dark:text-red-400 cb:text-cbVermillion hover:underline"
                     >
                       {agency.emergency}
                     </a>
@@ -240,12 +240,12 @@ export function AgencyContacts() {
 
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
-                      <Mail className="h-4 w-4 text-green-500 dark:text-green-400" />
+                      <Mail className="h-4 w-4 text-green-500 dark:text-green-400 cb:text-cbBluishGreen" />
                       <span className="text-sm font-medium">Email</span>
                     </div>
                     <a
                       href={`mailto:${agency.email}`}
-                      className="text-sm text-green-600 dark:text-green-400 hover:underline truncate"
+                      className="text-sm text-green-600 dark:text-green-400 cb:text-cbBluishGreen hover:underline truncate"
                     >
                       Contact
                     </a>
@@ -318,26 +318,26 @@ export function AgencyContacts() {
         </div>
 
         {/* Additional Information */}
-        <div className="mt-8 p-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+        <div className="mt-8 p-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 cb:bg-cbBlue/10 cb:dark:bg-cbBlue/20 cb:border-cbBlue/30 cb:dark:border-cbBlue/40 rounded-lg">
           <div className="flex items-center space-x-3">
-            <MapPin className="h-6 w-6 text-blue-600 dark:text-blue-400 mt-1" />
+            <MapPin className="h-6 w-6 text-blue-600 dark:text-blue-400 cb:text-cbBlue mt-1" />
             <div>
-              <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">
+              <h3 className="font-semibold text-blue-900 dark:text-blue-100 cb:text-cbBlue cb:dark:text-cbBlue mb-2">
                 Finding Your Water Company
               </h3>
-              <p className="text-blue-800 dark:text-blue-200 text-sm mb-3">
+              <p className="text-blue-800 dark:text-blue-200 cb:text-cbBlue cb:dark:text-cbBlue text-sm mb-3">
                 Not sure which water company serves your area? Use your postcode
                 to find your local water authority.
               </p>
               <Button
-                className="bg-blue-600 hover:bg-blue-700 dark:hover:bg-blue-500"
+                className="bg-blue-600 cb:bg-cbBlue hover:bg-blue-700 cb:hover:bg-cbBlue/90 dark:hover:bg-blue-500 dark:cb:hover:bg-cbBlue/80"
                 onClick={handleFindMyCompany}
                 disabled={locating}
               >
                 {locating ? "Finding..." : "Find My Water Company"}
               </Button>
               {localCompany && (
-                <p className="text-blue-800 dark:text-blue-200 text-sm mt-3">
+                <p className="text-blue-800 dark:text-blue-200 cb:text-cbBlue cb:dark:text-cbBlue text-sm mt-3">
                   Your local company: {localCompany}
                 </p>
               )}

@@ -103,13 +103,13 @@ const fallbackPosts = [
 
 const getCategoryColor = (category: string) => {
   const colors: { [key: string]: string } = {
-    "Water Conservation": "bg-blue-600",
-    Sustainability: "bg-green-600",
-    "Innovation & Tech": "bg-purple-600",
-    "Emergency Preparedness": "bg-red-600",
-    "Industry Insights": "bg-orange-600",
-    "Home & Garden": "bg-cyan-600",
-    "Business Solutions": "bg-indigo-600",
+    "Water Conservation": "bg-blue-600 cb:bg-cbBlue",
+    Sustainability: "bg-green-600 cb:bg-cbBluishGreen",
+    "Innovation & Tech": "bg-purple-600 cb:bg-cbPurple",
+    "Emergency Preparedness": "bg-red-600 cb:bg-cbVermillion",
+    "Industry Insights": "bg-orange-600 cb:bg-cbOrange",
+    "Home & Garden": "bg-cyan-600 cb:bg-cbSkyBlue",
+    "Business Solutions": "bg-indigo-600 cb:bg-cbPurple",
   }
   return colors[category] || "bg-gray-600"
 }
@@ -160,7 +160,7 @@ export function BlogGrid({ posts = fallbackPosts }: BlogGridProps) {
                 size="sm"
                 className={`absolute top-3 right-3 ${
                   isBookmarked
-                    ? "text-yellow-600 dark:text-yellow-400 bg-white/90 dark:bg-gray-800/90"
+                    ? "text-yellow-600 dark:text-yellow-400 cb:text-cbYellow bg-white/90 dark:bg-gray-800/90"
                     : "text-gray-600 dark:text-gray-300 bg-white/90 dark:bg-gray-800/90"
                 } hover:bg-white dark:hover:bg-gray-700`}
                 onClick={(e) => {

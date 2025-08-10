@@ -21,7 +21,7 @@ export const categories = [
     name: "Water Conservation",
     icon: Droplets,
     count: 5,
-    color: "bg-blue-600",
+    color: "bg-blue-600 cb:bg-cbBlue",
     description: "Tips and strategies for saving water",
   },
   {
@@ -29,7 +29,7 @@ export const categories = [
     name: "Sustainability",
     icon: Leaf,
     count: 5,
-    color: "bg-green-600",
+    color: "bg-green-600 cb:bg-cbBluishGreen",
     description: "Environmental impact and green solutions",
   },
   {
@@ -37,7 +37,7 @@ export const categories = [
     name: "Innovation & Tech",
     icon: Lightbulb,
     count: 4,
-    color: "bg-purple-600",
+    color: "bg-purple-600 cb:bg-cbPurple",
     description: "Latest technology and innovations",
   },
   {
@@ -45,7 +45,7 @@ export const categories = [
     name: "Emergency Preparedness",
     icon: AlertTriangle,
     count: 5,
-    color: "bg-red-600",
+    color: "bg-red-600 cb:bg-cbVermillion",
     description: "Drought, flood, and crisis management",
   },
   {
@@ -53,7 +53,7 @@ export const categories = [
     name: "Industry Insights",
     icon: TrendingUp,
     count: 4,
-    color: "bg-orange-600",
+    color: "bg-orange-600 cb:bg-cbOrange",
     description: "Water industry trends and analysis",
   },
   {
@@ -61,7 +61,7 @@ export const categories = [
     name: "Home & Garden",
     icon: Home,
     count: 4,
-    color: "bg-cyan-600",
+    color: "bg-cyan-600 cb:bg-cbSkyBlue",
     description: "Household water management tips",
   },
   {
@@ -69,7 +69,7 @@ export const categories = [
     name: "Business Solutions",
     icon: Building,
     count: 0,
-    color: "bg-indigo-600",
+    color: "bg-indigo-600 cb:bg-cbPurple",
     description: "Commercial water efficiency (coming soon)",
   },
 ]
@@ -83,15 +83,15 @@ export function BlogCategories({ selected, onSelect }: BlogCategoriesProps) {
 
   return (
     <Card className="shadow-lg border-0">
-      <CardHeader className="bg-gradient-to-r from-green-600 to-blue-600 text-white">
+      <CardHeader className="bg-gradient-to-r from-green-600 to-blue-600 cb:from-cbBluishGreen cb:to-cbBlue text-white">
         <CardTitle className="text-xl font-bold">Browse by Category</CardTitle>
-        <p className="text-green-100">Explore topics that interest you most</p>
+        <p className="text-green-100 cb:text-cbBluishGreen">Explore topics that interest you most</p>
       </CardHeader>
 
       <CardContent className="p-6">
         <div className="flex justify-end mb-4">
           <button
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+            className="bg-blue-600 cb:bg-cbBlue text-white px-4 py-2 rounded hover:bg-blue-700 cb:hover:bg-cbBlue/90 transition"
             onClick={async () => {
               const card = document.querySelector('.shadow-lg.border-0');
               if (card) {
@@ -117,8 +117,8 @@ export function BlogCategories({ selected, onSelect }: BlogCategoriesProps) {
                 key={category.id}
                 className={`p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
                   isSelected
-                    ? "border-blue-500 bg-blue-50 shadow-md"
-                    : "border-gray-200 hover:border-blue-300 hover:bg-gray-50"
+                    ? "border-blue-500 cb:border-cbBlue bg-blue-50 cb:bg-cbBlue/10 shadow-md"
+                    : "border-gray-200 hover:border-blue-300 cb:hover:border-cbBlue hover:bg-gray-50 cb:hover:bg-cbBlue/10"
                 }`}
                 onClick={() => onSelect(category.name)}
               >
