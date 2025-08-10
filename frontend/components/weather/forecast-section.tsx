@@ -52,8 +52,8 @@ export function ForecastSection({ daily }: ForecastSectionProps) {
                           <span className="font-medium">{day.day}</span>
                         </div>
                       </td>
-                      <td className="p-2 font-medium">{Math.round(day.high ?? day.temperature_max ?? 0)}°C</td>
-                      <td className="p-2 font-medium">{Math.round(day.low ?? day.temperature_min ?? 0)}°C</td>
+                      <td className="p-2 font-medium text-red-600 dark:text-red-500 cb:text-cbVermillion">{Math.round(day.high ?? day.temperature_max ?? 0)}°C</td>
+                      <td className="p-2 font-medium text-blue-600 dark:text-blue-500 cb:text-cbBlue">{Math.round(day.low ?? day.temperature_min ?? 0)}°C</td>
                       <td className="p-2">{day.precipitation !== undefined ? `${Math.round(day.precipitation)}%` : '-'}</td>
                     </tr>
                 )

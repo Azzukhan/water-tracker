@@ -195,7 +195,7 @@ export function NewsFilters({ values, onValuesChange }: NewsFiltersProps) {
               <Badge
                 key={`${filter}-${index}`}
                 variant="secondary"
-                className="cursor-pointer hover:bg-red-100 hover:text-red-800 dark:hover:bg-red-900/30 dark:hover:text-red-300 transition-colors"
+                className="cursor-pointer hover:bg-red-100 hover:text-red-800 dark:hover:bg-red-900/30 dark:hover:text-red-300 cb:hover:bg-cbVermillion/20 cb:hover:text-cbVermillion cb:dark:hover:bg-cbVermillion/30 cb:dark:hover:text-cbVermillion transition-colors"
                 onClick={() => removeFilter(filter as string)}
               >
                 {filter}

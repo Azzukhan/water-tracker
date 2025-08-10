@@ -65,6 +65,11 @@ export function NewsList({ items }: NewsListProps) {
     },
   } as const
 
+  const categoryClassMap: Record<string, string> = {
+    Announcement: "bg-green-100 text-green-800 cb:bg-cbBluishGreen/20 cb:text-cbBluishGreen",
+    "Flood Alert": "bg-red-100 text-red-800 cb:bg-cbVermillion/20 cb:text-cbVermillion",
+  }
+
   const toggleBookmark = (idx: number) => {
     setBookmarkedItems((prev) =>
       prev.includes(idx) ? prev.filter((i) => i !== idx) : [...prev, idx]
@@ -125,7 +130,12 @@ export function NewsList({ items }: NewsListProps) {
                           )
                         })()}
                         {news.category && (
-                          <span className="bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 px-2 py-0.5 rounded">
+                          <span
+                            className={`px-2 py-0.5 rounded ${
+                              categoryClassMap[news.category] ||
+                              "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300"
+                            }`}
+                          >
                             {news.category}
                           </span>
                         )}

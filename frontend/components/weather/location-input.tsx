@@ -67,14 +67,14 @@ export function LocationInput({ weather, onLocationSelect }: LocationInputProps)
 
   return (
     <Card className="shadow-lg border-0">
-      <CardHeader className="bg-gradient-to-r from-sky-500 to-blue-600 text-gray-900 dark:text-white">
+      <CardHeader className="bg-gradient-to-r from-sky-500 to-blue-600 cb:from-cbSkyBlue cb:to-cbBlue text-gray-900 dark:text-white">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
           <div>
             <CardTitle className="text-2xl font-bold">Weather Location</CardTitle>
-            <p className="text-sky-100">Select your location for accurate weather information</p>
+            <p className="text-sky-100 cb:text-cbSkyBlue/80">Select your location for accurate weather information</p>
           </div>
           <div className="flex items-center space-x-2">
-            <CheckCircle className="h-5 w-5 text-green-300" />
+            <CheckCircle className="h-5 w-5 text-green-300 cb:text-cbBluishGreen" />
             <span className="text-sm text-white">Live Data</span>
           </div>
         </div>
@@ -82,16 +82,16 @@ export function LocationInput({ weather, onLocationSelect }: LocationInputProps)
 
       <CardContent className="p-6">
         {/* Current Location Display */}
-        <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-700 rounded-lg">
+        <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900 cb:bg-cbBlue/20 cb:dark:bg-cbBlue/30 border border-blue-200 dark:border-blue-700 cb:border-cbBlue/40 cb:dark:border-cbBlue/60 rounded-lg">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <MapPin className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+              <MapPin className="h-5 w-5 text-blue-600 dark:text-blue-400 cb:text-cbBlue" />
               <div>
                 <div className="font-semibold text-gray-900 dark:text-gray-100">{currentLocation}</div>
                 <div className="text-sm text-gray-600 dark:text-gray-300">Current weather location</div>
               </div>
             </div>
-            <Badge className="bg-blue-600 text-white">Active</Badge>
+            <Badge className="bg-blue-600 cb:bg-cbBlue text-white">Active</Badge>
           </div>
         </div>
 
@@ -110,7 +110,7 @@ export function LocationInput({ weather, onLocationSelect }: LocationInputProps)
               </div>
             </div>
             <div className="flex space-x-2">
-              <Button className="bg-blue-600 hover:bg-blue-700" onClick={() => handleLocationSelect(location)} disabled={!location}>
+              <Button className="bg-blue-600 hover:bg-blue-700 cb:bg-cbBlue cb:hover:bg-cbBlue/80" onClick={() => handleLocationSelect(location)} disabled={!location}>
                 <Search className="h-4 w-4 mr-2" />
                 Search
               </Button>
@@ -118,11 +118,11 @@ export function LocationInput({ weather, onLocationSelect }: LocationInputProps)
                 variant="outline"
                 onClick={handleGeolocation}
                 disabled={isLocating}
-                className="border-blue-200 dark:border-blue-700 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:bg-blue-900"
+                className="border-blue-200 dark:border-blue-700 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:bg-blue-900 cb:border-cbBlue/40 cb:dark:border-cbBlue/60 cb:text-cbBlue cb:hover:bg-cbBlue/10 cb:dark:bg-cbBlue/20"
               >
                 {isLocating ? (
                   <>
-                    <div className="animate-spin h-4 w-4 mr-2 border-2 border-blue-600 border-t-transparent rounded-full"></div>
+                    <div className="animate-spin h-4 w-4 mr-2 border-2 border-blue-600 cb:border-cbBlue border-t-transparent rounded-full"></div>
                     Locating...
                   </>
                 ) : (

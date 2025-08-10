@@ -309,7 +309,7 @@ export default function WeatherPage() {
     return <div className="text-center py-20 text-xl">Loading...</div>;
   if (error)
     return (
-      <div className="text-center py-20 text-xl text-red-500">{error}</div>
+      <div className="text-center py-20 text-xl text-red-500 cb:text-cbVermillion">{error}</div>
     );
   if (!weatherData)
     return (
@@ -377,7 +377,7 @@ export default function WeatherPage() {
                     }}
                   />
                   <Button
-                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                    className="bg-blue-600 hover:bg-blue-700 cb:bg-cbBlue cb:hover:bg-cbBlue/80 text-white"
                     onClick={async () => {
                       if (searchQuery.trim().length > 0) {
                         setSearchLoading(true);
@@ -436,7 +436,7 @@ export default function WeatherPage() {
                   </ul>
                 )}
                 {searchError && (
-                  <div className="text-red-500 text-sm mt-1">{searchError}</div>
+                  <div className="text-red-500 cb:text-cbVermillion text-sm mt-1">{searchError}</div>
                 )}
               </div>
               <Button
@@ -480,7 +480,7 @@ export default function WeatherPage() {
               </Button>
               <Button
                 variant="ghost"
-                className="text-blue-600 hover:bg-blue-50"
+                className="text-blue-600 hover:bg-blue-50 cb:text-cbBlue cb:hover:bg-cbBlue/10"
                 onClick={() => {
                   setLocation(DEFAULT_LOCATION);
                   setSearchQuery("");
