@@ -228,14 +228,14 @@ export function SouthernHistoryChart({ reservoir }: { reservoir: string }) {
             </div>
             <div className="text-sm text-gray-600 dark:text-gray-300">Highest</div>
           </div>
-          <div className="text-center p-3 bg-red-50 rounded-lg">
-            <div className="text-2xl font-bold text-red-600">
+          <div className="text-center p-3 bg-red-50 cb:bg-cbVermillion/10 rounded-lg">
+            <div className="text-2xl font-bold text-red-600 dark:text-red-400 cb:text-cbVermillion">
               {data.length ? Math.min(...data.map((d) => d.level)).toFixed(1) : "0.0"}%
             </div>
             <div className="text-sm text-gray-600 dark:text-gray-300">Lowest</div>
           </div>
-          <div className="text-center p-3 bg-green-50 dark:bg-green-900 rounded-lg">
-            <div className="text-2xl font-bold text-green-600">
+          <div className="text-center p-3 bg-green-50 cb:bg-cbBluishGreen/10 dark:bg-green-900 cb:dark:bg-cbBluishGreen/20 rounded-lg">
+            <div className="text-2xl font-bold text-green-600 dark:text-green-400 cb:text-cbBluishGreen">
               {data.length ? (data.reduce((sum, d) => sum + d.level, 0) / data.length).toFixed(1) : "0.0"}%
             </div>
             <div className="text-sm text-gray-600 dark:text-gray-300">Average</div>

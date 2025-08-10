@@ -32,11 +32,11 @@ const getStatusColor = (status: string) => {
     case "Above Average":
       return "bg-blue-600 cb:bg-cbBlue";
     case "Normal":
-      return "bg-green-600 cb:bg-cbBlueGreen";
+      return "bg-green-600 cb:bg-cbBluishGreen cb:bg-cbBlueGreen";
     case "Below Average":
       return "bg-orange-600 cb:bg-cbOrange";
     case "Low":
-      return "bg-red-600 cb:bg-cbVermillion";
+      return "bg-red-600 cb:bg-cbVermillion cb:bg-cbVermillion";
     default:
       return "bg-gray-600 cb:bg-cbGrey";
   }

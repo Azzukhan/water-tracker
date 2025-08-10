@@ -230,7 +230,7 @@ export function ScottishRegressionChart() {
           accuracy.predicted !== null &&
           accuracy.actual !== null &&
           accuracy.error !== null && (
-            <p className="mb-4 text-red-600 font-semibold">
+            <p className="mb-4 text-red-600 dark:text-red-400 cb:text-cbVermillion font-semibold">
               Last week's prediction: {accuracy.predicted.toFixed(1)}% | Actual: {accuracy.actual.toFixed(1)}% | Accuracy: {(100 - accuracy.error).toFixed(1)}%
             </p>
           )}
@@ -303,12 +303,12 @@ export function ScottishRegressionChart() {
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm text-gray-600 dark:text-gray-300">Trend Direction</span>
               {trend > 0 ? (
-                <TrendingUp className="h-4 w-4 text-green-600" />
+                <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400 cb:text-cbBluishGreen" />
               ) : (
-                <TrendingUp className="h-4 w-4 text-red-600 rotate-180" />
+                <TrendingUp className="h-4 w-4 text-red-600 dark:text-red-400 cb:text-cbVermillion rotate-180" />
               )}
             </div>
-            <div className={`text-2xl font-bold ${trend > 0 ? "text-green-600" : "text-red-600"}`}>
+            <div className={`text-2xl font-bold ${trend > 0 ? "text-green-600 dark:text-green-400 cb:text-cbBluishGreen" : "text-red-600 dark:text-red-400 cb:text-cbVermillion"}`}>
               {trend > 0 ? "+" : ""}
               {trend.toFixed(1)}%
             </div>
@@ -324,9 +324,9 @@ export function ScottishRegressionChart() {
         </div>
 
         {avgPrediction < 70 && (
-          <div className="p-4 bg-orange-50 dark:bg-orange-900 border border-orange-200 rounded-lg">
+          <div className="p-4 bg-orange-50 cb:bg-cbOrange/10 dark:bg-orange-900 cb:dark:bg-cbOrange/20 border border-orange-200 rounded-lg">
             <div className="flex items-start space-x-3">
-              <AlertCircle className="h-5 w-5 text-orange-600 mt-0.5" />
+              <AlertCircle className="h-5 w-5 text-orange-600 dark:text-orange-500 cb:text-cbOrange mt-0.5" />
               <div>
                 <h4 className="font-semibold text-orange-900 mb-1">Low Level Alert</h4>
                 <p className="text-sm text-orange-800">

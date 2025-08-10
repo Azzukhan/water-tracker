@@ -175,9 +175,9 @@ export function YorkshireCurrent() {
                       <div
                         className={`text-lg font-semibold flex items-center ${
                           trendMeta.direction === "rising"
-                            ? "text-green-600"
+                            ? "text-green-600 dark:text-green-400 cb:text-cbBluishGreen"
                             : trendMeta.direction === "falling"
-                            ? "text-red-600"
+                            ? "text-red-600 dark:text-red-400 cb:text-cbVermillion"
                             : "text-gray-600 dark:text-gray-300"
                         }`}
                       >
@@ -191,11 +191,11 @@ export function YorkshireCurrent() {
                     </div>
                   </div>
 
-                  <div className="p-4 bg-green-50 dark:bg-green-900 rounded-lg">
+                  <div className="p-4 bg-green-50 cb:bg-cbBluishGreen/10 dark:bg-green-900 cb:dark:bg-cbBluishGreen/20 rounded-lg">
                     <div className="flex items-center justify-between">
                       <div>
                         <div className="text-sm text-gray-600 dark:text-gray-300">Status</div>
-                        <div className="text-lg font-semibold text-green-700">
+                        <div className="text-lg font-semibold text-green-700 dark:text-green-400 cb:text-cbBluishGreen">
                           {currentData
                             ? currentData.currentLevel >= 90
                               ? "High"
@@ -205,7 +205,7 @@ export function YorkshireCurrent() {
                             : "-"}
                         </div>
                       </div>
-                      <Badge className="bg-green-600 text-white">Operational</Badge>
+                      <Badge className="bg-green-600 cb:bg-cbBluishGreen text-white">Operational</Badge>
                     </div>
                   </div>
                 </div>
@@ -252,9 +252,9 @@ export function YorkshireCurrent() {
           </div>
 
           {currentData && currentData.currentLevel < 70 && (
-            <div className="mt-4 p-3 bg-orange-50 dark:bg-orange-900 border border-orange-200 rounded-lg">
+            <div className="mt-4 p-3 bg-orange-50 cb:bg-cbOrange/10 dark:bg-orange-900 cb:dark:bg-cbOrange/20 border border-orange-200 rounded-lg">
               <div className="flex items-center space-x-2">
-                <Minus className="h-4 w-4 text-orange-600" />
+                <Minus className="h-4 w-4 text-orange-600 dark:text-orange-500 cb:text-cbOrange" />
                 <span className="text-sm font-medium text-orange-800">Below Normal Range</span>
               </div>
             </div>

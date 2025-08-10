@@ -158,7 +158,7 @@ export function EnglandCurrent({ region }: Props) {
                   <div className="flex items-center justify-between p-4 bg-blue-50 dark:bg-blue-900 rounded-lg">
                     <div>
                       <div className="text-sm text-gray-600 dark:text-gray-300">7d Change</div>
-                      <div className={`text-lg font-semibold flex items-center ${trendMeta.direction === "rising" ? "text-green-600" : trendMeta.direction === "falling" ? "text-red-600" : "text-gray-600 dark:text-gray-300"}`}>
+                      <div className={`text-lg font-semibold flex items-center ${trendMeta.direction === "rising" ? "text-green-600 dark:text-green-400 cb:text-cbBluishGreen" : trendMeta.direction === "falling" ? "text-red-600 dark:text-red-400 cb:text-cbVermillion" : "text-gray-600 dark:text-gray-300"}`}>
                         <TrendIcon className="h-4 w-4 mr-1" />
                         {currentData && currentData.changeWeek > 0 ? "+" : ""}
                         {currentData ? currentData.changeWeek.toFixed(1) : "-"}%
@@ -168,11 +168,11 @@ export function EnglandCurrent({ region }: Props) {
                       </div>
                     </div>
                   </div>
-                  <div className="p-4 bg-green-50 dark:bg-green-900 rounded-lg">
+                  <div className="p-4 bg-green-50 cb:bg-cbBluishGreen/10 dark:bg-green-900 cb:dark:bg-cbBluishGreen/20 rounded-lg">
                     <div className="flex items-center justify-between">
                       <div>
                         <div className="text-sm text-gray-600 dark:text-gray-300">Status</div>
-                        <div className="text-lg font-semibold text-green-700">
+                        <div className="text-lg font-semibold text-green-700 dark:text-green-400 cb:text-cbBluishGreen">
                           {currentData
                             ? currentData.currentLevel >= 90
                               ? "High"
@@ -182,7 +182,7 @@ export function EnglandCurrent({ region }: Props) {
                             : "-"}
                         </div>
                       </div>
-                      <Badge className="bg-green-600 text-white">Operational</Badge>
+                      <Badge className="bg-green-600 cb:bg-cbBluishGreen text-white">Operational</Badge>
                     </div>
                   </div>
                 </div>
