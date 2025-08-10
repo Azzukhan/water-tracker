@@ -110,7 +110,7 @@ export function SouthernHistoryChart({ reservoir }: { reservoir: string }) {
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
           <div>
             <CardTitle className="text-xl font-bold">Historical Water Levels</CardTitle>
-            <p className="text-gray-600">Interactive chart with zoom and pan capabilities</p>
+            <p className="text-gray-600 dark:text-gray-300">Interactive chart with zoom and pan capabilities</p>
           </div>
 
           <div className="flex items-center space-x-3">
@@ -159,10 +159,10 @@ export function SouthernHistoryChart({ reservoir }: { reservoir: string }) {
                 content={({ active, payload, label }) => {
                   if (active && payload && payload.length) {
                     return (
-                      <div className="bg-white p-4 border border-gray-200 rounded-lg shadow-lg">
-                        <p className="font-semibold text-gray-900">{label}</p>
+                      <div className="bg-white dark:bg-gray-800 p-4 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg">
+                        <p className="font-semibold text-gray-900 dark:text-gray-100">{label}</p>
                         <p className="text-blue-600">Current Level: {payload[0].value}%</p>
-                        <p className="text-gray-600">Average: {payload[1].value}%</p>
+                        <p className="text-gray-600 dark:text-gray-300">Average: {payload[1].value}%</p>
                       </div>
                     )
                   }
@@ -196,7 +196,7 @@ export function SouthernHistoryChart({ reservoir }: { reservoir: string }) {
         </div>
 
         {/* Chart Controls */}
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0 p-4 bg-gray-50 rounded-lg">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
           <div className="flex items-center space-x-4 text-sm">
             <div className="flex items-center space-x-2">
               <div className="w-4 h-0.5 bg-blue-600"></div>
@@ -208,7 +208,7 @@ export function SouthernHistoryChart({ reservoir }: { reservoir: string }) {
             </div>
           </div>
 
-          <div className="flex items-center space-x-4 text-sm text-gray-600">
+          <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-300">
             <div className="flex items-center space-x-1">
               <Calendar className="h-4 w-4" />
               <span>
@@ -222,29 +222,29 @@ export function SouthernHistoryChart({ reservoir }: { reservoir: string }) {
 
         {/* Summary Statistics */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-          <div className="text-center p-3 bg-blue-50 rounded-lg">
+          <div className="text-center p-3 bg-blue-50 dark:bg-blue-900 rounded-lg">
             <div className="text-2xl font-bold text-blue-600">
               {data.length ? Math.max(...data.map((d) => d.level)).toFixed(1) : "0.0"}%
             </div>
-            <div className="text-sm text-gray-600">Highest</div>
+            <div className="text-sm text-gray-600 dark:text-gray-300">Highest</div>
           </div>
           <div className="text-center p-3 bg-red-50 rounded-lg">
             <div className="text-2xl font-bold text-red-600">
               {data.length ? Math.min(...data.map((d) => d.level)).toFixed(1) : "0.0"}%
             </div>
-            <div className="text-sm text-gray-600">Lowest</div>
+            <div className="text-sm text-gray-600 dark:text-gray-300">Lowest</div>
           </div>
-          <div className="text-center p-3 bg-green-50 rounded-lg">
+          <div className="text-center p-3 bg-green-50 dark:bg-green-900 rounded-lg">
             <div className="text-2xl font-bold text-green-600">
               {data.length ? (data.reduce((sum, d) => sum + d.level, 0) / data.length).toFixed(1) : "0.0"}%
             </div>
-            <div className="text-sm text-gray-600">Average</div>
+            <div className="text-sm text-gray-600 dark:text-gray-300">Average</div>
           </div>
-          <div className="text-center p-3 bg-gray-50 rounded-lg">
-            <div className="text-2xl font-bold text-gray-600">
+          <div className="text-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <div className="text-2xl font-bold text-gray-600 dark:text-gray-300">
               {data.length ? (Math.max(...data.map((d) => d.level)) - Math.min(...data.map((d) => d.level))).toFixed(1) : "0.0"}%
             </div>
-            <div className="text-sm text-gray-600">Range</div>
+            <div className="text-sm text-gray-600 dark:text-gray-300">Range</div>
           </div>
         </div>
       </CardContent>

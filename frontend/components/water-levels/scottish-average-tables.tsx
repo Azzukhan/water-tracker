@@ -97,7 +97,7 @@ export function ScottishAverageTables() {
                 </TableRow>
               ) : (
                 <TableRow>
-                  <TableCell colSpan={4} className="text-center text-sm text-gray-500">
+                  <TableCell colSpan={4} className="text-center text-sm text-gray-500 dark:text-gray-400">
                     No data available
                   </TableCell>
                 </TableRow>
@@ -138,7 +138,7 @@ export function ScottishAverageTables() {
               ))}
               {filteredRegions.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={4} className="text-center text-sm text-gray-500">
+                  <TableCell colSpan={4} className="text-center text-sm text-gray-500 dark:text-gray-400">
                     No data available
                   </TableCell>
                 </TableRow>

@@ -32,16 +32,16 @@ export function HourlyForecast({ hourly }: HourlyForecastProps) {
               return (
                 <div
                   key={hour.time + '-' + idx}
-                  className="flex-none w-24 flex flex-col items-center p-3 bg-white rounded-lg shadow"
+                  className="flex-none w-24 flex flex-col items-center p-3 bg-white dark:bg-gray-800 rounded-lg shadow"
                 >
-                  <div className="text-sm font-medium">{formattedTime}</div>
-                  <WeatherIcon className="h-8 w-8 my-2 text-blue-500" />
-                  <div className="text-sm font-medium">
+                  <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{formattedTime}</div>
+                  <WeatherIcon className="h-8 w-8 my-2 text-blue-500 dark:text-blue-400" />
+                  <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                     {hour.temperature != null ? `${Math.round(hour.temperature)}°C` : "-"}
                   </div>
                   <div className="flex items-center mt-1">
-                    <Droplet className="h-4 w-4 text-gray-500 mr-1" />
-                    <span className="text-sm font-medium">
+                    <Droplet className="h-4 w-4 text-gray-500 dark:text-gray-400 mr-1" />
+                    <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
                       {hour.precipitation_probability != null
                         ? `${Math.round(hour.precipitation_probability)}%`
                         : "-"}

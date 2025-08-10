@@ -133,12 +133,12 @@ export function EnglandRegionSelector({ region, onSelect }: Props) {
                 onClick={() => onSelect(r.id)}
                 className={`p-4 rounded-lg border cursor-pointer transition-all ${
                   region === r.id
-                    ? "border-blue-500 bg-blue-50"
-                    : "border-gray-200 hover:border-blue-300 hover:bg-gray-50"
+                    ? "border-blue-500 bg-blue-50 dark:bg-blue-900"
+                    : "border-gray-200 hover:border-blue-300 hover:bg-gray-50 dark:bg-gray-800"
                 }`}
               >
                 <div className="flex items-center justify-between mb-2">
-                  <h3 className="font-semibold text-gray-900 capitalize">
+                  <h3 className="font-semibold text-gray-900 dark:text-gray-100 capitalize">
                     {r.name}
                   </h3>
                   <Badge className={`${getStatusColor(r.status)} text-white`}>
@@ -158,8 +158,8 @@ export function EnglandRegionSelector({ region, onSelect }: Props) {
                 onClick={() => onSelect(r.id)}
                 className={`p-4 rounded-lg border cursor-pointer transition-all ${
                   region === r.id
-                    ? "border-blue-500 bg-blue-50"
-                    : "border-gray-200 hover:border-blue-300"
+                    ? "border-blue-500 bg-blue-50 dark:bg-blue-900"
+                    : "border-gray-200 dark:border-gray-700 hover:border-blue-300"
                 }`}
               >
                 <div className="flex items-center justify-between">

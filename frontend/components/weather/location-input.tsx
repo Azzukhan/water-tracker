@@ -82,13 +82,13 @@ export function LocationInput({ weather, onLocationSelect }: LocationInputProps)
 
       <CardContent className="p-6">
         {/* Current Location Display */}
-        <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+        <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-700 rounded-lg">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <MapPin className="h-5 w-5 text-blue-600" />
+              <MapPin className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               <div>
-                <div className="font-semibold text-gray-900">{currentLocation}</div>
-                <div className="text-sm text-gray-600">Current weather location</div>
+                <div className="font-semibold text-gray-900 dark:text-gray-100">{currentLocation}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-300">Current weather location</div>
               </div>
             </div>
             <Badge className="bg-blue-600 text-white">Active</Badge>
@@ -118,7 +118,7 @@ export function LocationInput({ weather, onLocationSelect }: LocationInputProps)
                 variant="outline"
                 onClick={handleGeolocation}
                 disabled={isLocating}
-                className="border-blue-200 text-blue-600 hover:bg-blue-50"
+                className="border-blue-200 dark:border-blue-700 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:bg-blue-900"
               >
                 {isLocating ? (
                   <>
@@ -137,12 +137,12 @@ export function LocationInput({ weather, onLocationSelect }: LocationInputProps)
         </div>
 
         {/* Location Info */}
-        <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+        <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
           <div className="flex items-start space-x-3">
-            <MapPin className="h-5 w-5 text-gray-600 mt-0.5" />
+            <MapPin className="h-5 w-5 text-gray-600 dark:text-gray-300 mt-0.5" />
             <div className="text-sm">
-              <div className="font-medium text-gray-900 mb-1">Location Services</div>
-              <div className="text-gray-600">
+              <div className="font-medium text-gray-900 dark:text-gray-100 mb-1">Location Services</div>
+              <div className="text-gray-600 dark:text-gray-300">
                 We use your location to provide the most accurate weather data for your area. Location data is not
                 stored and is only used for weather services.
               </div>

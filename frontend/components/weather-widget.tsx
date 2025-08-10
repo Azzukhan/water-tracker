@@ -92,7 +92,7 @@ export default function WeatherWidget() {
 
   if (loading) {
     return (
-      <Card className="shadow border-gray-100">
+      <Card className="shadow border-gray-100 dark:border-gray-700">
         <CardContent className="p-6 text-center">
           Loading weather...
         </CardContent>
@@ -102,7 +102,7 @@ export default function WeatherWidget() {
 
   if (error || !weather) {
     return (
-      <Card className="shadow border-gray-100">
+      <Card className="shadow border-gray-100 dark:border-gray-700">
         <CardContent className="p-6 text-center text-destructive">
           {error || "No weather data"}
         </CardContent>

@@ -112,7 +112,7 @@ export function EnglandHistoryChart({ region }: { region: string }) {
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
           <div>
             <CardTitle className="text-xl font-bold">Historical Groundwater Levels</CardTitle>
-            <p className="text-gray-600">Interactive chart with zoom and export</p>
+            <p className="text-gray-600 dark:text-gray-300">Interactive chart with zoom and export</p>
           </div>
           <div className="flex items-center space-x-3">
             <Select value={period} onValueChange={setPeriod}>
@@ -153,8 +153,8 @@ export function EnglandHistoryChart({ region }: { region: string }) {
                 content={({ active, payload, label }) => {
                   if (active && payload && payload.length) {
                     return (
-                      <div className="bg-white p-4 border border-gray-200 rounded-lg shadow-lg">
-                        <p className="font-semibold text-gray-900">{label}</p>
+                      <div className="bg-white dark:bg-gray-800 p-4 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg">
+                        <p className="font-semibold text-gray-900 dark:text-gray-100">{label}</p>
                         <p className="text-blue-600">Level: {payload[0].value.toFixed(1)}%</p>
                       </div>
                     );
@@ -167,12 +167,12 @@ export function EnglandHistoryChart({ region }: { region: string }) {
             </LineChart>
           </ResponsiveContainer>
         </div>
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0 p-4 bg-gray-50 rounded-lg">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
           <div className="flex items-center space-x-2">
             <div className="w-4 h-0.5 bg-blue-600"></div>
             <span>Level</span>
           </div>
-          <div className="flex items-center space-x-4 text-sm text-gray-600">
+          <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-300">
             <div className="flex items-center space-x-1">
               <Calendar className="h-4 w-4" />
               <span>

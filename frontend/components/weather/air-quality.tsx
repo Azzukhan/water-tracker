@@ -30,7 +30,7 @@ export function AirQuality({ aqi }) {
         <div className="flex-1 flex flex-col justify-between">
           {/* Main AQI Display */}
           <div className="text-center">
-            <div className="text-4xl font-bold text-gray-900 mb-2">{valueNum ?? '-'}</div>
+            <div className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-2">{valueNum ?? '-'}</div>
             <div className="flex items-center justify-center space-x-2">
               <Badge className="bg-green-600 text-white">
                 {valueNum && valueNum <= 3
@@ -42,22 +42,22 @@ export function AirQuality({ aqi }) {
                   : "Very High"}
               </Badge>
             </div>
-            <p className="text-sm text-gray-600 mt-2">{descStr}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">{descStr}</p>
           </div>
           {/* Pollutants */}
           <div className="space-y-4 mt-6">
-            <h4 className="font-medium text-gray-900">Pollutants</h4>
+            <h4 className="font-medium text-gray-900 dark:text-gray-100">Pollutants</h4>
             {pollutants.length === 0 ? (
-              <div className="text-gray-500 text-sm">No pollutant data available.</div>
+              <div className="text-gray-500 dark:text-gray-400 text-sm">No pollutant data available.</div>
             ) : (
               pollutants.map((pollutant, index) => (
                 <div key={index} className="space-y-2">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
-                      <Wind className="h-4 w-4 text-gray-500" />
-                      <span className="text-sm font-medium text-gray-900">{pollutant.name || '-'}</span>
+                      <Wind className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                      <span className="text-sm font-medium text-gray-900 dark:text-gray-100">{pollutant.name || '-'}</span>
                     </div>
-                    <div className="text-sm text-gray-600">
+                    <div className="text-sm text-gray-600 dark:text-gray-300">
                       {typeof pollutant.value === 'number' ? Math.round(pollutant.value) : '-'} {pollutant.unit || ''}
                     </div>
                   </div>
@@ -72,20 +72,20 @@ export function AirQuality({ aqi }) {
           </div>
         </div>
         {/* Footer: Forecast (optional) */}
-        <div className="p-4 bg-gray-50 rounded-lg mt-4">
-          <h4 className="font-medium text-gray-900 mb-3">3-Day Forecast</h4>
+        <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg mt-4">
+          <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-3">3-Day Forecast</h4>
           <div className="space-y-3">
             {!aqi?.forecast?.length ? (
-              <div className="text-gray-500 text-sm">No forecast data available.</div>
+              <div className="text-gray-500 dark:text-gray-400 text-sm">No forecast data available.</div>
             ) : (
               aqi.forecast.map((day, idx) => (
                 <div key={idx} className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">{day.day || '-'}</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-300">{day.day || '-'}</span>
                   <div className="flex items-center space-x-2">
                     <Badge className="bg-green-600 text-white text-xs">
                       {typeof day.aqi === 'number' ? Math.round(day.aqi) : '-'}
                     </Badge>
-                    <span className="text-sm text-gray-900">{day.status || '-'}</span>
+                    <span className="text-sm text-gray-900 dark:text-gray-100">{day.status || '-'}</span>
                   </div>
                 </div>
               ))

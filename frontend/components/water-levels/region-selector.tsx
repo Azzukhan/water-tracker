@@ -157,7 +157,7 @@ export function RegionSelector({ selectedRegion, onSelect }: RegionSelectorProps
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500 dark:text-gray-400" />
                 <Input
                   placeholder="Enter postcode (e.g., SW1A 1AA)"
                   value={postcode}
@@ -205,18 +205,18 @@ export function RegionSelector({ selectedRegion, onSelect }: RegionSelectorProps
                 key={region.id}
                 className={`p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
                   selectedRegion === region.id
-                    ? "border-blue-500 bg-blue-50"
-                    : "border-gray-200 hover:border-blue-300 hover:bg-gray-50"
+                    ? "border-blue-500 bg-blue-50 dark:bg-blue-900"
+                    : "border-gray-200 dark:border-gray-700 hover:border-blue-300 hover:bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-800"
                 }`}
                 onClick={() => onSelect(region.id)}
               >
                 <div className="flex items-center justify-between mb-2">
-                  <h3 className="font-semibold text-gray-900">{region.name}</h3>
+                  <h3 className="font-semibold text-gray-900 dark:text-gray-100">{region.name}</h3>
                   <Badge className={`${getStatusColor(region.status)} text-white`}>{region.level}%</Badge>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Status: {region.status}</span>
-                  <div className="w-16 bg-gray-200 rounded-full h-2">
+                  <span className="text-sm text-gray-600 dark:text-gray-300">Status: {region.status}</span>
+                  <div className="w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                     <div
                       className="bg-blue-600 h-2 rounded-full transition-all duration-300"
                       style={{ width: `${region.level}%` }}
@@ -234,22 +234,22 @@ export function RegionSelector({ selectedRegion, onSelect }: RegionSelectorProps
               <div
                 key={region.id}
                 className={`p-4 rounded-lg border cursor-pointer transition-all duration-200 ${
-                  selectedRegion === region.id ? "border-blue-500 bg-blue-50" : "border-gray-200 hover:border-blue-300"
+                  selectedRegion === region.id ? "border-blue-500 bg-blue-50 dark:bg-blue-900" : "border-gray-200 dark:border-gray-700 hover:border-blue-300"
                 }`}
                 onClick={() => onSelect(region.id)}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
-                    <MapPin className="h-5 w-5 text-gray-400" />
+                    <MapPin className="h-5 w-5 text-gray-400 dark:text-gray-500 dark:text-gray-400" />
                     <div>
-                      <h3 className="font-semibold text-gray-900">{region.name}</h3>
-                      <p className="text-sm text-gray-600">Status: {region.status}</p>
+                      <h3 className="font-semibold text-gray-900 dark:text-gray-100">{region.name}</h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-300">Status: {region.status}</p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-4">
                     <div className="text-right">
-                      <div className="text-2xl font-bold text-gray-900">{region.level}%</div>
-                      <div className="w-20 bg-gray-200 rounded-full h-2">
+                      <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{region.level}%</div>
+                      <div className="w-20 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                         <div className="bg-blue-600 h-2 rounded-full" style={{ width: `${region.level}%` }}></div>
                       </div>
                     </div>
@@ -262,18 +262,18 @@ export function RegionSelector({ selectedRegion, onSelect }: RegionSelectorProps
         )}
 
         {viewMode === "map" && (
-          <div className="bg-gray-100 rounded-lg p-8 text-center">
-            <Map className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Interactive Map View</h3>
-            <p className="text-gray-600 mb-4">Click on regions to view detailed water level information</p>
-            <div className="bg-white rounded-lg p-6 shadow-sm">
-              <div className="text-sm text-gray-500 mb-4">Map visualization would be integrated here</div>
+          <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-8 text-center">
+            <Map className="h-16 w-16 text-gray-400 dark:text-gray-500 dark:text-gray-400 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Interactive Map View</h3>
+            <p className="text-gray-600 dark:text-gray-300 mb-4">Click on regions to view detailed water level information</p>
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
+              <div className="text-sm text-gray-500 dark:text-gray-400 mb-4">Map visualization would be integrated here</div>
               <div className="grid grid-cols-3 gap-2">
                 {filtered.slice(0, 9).map((region) => (
                   <div
                     key={region.id}
                     className={`p-2 rounded text-xs cursor-pointer transition-colors ${
-                      selectedRegion === region.id ? "bg-blue-600 text-white" : "bg-gray-200 hover:bg-gray-300"
+                      selectedRegion === region.id ? "bg-blue-600 text-white" : "bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600"
                     }`}
                     onClick={() => onSelect(region.id)}
                   >

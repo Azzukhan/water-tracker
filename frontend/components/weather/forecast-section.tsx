@@ -28,11 +28,11 @@ export function ForecastSection({ daily }: ForecastSectionProps) {
     <Card className="shadow-lg border-0">
       <CardHeader>
         <CardTitle className="text-xl font-bold">7-Day Forecast</CardTitle>
-        <p className="text-gray-600">Extended weather forecast</p>
+        <p className="text-gray-600 dark:text-gray-300">Extended weather forecast</p>
       </CardHeader>
       <CardContent className="p-8">
         <div className="overflow-x-auto">
-          <table className="w-full text-center">
+          <table className="w-full text-center text-gray-900 dark:text-gray-100">
             <thead>
                 <tr className="border-b text-sm">
                   <th className="p-2 text-left">Day</th>
@@ -48,7 +48,7 @@ export function ForecastSection({ daily }: ForecastSectionProps) {
                     <tr key={day.date + '-' + idx} className="text-sm">
                       <td className="p-2 text-left">
                         <div className="flex items-center space-x-2">
-                          <Icon className="h-4 w-4 text-blue-500" />
+                          <Icon className="h-4 w-4 text-blue-500 dark:text-blue-400" />
                           <span className="font-medium">{day.day}</span>
                         </div>
                       </td>

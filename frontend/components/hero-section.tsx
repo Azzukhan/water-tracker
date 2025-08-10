@@ -51,7 +51,7 @@ export function HeroSection() {
             <div className="flex flex-col sm:flex-row gap-4">
               <Button
                 size="lg"
-                className="bg-white text-blue-700 hover:bg-blue-50 font-semibold px-8 py-4 text-lg group"
+                className="bg-white text-blue-700 hover:bg-blue-50 dark:bg-gray-900 dark:text-blue-100 dark:hover:bg-gray-800 font-semibold px-8 py-4 text-lg group"
                 asChild
               >
                 <Link href="/water-levels">

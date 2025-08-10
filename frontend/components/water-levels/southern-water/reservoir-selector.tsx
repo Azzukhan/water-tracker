@@ -184,19 +184,19 @@ export function SouthernWaterReservoirSelector({
                   key={r.id}
                   className={`p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
                     selectedReservoir === r.id
-                      ? "border-blue-500 bg-blue-50"
-                      : "border-gray-200 hover:border-blue-300 hover:bg-gray-50"
+                      ? "border-blue-500 bg-blue-50 dark:bg-blue-900"
+                      : "border-gray-200 hover:border-blue-300 hover:bg-gray-50 dark:bg-gray-800"
                   }`}
                   onClick={() => onSelect(r.id)}
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <h3 className="font-semibold text-gray-900">{r.name}</h3>
+                    <h3 className="font-semibold text-gray-900 dark:text-gray-100">{r.name}</h3>
                     <Badge className={`${getStatusColor(r.status)} text-white`}>
                       {r.level}%
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">
+                    <span className="text-sm text-gray-600 dark:text-gray-300">
                       Status: {r.status}
                     </span>
                     <div className="w-16 bg-gray-200 rounded-full h-2">
@@ -218,8 +218,8 @@ export function SouthernWaterReservoirSelector({
                   key={r.id}
                   className={`p-4 rounded-lg border cursor-pointer transition-all duration-200 ${
                     selectedReservoir === r.id
-                      ? "border-blue-500 bg-blue-50"
-                      : "border-gray-200 hover:border-blue-300"
+                      ? "border-blue-500 bg-blue-50 dark:bg-blue-900"
+                      : "border-gray-200 dark:border-gray-700 hover:border-blue-300"
                   }`}
                   onClick={() => onSelect(r.id)}
                 >
@@ -227,13 +227,13 @@ export function SouthernWaterReservoirSelector({
                     <div className="flex items-center space-x-4">
                       <MapPin className="h-5 w-5 text-gray-400" />
                       <div>
-                        <h3 className="font-semibold text-gray-900">{r.name}</h3>
-                        <p className="text-sm text-gray-600">Status: {r.status}</p>
+                        <h3 className="font-semibold text-gray-900 dark:text-gray-100">{r.name}</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-300">Status: {r.status}</p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-4">
                       <div className="text-right">
-                        <div className="text-2xl font-bold text-gray-900">{r.level}%</div>
+                        <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{r.level}%</div>
                         <div className="w-20 bg-gray-200 rounded-full h-2">
                           <div className="bg-blue-600 h-2 rounded-full" style={{ width: `${r.level}%` }}></div>
                         </div>
@@ -249,18 +249,18 @@ export function SouthernWaterReservoirSelector({
           )}
 
           {viewMode === "map" && (
-            <div className="bg-gray-100 rounded-lg p-8 text-center">
-              <Map className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Interactive Map View</h3>
-              <p className="text-gray-600 mb-4">Click on reservoirs to view detailed water level information</p>
-              <div className="bg-white rounded-lg p-6 shadow-sm">
-                <div className="text-sm text-gray-500 mb-4">Map visualization would be integrated here</div>
+            <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-8 text-center">
+              <Map className="h-16 w-16 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Interactive Map View</h3>
+              <p className="text-gray-600 dark:text-gray-300 mb-4">Click on reservoirs to view detailed water level information</p>
+              <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
+                <div className="text-sm text-gray-500 dark:text-gray-400 mb-4">Map visualization would be integrated here</div>
                 <div className="grid grid-cols-3 gap-2">
                   {filtered.slice(0, 9).map((r) => (
                     <div
                       key={r.id}
                       className={`p-2 rounded text-xs cursor-pointer transition-colors ${
-                        selectedReservoir === r.id ? "bg-blue-600 text-white" : "bg-gray-200 hover:bg-gray-300"
+                        selectedReservoir === r.id ? "bg-blue-600 text-white" : "bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600"
                       }`}
                       onClick={() => onSelect(r.id)}
                     >
