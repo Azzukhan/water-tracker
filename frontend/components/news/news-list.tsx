@@ -76,12 +76,12 @@ export function NewsList({ items }: NewsListProps) {
       {/* Results Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Latest News</h2>
-          <p className="text-gray-600">{items.length} stories found</p>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Latest News</h2>
+          <p className="text-gray-600 dark:text-gray-400">{items.length} stories found</p>
         </div>
         <div className="flex items-center space-x-2">
-          <span className="text-sm text-gray-600">Sort by:</span>
-          <Select value={sortBy} onValueChange={(v) => setSortBy(v as "recent" | "oldest")}>
+          <span className="text-sm text-gray-600 dark:text-gray-400">Sort by:</span>
+          <Select value={sortBy} onValueChange={(v) => setSortBy(v as "recent" | "oldest")}> 
             <SelectTrigger className="w-32 h-8">
               <SelectValue placeholder="Sort" />
             </SelectTrigger>
@@ -104,14 +104,14 @@ export function NewsList({ items }: NewsListProps) {
                 <div className="space-y-4">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <h3 className="text-xl font-bold text-gray-900 hover:text-blue-600 cursor-pointer transition-colors leading-tight">
-                        {news.title}
-                      </h3>
-                      <div className="flex items-center space-x-4 mt-2 text-sm text-gray-600">
-                        <div className="flex items-center space-x-1">
-                          <Clock className="h-4 w-4" />
-                          <span>{new Date(news.publishedAt).toLocaleDateString("en-GB")}</span>
-                        </div>
+          <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer transition-colors leading-tight">
+            {news.title}
+          </h3>
+          <div className="flex items-center space-x-4 mt-2 text-sm text-gray-600 dark:text-gray-400">
+            <div className="flex items-center space-x-1">
+              <Clock className="h-4 w-4" />
+              <span>{new Date(news.publishedAt).toLocaleDateString("en-GB")}</span>
+            </div>
                         {(() => {
                           const sev =
                             news.severity && severityMap[news.severity as keyof typeof severityMap]
@@ -125,7 +125,7 @@ export function NewsList({ items }: NewsListProps) {
                           )
                         })()}
                         {news.category && (
-                          <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
+                          <span className="bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 px-2 py-0.5 rounded">
                             {news.category}
                           </span>
                         )}
@@ -136,13 +136,13 @@ export function NewsList({ items }: NewsListProps) {
                       variant="ghost"
                       size="sm"
                       onClick={() => toggleBookmark(startIndex + idx)}
-                      className={isBookmarked ? "text-yellow-600" : "text-gray-400"}
+                      className={isBookmarked ? "text-yellow-600 dark:text-yellow-400" : "text-gray-400 dark:text-gray-500"}
                     >
                       <Bookmark className={`h-4 w-4 ${isBookmarked ? "fill-current" : ""}`} />
                     </Button>
                   </div>
 
-                  <p className="text-gray-700 leading-relaxed">{news.description}</p>
+                  <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{news.description}</p>
 
                   <div className="flex items-center justify-between">
                     <div />
@@ -156,17 +156,17 @@ export function NewsList({ items }: NewsListProps) {
                             Read More
                           </Button>
                         </DialogTrigger>
-                        <DialogContent>
-                          <DialogHeader>
-                            <DialogTitle>{news.title}</DialogTitle>
-                          </DialogHeader>
-                          <p className="whitespace-pre-line text-sm text-gray-700">
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>{news.title}</DialogTitle>
+                            </DialogHeader>
+                          <p className="whitespace-pre-line text-sm text-gray-700 dark:text-gray-300">
                             {news.description}
                           </p>
-                        </DialogContent>
-                      </Dialog>
-                    ) : (
-                      <Button size="sm" className="bg-blue-600 hover:bg-blue-700" asChild>
+                          </DialogContent>
+                        </Dialog>
+                      ) : (
+                      <Button size="sm" className="bg-blue-600 hover:bg-blue-700 dark:hover:bg-blue-500" asChild>
                         <a href={news.url} target="_blank" rel="noreferrer">
                           <ExternalLink className="h-4 w-4 mr-2" />
                           Read More
@@ -184,7 +184,7 @@ export function NewsList({ items }: NewsListProps) {
 
       {/* Pagination */}
       <div className="flex items-center justify-between">
-        <div className="text-sm text-gray-600">
+        <div className="text-sm text-gray-600 dark:text-gray-400">
           Showing {startIndex + 1}-{Math.min(startIndex + itemsPerPage, items.length)} of {items.length} results
         </div>
 

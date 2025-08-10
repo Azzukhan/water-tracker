@@ -161,12 +161,12 @@ export function FAQ() {
 
   return (
     <Card className="shadow-lg border-0">
-      <CardHeader className="bg-gradient-to-r from-purple-600 to-blue-600 text-white">
+      <CardHeader className="bg-gradient-to-r from-purple-600 to-blue-600 dark:from-purple-700 dark:to-blue-700 text-white">
         <CardTitle className="text-2xl font-bold flex items-center">
           <HelpCircle className="h-6 w-6 mr-3" />
           Frequently Asked Questions
         </CardTitle>
-        <p className="text-purple-100">Find quick answers to common water-related questions</p>
+        <p className="text-purple-100 dark:text-purple-200">Find quick answers to common water-related questions</p>
       </CardHeader>
 
       <CardContent className="p-6">
@@ -174,12 +174,12 @@ export function FAQ() {
         <div className="space-y-6 mb-8">
           {/* Search */}
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
             <Input
               placeholder="Search frequently asked questions..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
+              className="pl-10 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700"
             />
           </div>
 
@@ -191,7 +191,7 @@ export function FAQ() {
                 variant={selectedCategory === category.id ? "default" : "outline"}
                 size="sm"
                 onClick={() => setSelectedCategory(category.id)}
-                className="text-xs"
+                className="text-xs dark:bg-gray-800 dark:text-gray-100"
               >
                 {category.name} ({category.count})
               </Button>
@@ -203,16 +203,16 @@ export function FAQ() {
         <div className="space-y-4">
           {filteredFAQs.length === 0 ? (
             <div className="text-center py-8">
-              <HelpCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">No questions found</h3>
-              <p className="text-gray-600">Try adjusting your search terms or category filter.</p>
+              <HelpCircle className="h-12 w-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">No questions found</h3>
+              <p className="text-gray-600 dark:text-gray-400">Try adjusting your search terms or category filter.</p>
             </div>
           ) : (
             filteredFAQs.map((faq) => {
               const isExpanded = expandedItems.includes(faq.id)
 
               return (
-                <div key={faq.id} className="border border-gray-200 rounded-lg hover:border-blue-300 transition-colors">
+                <div key={faq.id} className="border border-gray-200 dark:border-gray-700 rounded-lg hover:border-blue-300 dark:hover:border-blue-700 transition-colors">
                   <button
                     className="w-full p-6 text-left focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset"
                     onClick={() => toggleExpanded(faq.id)}
@@ -220,10 +220,10 @@ export function FAQ() {
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
                         <div className="flex items-center space-x-3 mb-2">
-                          <h3 className="text-lg font-semibold text-gray-900">{faq.question}</h3>
+                          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{faq.question}</h3>
                           {faq.popular && <Badge className="bg-orange-600 text-white text-xs">Popular</Badge>}
                         </div>
-                        <div className="flex items-center space-x-4 text-sm text-gray-500">
+                        <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
                           <span className="capitalize">{faq.category.replace("-", " ")}</span>
                           <div className="flex items-center space-x-1">
                             <Star className="h-4 w-4 text-yellow-500" />
@@ -233,9 +233,9 @@ export function FAQ() {
                       </div>
                       <div className="ml-4">
                         {isExpanded ? (
-                          <ChevronUp className="h-5 w-5 text-gray-500" />
+                          <ChevronUp className="h-5 w-5 text-gray-500 dark:text-gray-400" />
                         ) : (
-                          <ChevronDown className="h-5 w-5 text-gray-500" />
+                          <ChevronDown className="h-5 w-5 text-gray-500 dark:text-gray-400" />
                         )}
                       </div>
                     </div>
@@ -243,10 +243,10 @@ export function FAQ() {
 
                   {isExpanded && (
                     <div className="px-6 pb-6">
-                      <div className="pt-4 border-t border-gray-200">
-                        <p className="text-gray-700 leading-relaxed mb-4">{faq.answer}</p>
+                      <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">{faq.answer}</p>
                         <div className="flex items-center justify-between">
-                          <div className="text-sm text-gray-500">Was this helpful?</div>
+                          <div className="text-sm text-gray-500 dark:text-gray-400">Was this helpful?</div>
                           <div className="flex items-center space-x-2">
                             <Button
                               variant={userVotes[faq.id] === "yes" ? "default" : "outline"}
@@ -276,17 +276,17 @@ export function FAQ() {
         </div>
 
         {/* Contact Support */}
-        <div className="mt-8 p-6 bg-blue-50 border border-blue-200 rounded-lg">
+        <div className="mt-8 p-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
           <div className="text-center">
-            <HelpCircle className="h-8 w-8 text-blue-600 mx-auto mb-3" />
-            <h3 className="font-semibold text-blue-900 mb-2">Still need help?</h3>
-            <p className="text-blue-800 text-sm mb-4">
+            <HelpCircle className="h-8 w-8 text-blue-600 dark:text-blue-400 mx-auto mb-3" />
+            <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">Still need help?</h3>
+            <p className="text-blue-800 dark:text-blue-200 text-sm mb-4">
               Can't find the answer you're looking for? Our support team is here to help.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button className="bg-blue-600 hover:bg-blue-700">Contact Support</Button>
+                  <Button className="bg-blue-600 hover:bg-blue-700 dark:hover:bg-blue-500">Contact Support</Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>

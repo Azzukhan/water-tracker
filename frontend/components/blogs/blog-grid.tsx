@@ -136,11 +136,11 @@ export function BlogGrid({ posts = fallbackPosts }: BlogGridProps) {
       {/* Section Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Latest Articles</h2>
-          <p className="text-gray-600">{posts.length} educational articles available</p>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Latest Articles</h2>
+          <p className="text-gray-600 dark:text-gray-400">{posts.length} educational articles available</p>
         </div>
         <div className="flex items-center space-x-2">
-          <span className="text-sm text-gray-600">Sort by:</span>
+          <span className="text-sm text-gray-600 dark:text-gray-400">Sort by:</span>
           <Button variant="outline" size="sm">
             Most Recent
           </Button>
@@ -159,8 +159,10 @@ export function BlogGrid({ posts = fallbackPosts }: BlogGridProps) {
                 variant="ghost"
                 size="sm"
                 className={`absolute top-3 right-3 ${
-                  isBookmarked ? "text-yellow-600 bg-white/90" : "text-gray-600 bg-white/90"
-                } hover:bg-white`}
+                  isBookmarked
+                    ? "text-yellow-600 dark:text-yellow-400 bg-white/90 dark:bg-gray-800/90"
+                    : "text-gray-600 dark:text-gray-300 bg-white/90 dark:bg-gray-800/90"
+                } hover:bg-white dark:hover:bg-gray-700`}
                 onClick={(e) => {
                   e.stopPropagation()
                   toggleBookmark(key)
@@ -175,7 +177,7 @@ export function BlogGrid({ posts = fallbackPosts }: BlogGridProps) {
 
       {/* Pagination */}
       <div className="flex items-center justify-between">
-        <div className="text-sm text-gray-600">
+        <div className="text-sm text-gray-600 dark:text-gray-400">
           Showing {startIndex + 1}-{Math.min(startIndex + postsPerPage, posts.length)} of {posts.length}{" "}
           articles
         </div>

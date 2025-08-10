@@ -80,7 +80,7 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
         <Badge variant="secondary" className="mb-4">
           {blogPost.category}
         </Badge>
-        <h1 className="text-4xl font-bold mb-4">{blogPost.title}</h1>
+        <h1 className="text-4xl font-bold mb-4 text-gray-900 dark:text-gray-100">{blogPost.title}</h1>
 
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
@@ -144,13 +144,13 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
       </div>
 
       {/* Article Content */}
-      <div className="prose prose-lg max-w-none mb-8">
+      <div className="prose prose-lg max-w-none mb-8 dark:prose-invert">
         <div dangerouslySetInnerHTML={{ __html: blogPost.content }} />
       </div>
 
       {/* Tags */}
       <div className="mb-8">
-        <h3 className="text-lg font-semibold mb-3">Tags</h3>
+        <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-gray-100">Tags</h3>
         <div className="flex flex-wrap gap-2">
           {blogPost.tags.map((tag) => (
             <Badge key={tag} variant="outline">
@@ -165,7 +165,7 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
       {/* Author Bio */}
       <Card>
         <CardContent className="p-6">
-          <h3 className="text-lg font-semibold mb-4">About the Author</h3>
+          <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">About the Author</h3>
           <div className="flex gap-4">
             <Avatar className="h-16 w-16">
               <AvatarImage

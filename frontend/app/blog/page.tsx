@@ -41,14 +41,14 @@ export default function BlogPage() {
     <div className="container mx-auto px-4 py-8 space-y-10 mt-24">
       <BlogsHeader />
       <Card className="shadow-lg border-0">
-        <CardHeader className="bg-gradient-to-r from-green-600 to-blue-600 text-white">
+        <CardHeader className="bg-gradient-to-r from-green-600 to-blue-600 dark:from-green-700 dark:to-blue-700 text-white">
           <CardTitle className="text-xl font-bold">Browse by Category</CardTitle>
-          <p className="text-green-100">Explore topics that interest you most</p>
+          <p className="text-green-100 dark:text-green-200">Explore topics that interest you most</p>
         </CardHeader>
         <CardContent className="p-6">
           <div className="flex justify-end mb-4">
             <button
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 dark:hover:bg-blue-500 transition"
               onClick={async () => {
                 const card = document.querySelector('.shadow-lg.border-0');
                 if (card) {
@@ -77,8 +77,8 @@ export default function BlogPage() {
                   aria-pressed={isSelected}
                   className={`p-4 rounded-lg border-2 w-full text-left transition-all duration-200 ${
                     isSelected
-                      ? "border-blue-500 bg-blue-50 shadow-md"
-                      : "border-gray-200 hover:border-blue-300 hover:bg-gray-50"
+                      ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-md"
+                      : "border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-gray-50 dark:hover:bg-gray-800"
                   }`}
                 >
                   <div className="text-center space-y-3">
@@ -87,8 +87,8 @@ export default function BlogPage() {
                     </div>
 
                     <div>
-                      <h3 className="font-semibold text-gray-900 mb-1">{categoryItem.name}</h3>
-                      <p className="text-xs text-gray-600 mb-2">{categoryItem.description}</p>
+                      <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">{categoryItem.name}</h3>
+                      <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">{categoryItem.description}</p>
                       <Badge variant="outline" className="text-xs">
                         {categoryItem.count} articles
                       </Badge>
@@ -101,18 +101,18 @@ export default function BlogPage() {
 
           {/* Selected Category Info */}
           {category !== "All Articles" && (
-            <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
               <div className="flex items-center space-x-3">
-                <div className="text-blue-600">
+                <div className="text-blue-600 dark:text-blue-400">
                   {React.createElement(categories.find((c) => c.name === category)?.icon || Globe, {
                     className: "h-5 w-5",
                   })}
                 </div>
                 <div>
-                  <div className="font-medium text-blue-900">
+                  <div className="font-medium text-blue-900 dark:text-blue-100">
                     Viewing: {categories.find((c) => c.name === category)?.name}
                   </div>
-                  <div className="text-sm text-blue-700">
+                  <div className="text-sm text-blue-700 dark:text-blue-300">
                     {categories.find((c) => c.name === category)?.description}
                   </div>
                 </div>

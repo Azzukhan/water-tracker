@@ -58,14 +58,14 @@ export function ContactForm() {
 
   if (submitStatus === "success") {
     return (
-      <Card className="shadow-lg border-0 bg-green-50 border-green-200">
+      <Card className="shadow-lg border-0 bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
         <CardContent className="p-8 text-center">
-          <CheckCircle className="h-16 w-16 text-green-600 mx-auto mb-4" />
-          <h3 className="text-2xl font-bold text-green-900 mb-2">Message Sent Successfully!</h3>
-          <p className="text-green-800 mb-4">
+          <CheckCircle className="h-16 w-16 text-green-600 dark:text-green-400 mx-auto mb-4" />
+          <h3 className="text-2xl font-bold text-green-900 dark:text-green-100 mb-2">Message Sent Successfully!</h3>
+          <p className="text-green-800 dark:text-green-200 mb-4">
             Thank you for contacting us. We'll respond to your inquiry within 24 hours during business days.
           </p>
-          <div className="text-sm text-green-700">
+          <div className="text-sm text-green-700 dark:text-green-300">
             Reference ID: <span className="font-mono">WTR-{Date.now().toString().slice(-6)}</span>
           </div>
         </CardContent>
@@ -75,12 +75,12 @@ export function ContactForm() {
 
   return (
     <Card className="shadow-lg border-0 flex flex-col h-full min-h-[600px] lg:min-h-[720px]">
-      <CardHeader className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white">
+      <CardHeader className="bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-blue-700 dark:to-cyan-700 text-white">
         <CardTitle className="text-2xl font-bold flex items-center">
           <MessageCircle className="h-6 w-6 mr-3" />
           General Contact Form
         </CardTitle>
-        <p className="text-blue-100">Send us your questions, feedback, or general inquiries</p>
+        <p className="text-blue-100 dark:text-blue-200">Send us your questions, feedback, or general inquiries</p>
       </CardHeader>
       <CardContent className="p-8 flex flex-col flex-1">
         <form onSubmit={handleSubmit} className="flex flex-col flex-1">
@@ -89,7 +89,7 @@ export function ContactForm() {
             {/* Personal Information */}
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-900 mb-2">Full Name *</label>
+                <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">Full Name *</label>
                 <Input
                   placeholder="Enter your full name"
                   value={formData.name}
@@ -98,7 +98,7 @@ export function ContactForm() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-900 mb-2">Email Address *</label>
+                <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">Email Address *</label>
                 <Input
                   type="email"
                   placeholder="your.email@example.com"
@@ -110,7 +110,7 @@ export function ContactForm() {
             </div>
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-900 mb-2">Phone Number</label>
+                <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">Phone Number</label>
                 <Input
                   type="tel"
                   placeholder="07123 456789"
@@ -119,7 +119,7 @@ export function ContactForm() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-900 mb-2">Inquiry Category *</label>
+                <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">Inquiry Category *</label>
                 <Select
                   value={formData.category}
                   onValueChange={(value) => setFormData((prev) => ({ ...prev, category: value }))}
@@ -141,7 +141,7 @@ export function ContactForm() {
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">Subject *</label>
+              <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">Subject *</label>
               <Input
                 placeholder="Brief description of your inquiry"
                 value={formData.subject}
@@ -150,7 +150,7 @@ export function ContactForm() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">Message *</label>
+              <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">Message *</label>
               <Textarea
                 placeholder="Please provide detailed information about your inquiry..."
                 rows={6}
@@ -160,10 +160,10 @@ export function ContactForm() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">Attachments (Optional)</label>
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                <div className="text-sm text-gray-600 mb-2">Upload relevant documents, images, or files</div>
+              <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">Attachments (Optional)</label>
+              <div className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-6 text-center">
+                <Upload className="h-8 w-8 text-gray-400 dark:text-gray-500 mx-auto mb-2" />
+                <div className="text-sm text-gray-600 dark:text-gray-300 mb-2">Upload relevant documents, images, or files</div>
                 <input
                   type="file"
                   multiple
@@ -185,7 +185,7 @@ export function ContactForm() {
                   checked={formData.urgent}
                   onCheckedChange={(checked) => setFormData((prev) => ({ ...prev, urgent: checked as boolean }))}
                 />
-                <label htmlFor="urgent" className="text-sm text-gray-700">
+                <label htmlFor="urgent" className="text-sm text-gray-700 dark:text-gray-300">
                   This is an urgent inquiry requiring immediate attention
                 </label>
               </div>
@@ -195,14 +195,14 @@ export function ContactForm() {
                   checked={formData.newsletter}
                   onCheckedChange={(checked) => setFormData((prev) => ({ ...prev, newsletter: checked as boolean }))}
                 />
-                <label htmlFor="newsletter" className="text-sm text-gray-700">
+                <label htmlFor="newsletter" className="text-sm text-gray-700 dark:text-gray-300">
                   Subscribe to our newsletter for water updates and tips
                 </label>
               </div>
             </div>
           </div>
           {/* BUTTON AND NOTICE - Always at the bottom */}
-          <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 py-3 mt-6" disabled={isSubmitting}>
+          <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 dark:hover:bg-blue-500 py-3 mt-6" disabled={isSubmitting}>
             {isSubmitting ? (
               <>
                 <div className="animate-spin h-4 w-4 mr-2 border-2 border-white border-t-transparent rounded-full"></div>
@@ -215,8 +215,8 @@ export function ContactForm() {
               </>
             )}
           </Button>
-          <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg mt-4">
-            <div className="text-xs text-gray-600">
+          <div className="p-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg mt-4">
+            <div className="text-xs text-gray-600 dark:text-gray-400">
               <strong>Privacy Notice:</strong> Your personal information will be used solely to respond to your inquiry
               and will not be shared with third parties. We comply with UK GDPR regulations.
             </div>
