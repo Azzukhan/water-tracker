@@ -258,7 +258,7 @@ export function SouthernWaterCurrent({ reservoir }: { reservoir: string }) {
             <div className="mt-4 p-3 bg-orange-50 cb:bg-cbOrange/10 dark:bg-orange-900 cb:dark:bg-cbOrange/20 border border-orange-200 rounded-lg">
               <div className="flex items-center space-x-2">
                 <Minus className="h-4 w-4 text-orange-600 dark:text-orange-500 cb:text-cbOrange" />
-                <span className="text-sm font-medium text-orange-800">Below Normal Range</span>
+                <span className="text-sm font-medium text-orange-800 cb:text-cbOrange">Below Normal Range</span>
               </div>
             </div>
           )}

@@ -131,12 +131,12 @@ export function QuickInfoTiles() {
           <div className="grid md:grid-cols-2 gap-6">
             <div className="text-center">
               <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
-                <BookOpen className="h-12 w-12 text-green-600 dark:text-green-400 mx-auto mb-4" />
+                <BookOpen className="h-12 w-12 text-green-600 dark:text-green-400 cb:text-cbBluishGreen mx-auto mb-4" />
                 <h4 className="font-bold text-gray-900 dark:text-gray-100 mb-2">Learn More</h4>
                 <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
                   Explore our educational blogs and guides for water conservation tips and industry insights.
                 </p>
-                <Button className="bg-green-600 hover:bg-green-700" asChild>
+                <Button className="bg-green-600 hover:bg-green-700 cb:bg-cbBluishGreen cb:hover:bg-cbBluishGreen/80" asChild>
                   <Link href="/blog">
                     Visit Blog &amp; Awareness
                     <ArrowRight className="ml-2 h-4 w-4" />
@@ -147,12 +147,12 @@ export function QuickInfoTiles() {
 
             <div className="text-center">
               <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
-                <Phone className="h-12 w-12 text-blue-600 dark:text-blue-400 mx-auto mb-4" />
+                <Phone className="h-12 w-12 text-blue-600 dark:text-blue-400 cb:text-cbSkyBlue mx-auto mb-4" />
                 <h4 className="font-bold text-gray-900 dark:text-gray-100 mb-2">Need Help?</h4>
                 <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
                   Contact our support team for assistance with water issues, billing, or general inquiries.
                 </p>
-                <Button className="bg-blue-600 hover:bg-blue-700" asChild>
+                <Button className="bg-blue-600 hover:bg-blue-700 cb:bg-cbBlue cb:hover:bg-cbBlue/80" asChild>
                   <Link href="/contact">
                     Contact Support
                     <ArrowRight className="ml-2 h-4 w-4" />

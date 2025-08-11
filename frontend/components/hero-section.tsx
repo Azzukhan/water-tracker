@@ -94,15 +94,15 @@ export function HeroSection() {
                 <div className="flex items-center justify-between">
                   <h3 className="text-white font-semibold">Live Status</h3>
                   <div className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                    <span className="text-green-300 text-sm">Online</span>
+                    <div className="w-2 h-2 bg-green-400 cb:bg-cbBluishGreen rounded-full animate-pulse"></div>
+                    <span className="text-green-300 cb:text-cbBluishGreen text-sm">Online</span>
                   </div>
                 </div>
 
                 <div className="space-y-4">
                   <div className="flex items-center justify-between text-white">
                     <span className="flex items-center">
-                      <TrendingUp className="h-4 w-4 mr-2 text-green-400" />
+                      <TrendingUp className="h-4 w-4 mr-2 text-green-400 cb:text-cbBluishGreen" />
                       Scottish Water Level
                     </span>
                     <span className="font-mono text-lg font-semibold">
@@ -115,7 +115,7 @@ export function HeroSection() {
                       <Shield className="h-4 w-4 mr-2 text-blue-400" />
                       Water Quality
                     </span>
-                    <span className="text-green-400 font-semibold">Excellent</span>
+                    <span className="text-green-400 cb:text-cbBluishGreen font-semibold">Excellent</span>
                   </div>
 
                   <div className="bg-white/5 rounded-lg p-4">

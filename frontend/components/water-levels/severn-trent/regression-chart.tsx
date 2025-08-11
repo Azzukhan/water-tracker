@@ -23,7 +23,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { Info, TrendingUp, AlertCircle } from "lucide-react";
-import { useColorBlind } from "@/contexts/ColorBlindContext";
+import { useColorBlind } from "@/components/color-blind-provider";
 
 interface HistoricalEntry {
   date: string;

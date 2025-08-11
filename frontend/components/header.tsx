@@ -7,7 +7,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Menu, Droplets, Mail } from "lucide-react"
 import { EmergencyButton } from "@/components/emergency-button"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { ColorBlindToggle } from "@/components/color-blind-toggle"
+import { useColorBlind } from "@/components/color-blind-provider"
 
 const navItems = [
   { name: "Home", href: "/" },
@@ -17,6 +17,32 @@ const navItems = [
   { name: "Blogs", href: "/blog" },
   { name: "Contact", href: "/contact" },
 ]
+
+export function HeaderToggleRow({ className = "" }: { className?: string }) {
+  const { isCb, toggleCb } = useColorBlind();
+  return (
+    <div className={`flex items-center gap-3 ${className}`}>
+      <label className="inline-flex items-center gap-2 cursor-pointer">
+        <input
+          type="checkbox"
+          className="sr-only"
+          checked={isCb}
+          onChange={toggleCb}
+          aria-label="Toggle Color-Blind Mode"
+        />
+        <span
+          aria-hidden
+          className={`h-5 w-9 rounded-full transition ${
+            isCb ? "bg-cbBlue" : "bg-gray-300 dark:bg-gray-600"
+          }`}
+        />
+        <span className="text-sm text-gray-700 dark:text-gray-200 cb:text-cbBlue">
+          Color-Blind Mode
+        </span>
+      </label>
+    </div>
+  );
+}
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false)
@@ -28,7 +54,7 @@ export function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3 group">
             <div className="relative">
-              <Droplets className="h-8 w-8 text-blue-600 dark:text-blue-400 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors" />
+              <Droplets className="h-8 w-8 text-blue-600 dark:text-blue-400 cb:text-cbSkyBlue group-hover:text-blue-700 dark:group-hover:text-blue-300 cb:group-hover:text-cbBlue transition-colors" />
               <div className="absolute -top-1 -right-1 w-3 h-3 bg-cyan-400 dark:bg-cyan-500 rounded-full animate-pulse"></div>
             </div>
             <div className="hidden sm:block">
@@ -43,7 +69,7 @@ export function Header() {
               <Link
                 key={item.name}
                 href={item.href}
-                className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all duration-200"
+                className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 cb:hover:text-cbSkyBlue hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all duration-200"
               >
                 {item.name}
               </Link>
@@ -53,7 +79,7 @@ export function Header() {
           {/* Theme Toggle & Emergency Contact & Mobile Menu */}
           <div className="flex items-center space-x-3">
             <ThemeToggle className="hidden md:flex" />
-            <ColorBlindToggle className="hidden md:flex" />
+            <HeaderToggleRow className="hidden md:flex" />
 
             <div className="hidden md:flex">
               <EmergencyButton />
@@ -74,7 +100,7 @@ export function Header() {
               <SheetContent side="right" className="w-80">
                 <div className="flex flex-col space-y-6 mt-6">
                   <div className="flex items-center space-x-3">
-                    <Droplets className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                    <Droplets className="h-6 w-6 text-blue-600 dark:text-blue-400 cb:text-cbSkyBlue" />
                     <div>
                       <h2 className="font-semibold text-gray-900 dark:text-white">UK Water Tracker</h2>
                       <p className="text-sm text-gray-500 dark:text-gray-400">Live Water Intelligence</p>
@@ -87,7 +113,7 @@ export function Header() {
                         key={item.name}
                         href={item.href}
                         onClick={() => setIsOpen(false)}
-                        className="px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                        className="px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 cb:hover:text-cbSkyBlue hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
                       >
                         {item.name}
                       </Link>
@@ -96,7 +122,7 @@ export function Header() {
 
                     <div className="pt-4 border-t dark:border-gray-700">
                       <ThemeToggle className="mb-3" />
-                      <ColorBlindToggle className="mb-3" />
+                      <HeaderToggleRow className="mb-3" />
 
                     <EmergencyButton fullWidth className="mb-3" />
                     <Button variant="outline" className="w-full" asChild>

@@ -14,7 +14,7 @@ const dataSources = [
     dataTypes: ["Reservoir Levels", "Supply Data"],
     updateFrequency: "30 minutes",
     reliability: "99.5%",
-    color: "bg-blue-600",
+    color: "bg-blue-600 cb:bg-cbSkyBlue",
   },
   {
     name: "Severn Trent",
@@ -24,7 +24,7 @@ const dataSources = [
     dataTypes: ["Reservoir Levels"],
     updateFrequency: "weekly",
     reliability: "98%",
-    color: "bg-green-700",
+    color: "bg-green-700 cb:bg-cbBluishGreen",
   },
 ]
 
@@ -113,18 +113,18 @@ export function DataSources() {
             <div className="flex items-start space-x-3">
               <Shield className="h-6 w-6 text-green-600 dark:text-green-400 cb:text-cbBluishGreen mt-1" />
               <div>
-                <h3 className="font-semibold text-green-900 mb-2">Data Quality Assurance</h3>
+                <h3 className="font-semibold text-green-900 cb:text-cbBluishGreen mb-2">Data Quality Assurance</h3>
                 <div className="grid md:grid-cols-3 gap-4 text-sm">
                   <div>
-                    <div className="font-medium text-green-800">Real-time Validation</div>
+                    <div className="font-medium text-green-800 cb:text-cbBluishGreen">Real-time Validation</div>
                     <div className="text-green-700 dark:text-green-400 cb:text-cbBluishGreen">Automated quality checks on all incoming data</div>
                   </div>
                   <div>
-                    <div className="font-medium text-green-800">Cross-verification</div>
+                    <div className="font-medium text-green-800 cb:text-cbBluishGreen">Cross-verification</div>
                     <div className="text-green-700 dark:text-green-400 cb:text-cbBluishGreen">Multiple source validation for accuracy</div>
                   </div>
                   <div>
-                    <div className="font-medium text-green-800">Historical Consistency</div>
+                    <div className="font-medium text-green-800 cb:text-cbBluishGreen">Historical Consistency</div>
                     <div className="text-green-700 dark:text-green-400 cb:text-cbBluishGreen">Trend analysis and anomaly detection</div>
                   </div>
                 </div>

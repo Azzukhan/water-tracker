@@ -32,7 +32,7 @@ export function LiveHighlights() {
       <CardHeader className="bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-blue-700 dark:to-cyan-700 text-white h-24 flex flex-col justify-center rounded-t-lg">
         <div className="flex items-center justify-between">
           <CardTitle className="text-2xl font-bold flex items-center">
-            <div className="w-3 h-3 bg-green-400 rounded-full mr-3 animate-pulse"></div>
+            <div className="w-3 h-3 bg-green-400 cb:bg-cbBluishGreen rounded-full mr-3 animate-pulse"></div>
             Live Highlights
           </CardTitle>
           <Badge variant="secondary" className="bg-white/20 text-white border-white/30">
