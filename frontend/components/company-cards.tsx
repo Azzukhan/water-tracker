@@ -11,7 +11,7 @@ const companies = [
     email: "help@scottishwater.co.uk",
     website: "scottishwater.co.uk",
     region: "Scotland",
-    color: "bg-blue-600",
+    color: "bg-blue-600 cb:bg-cbSkyBlue",
   },
   {
     name: "SEPA",
@@ -21,7 +21,7 @@ const companies = [
     email: "enquiries@sepa.org.uk",
     website: "sepa.org.uk",
     region: "Scotland",
-    color: "bg-green-600",
+    color: "bg-green-600 cb:bg-cbBluishGreen",
   },
   {
     name: "Environment Agency",
@@ -31,7 +31,7 @@ const companies = [
     email: "enquiries@environment-agency.gov.uk",
     website: "gov.uk/environment-agency",
     region: "England",
-    color: "bg-emerald-600",
+    color: "bg-emerald-600 cb:bg-cbBluishGreen",
   },
   {
     name: "Natural Resources Wales",
@@ -41,7 +41,7 @@ const companies = [
     email: "enquiries@naturalresourceswales.gov.uk",
     website: "naturalresources.wales",
     region: "Wales",
-    color: "bg-red-600",
+    color: "bg-red-600 cb:bg-cbVermillion",
   },
 ]
 
@@ -85,11 +85,11 @@ export function CompanyCards() {
                   {/* Contact Info */}
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center justify-center text-gray-600 dark:text-gray-300">
-                      <Phone className="h-4 w-4 mr-2 text-blue-500" />
+                      <Phone className="h-4 w-4 mr-2 text-blue-500 cb:text-cbSkyBlue" />
                       <span className="font-mono">{company.phone}</span>
                     </div>
                     <div className="flex items-center justify-center text-gray-600 dark:text-gray-300">
-                      <Mail className="h-4 w-4 mr-2 text-green-500" />
+                      <Mail className="h-4 w-4 mr-2 text-green-500 cb:text-cbBluishGreen" />
                       <span className="truncate">{company.email}</span>
                     </div>
                   </div>

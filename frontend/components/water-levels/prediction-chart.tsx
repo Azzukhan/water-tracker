@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge"
 import { Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, ComposedChart } from "recharts"
 import { Brain, TrendingUp, AlertCircle, Info } from "lucide-react"
-import { useColorBlind } from "@/contexts/ColorBlindContext"
+import { useColorBlind } from "@/components/color-blind-provider"
 
 // Generate AI prediction data
 const generatePredictionData = (period: string) => {

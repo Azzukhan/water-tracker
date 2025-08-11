@@ -55,20 +55,20 @@ export function WeatherCard() {
             <div className="text-lg font-semibold text-gray-900">{currentWeather.humidity}%</div>
           </div>
 
-          <div className="bg-green-50 rounded-lg p-4 text-center">
-            <Wind className="h-6 w-6 text-green-500 mx-auto mb-2" />
+          <div className="bg-green-50 cb:bg-cbBluishGreen/10 rounded-lg p-4 text-center">
+            <Wind className="h-6 w-6 text-green-500 cb:text-cbBluishGreen mx-auto mb-2" />
             <div className="text-sm text-gray-600">Wind</div>
             <div className="text-lg font-semibold text-gray-900">{currentWeather.windSpeed} mph</div>
           </div>
 
-          <div className="bg-orange-50 rounded-lg p-4 text-center">
-            <Eye className="h-6 w-6 text-orange-500 mx-auto mb-2" />
+          <div className="bg-orange-50 cb:bg-cbOrange/10 rounded-lg p-4 text-center">
+            <Eye className="h-6 w-6 text-orange-500 cb:text-cbOrange mx-auto mb-2" />
             <div className="text-sm text-gray-600">Visibility</div>
             <div className="text-lg font-semibold text-gray-900">{currentWeather.visibility} km</div>
           </div>
 
-          <div className="bg-red-50 rounded-lg p-4 text-center">
-            <Thermometer className="h-6 w-6 text-red-500 mx-auto mb-2" />
+          <div className="bg-red-50 cb:bg-cbVermillion/10 rounded-lg p-4 text-center">
+            <Thermometer className="h-6 w-6 text-red-500 cb:text-cbVermillion mx-auto mb-2" />
             <div className="text-sm text-gray-600">UV Index</div>
             <div className="text-lg font-semibold text-gray-900">{currentWeather.uvIndex}</div>
           </div>
@@ -83,7 +83,7 @@ export function WeatherCard() {
               className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
             >
               <div className="flex items-center space-x-3">
-                <day.icon className="h-5 w-5 text-blue-500" />
+                <day.icon className="h-5 w-5 text-blue-500 cb:text-cbSkyBlue" />
                 <span className="font-medium text-gray-900">{day.day}</span>
               </div>
               <div className="flex items-center space-x-3">

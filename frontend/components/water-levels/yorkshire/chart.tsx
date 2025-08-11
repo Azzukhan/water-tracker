@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { API_BASE } from "@/lib/api";
 import { Line } from "react-chartjs-2";
 import "chart.js/auto";
-import { useColorBlind } from "@/contexts/ColorBlindContext";
+import { useColorBlind } from "@/components/color-blind-provider";
 
 interface Entry {
   report_date: string;
