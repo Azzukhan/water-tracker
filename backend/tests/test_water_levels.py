@@ -6,7 +6,6 @@ from water_levels.models import (
     ScottishWaterForecast,
     SevernTrentReservoirLevel,
     SevernTrentReservoirForecast,
-    YorkshireWaterReport,
     YorkshireWaterPrediction,
     YorkshireReservoirData,
     SouthernWaterReservoirLevel,
@@ -87,20 +86,6 @@ def test_severn_trent_forecast(api_client):
     resp = api_client.get("/api/water-levels/severn-trent/forecast/")
     assert resp.status_code == 200
 
-
-@pytest.mark.django_db
-def test_yorkshire_reports(api_client):
-    YorkshireWaterReport.objects.create(
-        report_month=datetime.date(2024, 1, 1),
-        rainfall_percent_lta=90.0,
-        reservoir_percent=80.0,
-        reservoir_weekly_delta=1.0,
-        river_condition="OK",
-        demand_megalitres_per_day=100.0,
-        source_pdf="https://example.com/report.pdf",
-    )
-    resp = api_client.get("/api/water-levels/yorkshire-water-reports/")
-    assert resp.status_code == 200
 
 
 @pytest.mark.django_db
@@ -237,14 +222,11 @@ def test_severn_trent_accuracy(api_client):
 
 @pytest.mark.django_db
 def test_yorkshire_accuracy(api_client):
-    YorkshireWaterReport.objects.create(
-        report_month=datetime.date(2024, 1, 8),
-        rainfall_percent_lta=90.0,
-        reservoir_percent=80.0,
-        reservoir_weekly_delta=1.0,
-        river_condition="OK",
-        demand_megalitres_per_day=100.0,
-        source_pdf="http://example.com",
+    YorkshireReservoirData.objects.create(
+        report_date=datetime.date(2024, 1, 8),
+        reservoir_level=80.0,
+        weekly_difference=1.0,
+        direction="OK",
     )
     YorkshireWaterPrediction.objects.create(
         date=datetime.date(2024, 1, 8),
@@ -264,7 +246,6 @@ def test_yorkshire_accuracy(api_client):
     )
     resp = api_client.get("/api/water-levels/yorkshire-prediction-accuracy/")
     assert resp.status_code == 200
-
 
 @pytest.mark.django_db
 def test_southernwater_accuracy(api_client):

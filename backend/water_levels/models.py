@@ -118,21 +118,6 @@ class SevernTrentReservoirForecast(models.Model):
         return f"{self.date} {self.model_type}: {self.predicted_percentage}%"
 
 
-class YorkshireWaterReport(models.Model):
-    report_month = models.DateField(unique=True)
-    rainfall_percent_lta = models.FloatField()
-    reservoir_percent = models.FloatField()
-    reservoir_weekly_delta = models.FloatField()
-    river_condition = models.CharField(max_length=100)
-    demand_megalitres_per_day = models.FloatField()
-    source_pdf = models.URLField()
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        ordering = ["-report_month"]
-
-    def __str__(self) -> str:  # pragma: no cover
-        return f"{self.report_month} - {self.reservoir_percent}%"
 
 
 class YorkshireWaterPrediction(models.Model):

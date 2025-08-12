@@ -4,7 +4,6 @@ from .models import (
     ScottishWaterRegionalLevel,
     SevernTrentReservoirLevel,
     SevernTrentReservoirForecast,
-    YorkshireWaterReport,
     YorkshireWaterPrediction,
     YorkshireReservoirData,
     SouthernWaterReservoirForecast,
@@ -59,7 +58,6 @@ class SevernTrentReservoirForecastAdmin(admin.ModelAdmin):
     )
 
 
-admin.site.register(YorkshireWaterReport)
 admin.site.register(YorkshireWaterPrediction)
 admin.site.register(YorkshireReservoirData)
 admin.site.register(SouthernWaterReservoirLevel)

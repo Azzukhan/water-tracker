@@ -416,23 +416,6 @@ def weekly_severn_trent_predictions():
     return "scheduled"
 
 
-@shared_task
-def generate_yorkshire_arima_forecast():
-    """Generate 4-month ARIMA forecast for Yorkshire Water."""
-    from ml.yorkshire_arima_model import generate_arima_forecast as _gen
-
-    _gen()
-    return "ARIMA forecast complete"
-
-
-@shared_task
-def generate_yorkshire_regression_forecast():
-    """Generate regression-based forecast for Yorkshire Water."""
-    from ml.yorkshire_regression_model import generate_regression_forecast as _gen
-
-    _gen()
-    return "REGRESSION forecast complete"
-
 
 @shared_task
 def fetch_yorkshire_water_reports():
@@ -449,17 +432,6 @@ def fetch_yorkshire_water_reports():
     return "done"
 
 
-@shared_task
-def run_yorkshire_lstm_prediction_task():
-    """Generate monthly Yorkshire predictions using both models."""
-    from ml.yorkshire_lstm_model import train_and_predict_yorkshire
-    from ml.yorkshire_arima_model import generate_arima_forecast as _gen_arima
-    from ml.yorkshire_regression_model import generate_regression_forecast as _gen_reg
-
-    train_and_predict_yorkshire()
-    _gen_arima()
-    _gen_reg()
-    return "predictions generated"
 
 
 @shared_task

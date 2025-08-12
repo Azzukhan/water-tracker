@@ -5,7 +5,6 @@ from .models import (
     ScottishWaterForecast,
     SevernTrentReservoirLevel,
     SevernTrentReservoirForecast,
-    YorkshireWaterReport,
     YorkshireWaterPrediction,
     YorkshireReservoirData,
     SouthernWaterReservoirLevel,
@@ -71,11 +70,6 @@ class ScottishWaterRegionalForecastSerializer(serializers.ModelSerializer):
         model = ScottishWaterRegionalForecast
         fields = "__all__"
 
-
-class YorkshireWaterReportSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = YorkshireWaterReport
-        fields = "__all__"
 
 
 class YorkshireWaterPredictionSerializer(serializers.ModelSerializer):
