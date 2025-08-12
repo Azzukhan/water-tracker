@@ -31,3 +31,17 @@ def test_external_blog(api_client, monkeypatch):
     resp = api_client.get('/api/blog/external/')
     assert resp.status_code == 200
     assert 'posts' in resp.json()
+
+@pytest.mark.django_db
+def test_subscribers(api_client):
+    resp = api_client.post('/api/blog/subscribers/', {'email':'a@example.com'})
+    assert resp.status_code == 201
+    resp = api_client.get('/api/blog/subscribers/')
+    assert resp.status_code == 200
+
+@pytest.mark.django_db
+def test_story_post_and_list(api_client):
+    resp = api_client.post('/api/blog/stories/', {'name':'John','email':'j@example.com','text':'Hello'})
+    assert resp.status_code == 201
+    resp = api_client.get('/api/blog/stories/')
+    assert resp.status_code == 200
