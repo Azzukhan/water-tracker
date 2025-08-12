@@ -37,3 +37,6 @@ def generate_scottish_water_regional_arima_forecast():
             )
 
     return "Scottish Water regional ARIMA forecasts complete"
+
+if __name__ == "__main__":
+    generate_scottish_water_regional_arima_forecast()

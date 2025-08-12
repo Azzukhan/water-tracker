@@ -37,3 +37,7 @@ def generate_scottish_water_regional_lstm_forecast():
             )
 
     return "Scottish Water regional LSTM forecasts complete"
+
+if __name__ == "__main__":
+    generate_scottish_water_regional_lstm_forecast()
+# This script generates LSTM forecasts for each Scottish Water region
