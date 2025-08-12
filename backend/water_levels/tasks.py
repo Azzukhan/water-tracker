@@ -212,25 +212,6 @@ def generate_scottish_regional_forecasts(): #todo: improve this
         last_date = qs.last().date
         for i in range(4):
             target = last_date + timedelta(weeks=i + 1)
-            ScottishWaterPredictionAccuracy.objects.update_or_create(
-                area=area,
-                date=target,
-                model_type="ARIMA",
-                defaults={"predicted_value": round(float(arima_preds.iloc[i]), 2)},
-            )
-            ScottishWaterPredictionAccuracy.objects.update_or_create(
-                area=area,
-                date=target,
-                model_type="LSTM",
-                defaults={"predicted_value": round(float(lstm_preds[i]), 2)},
-            )
-            ScottishWaterPredictionAccuracy.objects.update_or_create(
-                area=area,
-                date=target,
-                model_type="REGRESSION",
-                defaults={"predicted_value": round(float(reg_preds[i]), 2)},
-            )
-
             ScottishWaterRegionalForecast.objects.update_or_create(
                 area=area,
                 date=target,
@@ -328,24 +309,48 @@ def weekly_EA_stations_water_predictions():
 
 @shared_task
 def calculate_scottishwater_accuracy():
-    """Placeholder accuracy calculation for Scottish Water predictions."""
+    """Calculate accuracy for Scottish Water regional forecasts."""
     from .models import (
         ScottishWaterPredictionAccuracy,
         ScottishWaterRegionalLevel,
+        ScottishWaterRegionalForecast,
     )
 
-    # This assumes predictions exist in ScottishWaterPredictionAccuracy model
     today = datetime.today().date()
-    records = ScottishWaterPredictionAccuracy.objects.filter(date__lte=today)
-    for rec in records:
-        actual = ScottishWaterRegionalLevel.objects.filter(
-            area=rec.area, date=rec.date
-        ).first()
-        if actual:
-            error = abs((actual.current - rec.predicted_value) / actual.current) * 100
-            rec.actual_value = actual.current
-            rec.percentage_error = round(error, 2)
-            rec.save()
+    areas = (
+        ScottishWaterRegionalLevel.objects.values_list("area", flat=True).distinct()
+    )
+    for area in areas:
+        latest_actual = (
+            ScottishWaterRegionalLevel.objects
+            .filter(area=area, date__lte=today)
+            .order_by("-date")
+            .first()
+        )
+        if not latest_actual:
+            continue
+
+        forecasts = ScottishWaterRegionalForecast.objects.filter(
+            area=area, date=latest_actual.date
+        )
+        for f in forecasts:
+            try:
+                error = (
+                    abs((latest_actual.current - f.predicted_level) / latest_actual.current)
+                    * 100
+                )
+            except ZeroDivisionError:
+                error = 0.0
+            ScottishWaterPredictionAccuracy.objects.update_or_create(
+                area=area,
+                date=f.date,
+                model_type=f.model_type,
+                defaults={
+                    "predicted_value": f.predicted_level,
+                    "actual_value": latest_actual.current,
+                    "percentage_error": round(error, 2),
+                },
+            )
     return "scottish accuracy updated"
 
 
