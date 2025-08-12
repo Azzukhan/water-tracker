@@ -1,11 +1,9 @@
-import re
 from datetime import datetime
 import os
 import sys
 import warnings
 import django
 import requests
-from bs4 import BeautifulSoup
 import pandas as pd
 from statsmodels.tsa.arima.model import ARIMA
 from celery import shared_task
@@ -14,23 +12,28 @@ from .ml.general_lstm.lstm import train_lstm
 from sklearn.linear_model import LinearRegression
 import numpy as np
 
+from django.db.models import Avg
+
 # Yorkshire Water
 from .scraper.yorkshire.yorkshire_pdf_scraper import scrape_site
 from .ml.yorkshire.yorkshire_lstm_model import generate_yorkshire_lstm_forecast
 from .ml.yorkshire.yorkshire_arima_model import generate_yorkshire_arima_forecast
 from .ml.yorkshire.yorkshire_regression_model import generate_yorkshire_regression_forecast
+from .model_effiency.yorkshire.yorkshire_model_accuracy import calculate_yorkshire_accuracy
 
 # Severn Trent
 from .ml.severn_trent.severn_trent_arima_model_trained import generate_severn_trent_arima_forecast
 from .ml.severn_trent.severn_trent_lstm_model_trained import generate_severn_trent_lstm_forecast
 from .ml.severn_trent.severn_trent_regression_model_trained import generate_severn_trent_regression_forecast
 from .scraper.severn_trent.severn_trent_scrapper import extract_severn_trent_water_levels
+from .model_effiency.severn_trent.severn_trent_model_accuracy import calculate_severn_trent_accuracy
 
 # Southern Water
 from .scraper.southern_water.southern_water_scrapper import extract_southern_water_levels
 from .ml.southern_water.southern_water_arima_model_trained import generate_southern_arima_forecast
 from .ml.southern_water.southern_water_regression_model_trained import generate_southern_regression_forecast
 from .ml.southern_water.southern_water_lstm_model_trained import generate_southern_lstm_forecast
+from .model_effiency.southern_water.southern_water_model_accuracy import calculate_southernwater_accuracy
 
 if __package__ in (None, ""):
     # Allow running this module as a standalone script for quick testing
@@ -45,6 +48,8 @@ else:
     )
     from .utils import fetch_scottish_water_resource_levels
 
+from water_levels.models import EnglandwaterStation, EnglandwaterLevel
+from water_levels.utils import get_region
 
 @shared_task
 def update_scottish_resources():
@@ -278,6 +283,7 @@ def weekly_severn_trent_predictions():
     generate_severn_trent_arima_forecast.delay()
     generate_severn_trent_lstm_forecast.delay()
     generate_severn_trent_regression_forecast.delay()
+    calculate_severn_trent_accuracy.delay()
     return "scheduled"
 
 
@@ -297,6 +303,7 @@ def monthly_yorkshire_predictions():
     generate_yorkshire_arima_forecast.delay()
     generate_yorkshire_lstm_forecast.delay()
     generate_yorkshire_regression_forecast.delay()
+    calculate_yorkshire_accuracy.delay()
     return "scheduled"
 
 
@@ -310,17 +317,13 @@ def fetch_and_generate_southern_water_forecasts():
 
 
 @shared_task
-def Weekly_southernwater_predictions():
-    extract_southern_water_levels.delay()
+def weekly_southernwater_predictions():
+    """Generate Southern Water forecasts and calculate accuracy."""
     generate_southern_arima_forecast.delay()
     generate_southern_lstm_forecast.delay()
     generate_southern_regression_forecast.delay()
+    calculate_southernwater_accuracy.delay()
     return "scheduled"
-
-
-from .models import EnglandwaterStation, EnglandwaterLevel
-from .utils import get_region
-
 
 @shared_task
 def import_historical_englandwater_levels():
@@ -538,10 +541,6 @@ def train_englandwater_prediction_models():
             )
     return "predictions updated"
 
-
-from django.db.models import Avg
-from datetime import datetime, timedelta
-
 @shared_task
 def calculate_Englandwater_prediction_accuracy():
     today = datetime.today().date()
@@ -603,169 +602,6 @@ def calculate_Englandwater_prediction_accuracy():
                 )
 
     return "accuracy updated"
-
-
-
-@shared_task
-def calculate_severn_trent_accuracy():
-    """Calculate accuracy of Severn Trent reservoir forecasts."""
-    from .models import (
-        SevernTrentReservoirForecast,
-        SevernTrentReservoirLevel,
-        SevernTrentForecastAccuracy,
-    )
-
-    today = datetime.today().date()
-    forecasts = SevernTrentReservoirForecast.objects.filter(date__lte=today)
-    for f in forecasts:
-        actual = SevernTrentReservoirLevel.objects.filter(date=f.date).first()
-        if actual:
-            error = (
-                abs((actual.percentage - f.predicted_percentage) / actual.percentage)
-                * 100
-            )
-            SevernTrentForecastAccuracy.objects.update_or_create(
-                date=f.date,
-                model_type=f.model_type,
-                defaults={
-                    "predicted_percentage": f.predicted_percentage,
-                    "actual_percentage": actual.percentage,
-                    "percentage_error": round(error, 2),
-                },
-            )
-        else:
-            print(f"Actual data missing for {f.date} {f.model_type}")
-    return "severn accuracy updated"
-
-
-@shared_task
-def calculate_yorkshire_accuracy():
-    """Calculate accuracy of Yorkshire Water predictions."""
-    from .models import (
-        YorkshireWaterPrediction,
-        YorkshireReservoirData,
-        YorkshireWaterPredictionAccuracy,
-    )
-    from datetime import datetime
-
-    today = datetime.today().date()
-    preds = YorkshireWaterPrediction.objects.filter(date__lte=today)
-    for p in preds:
-        # Fixed field name
-        report = YorkshireReservoirData.objects.filter(report_date=p.date).first()
-        if report:
-            res_error = (
-                abs(
-                    (report.reservoir_level - p.predicted_reservoir_percent)
-                    / report.reservoir_level
-                )
-                * 100
-                if report.reservoir_level
-                else None
-            )
-            dem_error = None
-            if hasattr(report, "demand_megalitres_per_day") and report.demand_megalitres_per_day:
-                dem_error = (
-                    abs(
-                        (report.demand_megalitres_per_day - p.predicted_demand_mld)
-                        / report.demand_megalitres_per_day
-                    )
-                    * 100
-                )
-            YorkshireWaterPredictionAccuracy.objects.update_or_create(
-                date=p.date,
-                model_type=p.model_type,
-                defaults={
-                    "predicted_reservoir_percent": p.predicted_reservoir_percent,
-                    "actual_reservoir_percent": report.reservoir_level,
-                    "reservoir_error": (
-                        round(res_error, 2) if res_error is not None else None
-                    ),
-                    "predicted_demand_mld": p.predicted_demand_mld,
-                    "actual_demand_mld": getattr(report, "demand_megalitres_per_day", None),
-                    "demand_error": (
-                        round(dem_error, 2) if dem_error is not None else None
-                    ),
-                },
-            )
-        else:
-            print(f"No report for {p.date}")
-    return "yorkshire accuracy updated"
-
-
-
-from datetime import datetime, timedelta
-
-@shared_task
-def calculate_southernwater_accuracy():
-    """Calculate accuracy of Southern Water forecasts for the most recent actual value per reservoir and model."""
-    from .models import (
-        SouthernWaterReservoirForecast,
-        SouthernWaterReservoirLevel,
-        SouthernWaterForecastAccuracy,
-    )
-
-    reservoirs = (
-        SouthernWaterReservoirLevel.objects.values_list('reservoir', flat=True).distinct()
-    )
-
-    for reservoir in reservoirs:
-        # Get latest actual value
-        latest_actual = (
-            SouthernWaterReservoirLevel.objects
-            .filter(reservoir=reservoir)
-            .order_by('-date')
-            .first()
-        )
-        if not latest_actual:
-            print(f"No actual data for {reservoir}")
-            continue
-
-        # Find available models for this reservoir's forecasts
-        model_types = (
-            SouthernWaterReservoirForecast.objects
-            .filter(reservoir=reservoir)
-            .values_list('model_type', flat=True)
-            .distinct()
-        )
-
-        for model in model_types:
-            # Find forecast closest to the latest actual date
-            candidates = (
-                SouthernWaterReservoirForecast.objects
-                .filter(reservoir=reservoir, model_type=model)
-            )
-            if not candidates.exists():
-                print(f"No forecast for {reservoir} {model}")
-                continue
-
-            # Find the forecast with minimum abs(date difference)
-            closest = min(
-                candidates,
-                key=lambda f: abs((f.date - latest_actual.date).days)
-            )
-
-            actual_val = latest_actual.current_level
-            predicted_val = closest.predicted_level
-            try:
-                error = abs((actual_val - predicted_val) / actual_val) * 100
-            except ZeroDivisionError:
-                error = 0.0
-
-            SouthernWaterForecastAccuracy.objects.update_or_create(
-                reservoir=reservoir,
-                date=latest_actual.date,
-                model_type=model,
-                defaults={
-                    "predicted_level": predicted_val,
-                    "actual_level": actual_val,
-                    "percentage_error": round(error, 2),
-                },
-            )
-            print(f"Accuracy for {reservoir} {model} on {latest_actual.date}: pred={predicted_val} (forecast for {closest.date}), actual={actual_val}, error={round(error,2)}%")
-
-    return "southern accuracy updated"
-
 
 
 @shared_task

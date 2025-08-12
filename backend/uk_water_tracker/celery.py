@@ -27,7 +27,7 @@ app.conf.beat_schedule = {
     },
     # Scrape Severn Trent reservoir data every Wednesday morning
     'weekly-severn-trent-scrape': {
-        'task': 'water_levels.tasks.fetch_severn_trent_reservoir_data',
+        'task': 'water_levels.tasks.fetch_and_generate_severn_trent_forecasts',
         'schedule': crontab(day_of_week='wed', hour=8, minute=0),
     },
     # Generate new forecasts after scraping the latest data
@@ -35,14 +35,24 @@ app.conf.beat_schedule = {
         'task': 'water_levels.tasks.weekly_severn_trent_predictions',
         'schedule': crontab(day_of_week='wed', hour=9, minute=0),
     },
-    'monthly-yorkshire-scrape-and-predict': {
-        'task': 'water_levels.tasks.fetch_yorkshire_water_reports',
+    'monthly-yorkshire-scrape': {
+        'task': 'water_levels.tasks.fetch_and_generate_yorkshire_water_forecasts',
         'schedule': crontab(day_of_month=1, hour=6, minute=0),
     },
-    'monthly-southernwater-update': {
-        'task': 'water_levels.tasks.monthly_southernwater_predictions',
-        'schedule': crontab(day_of_month=1, hour=10, minute=0),
+    'monthly-yorkshire-predict': {
+        'task': 'water_levels.tasks.monthly_yorkshire_predictions',
+        'schedule': crontab(day_of_month=1, hour=8, minute=0),
     },
+    
+    'weekly-southernwater-scrape': {
+        'task': 'water_levels.tasks.fetch_and_generate_southernwater_forecasts',
+        'schedule': crontab(day_of_week='wed', hour=9, minute=0),
+    },
+    'weekly-southernwater-predict': {
+        'task': 'water_levels.tasks.weekly_southernwater_predictions',
+        'schedule': crontab(day_of_week='wed', hour=10, minute=0),
+    },
+    
     'fetch-groundwater-levels-every-15-mins': {
         'task': 'water_levels.tasks.fetch_current_groundwater_levels',
         'schedule': crontab(minute='*/15'),
@@ -54,18 +64,6 @@ app.conf.beat_schedule = {
     'weekly-groundwater-prediction-accuracy': {
         'task': 'water_levels.tasks.calculate_prediction_accuracy',
         'schedule': crontab(day_of_week=0, hour=6, minute=0),
-    },
-    'weekly-severn-trent-accuracy': {
-        'task': 'water_levels.tasks.calculate_severn_trent_accuracy',
-        'schedule': crontab(day_of_week='wed', hour=11, minute=0),
-    },
-    'monthly-yorkshire-accuracy': {
-        'task': 'water_levels.tasks.calculate_yorkshire_accuracy',
-        'schedule': crontab(day_of_month=1, hour=12, minute=0),
-    },
-    'monthly-southernwater-accuracy': {
-        'task': 'water_levels.tasks.calculate_southernwater_accuracy',
-        'schedule': crontab(day_of_month=1, hour=13, minute=0),
     },
     'weekly-scottishwater-accuracy': {
         'task': 'water_levels.tasks.calculate_scottishwater_accuracy',
