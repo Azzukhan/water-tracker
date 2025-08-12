@@ -65,8 +65,8 @@ app.conf.beat_schedule = {
         'task': 'water_levels.tasks.calculate_prediction_accuracy',
         'schedule': crontab(day_of_week=0, hour=6, minute=0),
     },
-    'weekly-scottishwater-accuracy': {
-        'task': 'water_levels.tasks.calculate_scottishwater_accuracy',
+    'weekly-scottishwater-regional-accuracy': {
+        'task': 'water_levels.tasks.calculate_scottish_regional_accuracy',
         'schedule': crontab(day_of_week='wed', hour=7, minute=0),
     },
 }
