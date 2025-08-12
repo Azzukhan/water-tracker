@@ -99,7 +99,7 @@ export default function WaterLevelsPage() {
           variant={agency === "EA" ? "default" : "outline"}
           onClick={() => setAgency("EA")}
         >
-          EA
+          EA Stations
         </Button>
       </div>
 

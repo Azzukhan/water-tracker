@@ -170,7 +170,7 @@ export function EALSTMChart({ region }: { region: string }) {
     <Card className="shadow-lg border-0">
       <CardHeader>
         <div className="flex items-center justify-between space-y-4 sm:space-y-0">
-          <CardTitle className="text-xl font-bold">EA Forecast - LSTM</CardTitle>
+          <CardTitle className="text-xl font-bold">EA Stations Forecast - LSTM</CardTitle>
           <div className="flex items-center space-x-3 sm:ml-4">
             <Select value={period} onValueChange={setPeriod}>
               <SelectTrigger className="w-32">

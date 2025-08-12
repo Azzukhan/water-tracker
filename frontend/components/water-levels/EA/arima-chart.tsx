@@ -40,7 +40,7 @@ interface ChartPoint {
   displayDate: string;
 }
 
-const PERIOD_MONTHS = {
+const PERIOD_MONTHS: Record<"9m" | "12m" | "15m" | "18m", { history: number; forecast: number }> = {
   "9m": { history: 6, forecast: 3 },
   "12m": { history: 9, forecast: 3 },
   "15m": { history: 12, forecast: 3 },
@@ -99,7 +99,7 @@ const filterByPeriod = (
 
 export function EAARIMAChart({ region }: { region: string }) {
   const [allData, setAllData] = useState<ChartPoint[]>([]);
-  const [period, setPeriod] = useState("9m");
+  const [period, setPeriod] = useState<"9m" | "12m" | "15m" | "18m">("9m");
   const [avgPrediction, setAvgPrediction] = useState(0);
   const [trend, setTrend] = useState(0);
   const [showUncertainty, setShowUncertainty] = useState(true);
@@ -177,7 +177,7 @@ export function EAARIMAChart({ region }: { region: string }) {
       <CardHeader>
         <div className="flex items-center justify-between space-y-4 sm:space-y-0">
           <CardTitle className="text-xl font-bold">
-            EA Forecast - ARIMA
+            EA Stations Forecast - ARIMA
           </CardTitle>
           <div className="flex items-center space-x-3 sm:ml-4">
             <Select value={period} onValueChange={setPeriod}>

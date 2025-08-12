@@ -3,10 +3,11 @@ import time
 from datetime import datetime
 from typing import Tuple
 
+import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 
-from .models import ScottishWaterAverageLevel, ScottishWaterRegionalLevel
+from .models import EAwaterLevel, EAwaterStation, ScottishWaterAverageLevel, ScottishWaterRegionalLevel
 
 LAST_UPDATE_REGEX = re.compile(r"(\d{1,2} \w+ \d{4})")
 
@@ -174,3 +175,19 @@ def get_region(lat, lon):
     else:
         return "east"
 
+
+
+
+def get_region_timeseries(region):
+    station_ids = EAwaterStation.objects.filter(region=region).values_list(
+        "id", flat=True
+    )
+    levels = EAwaterLevel.objects.filter(station_id__in=station_ids).values(
+        "date", "value"
+    )
+    df = pd.DataFrame(list(levels))
+    if df.empty:
+        return pd.Series(dtype=float)
+    df["date"] = pd.to_datetime(df["date"])
+    df = df.groupby("date")["value"].mean().asfreq("W")
+    return df.sort_index()

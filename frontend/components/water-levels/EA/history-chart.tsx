@@ -111,7 +111,7 @@ export function EAHistoryChart({ region }: { region: string }) {
       <CardHeader>
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
           <div>
-            <CardTitle className="text-xl font-bold">Historical Groundwater Levels</CardTitle>
+            <CardTitle className="text-xl font-bold">Historical EA Stations Water Levels</CardTitle>
             <p className="text-gray-600 dark:text-gray-300">Interactive chart with zoom and export</p>
           </div>
           <div className="flex items-center space-x-3">

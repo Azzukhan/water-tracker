@@ -1,18 +1,9 @@
 from datetime import datetime
 import os
 import sys
-import warnings
 import django
-import requests
-import pandas as pd
-from statsmodels.tsa.arima.model import ARIMA
 from celery import shared_task
-from datetime import timedelta
 from .ml.general_lstm.lstm import train_lstm
-from sklearn.linear_model import LinearRegression
-import numpy as np
-
-from django.db.models import Avg
 
 # Yorkshire Water
 from .scraper.yorkshire.yorkshire_pdf_scraper import scrape_site
@@ -35,6 +26,14 @@ from .ml.southern_water.southern_water_regression_model_trained import generate_
 from .ml.southern_water.southern_water_lstm_model_trained import generate_southern_lstm_forecast
 from .model_effiency.southern_water.southern_water_model_accuracy import calculate_southernwater_accuracy
 
+# EA Water
+from .scraper.environment_agency.EA_Stations_scraper import extract_EA_stations_water_levels
+from .ml.environment_agency.EA_stations_arima_trained import generate_EA_station_arima_forecast
+from .ml.environment_agency.EA_stations_lstm_trained import generate_EA_station_lstm_forecast
+from .ml.environment_agency.EA_stations_regression_trained import generate_EA_station_regression_forecast
+from .model_effiency.environment_agency.EA_stations_model_accuracy import calculate_EA_stations_water_prediction_accuracy
+# Scottish Water
+from .models import EAwaterStation, EAwaterLevel, EAwaterPrediction, EAwaterPredictionAccuracy
 if __package__ in (None, ""):
     # Allow running this module as a standalone script for quick testing
     sys.path.append(os.path.dirname(os.path.dirname(__file__)))
@@ -325,283 +324,20 @@ def weekly_southernwater_predictions():
     calculate_southernwater_accuracy.delay()
     return "scheduled"
 
-@shared_task
-def import_historical_EAwater_levels():
-    stations_url = "https://environment.data.gov.uk/hydrology/id/stations"
-    params = {"observedProperty": "groundwaterLevel"}
-    response = requests.get(
-        stations_url, params=params, headers={"Accept": "application/json"}
-    )
-    response.raise_for_status()
-    data = response.json()
+def fetch_and_generate_EA_stations_water_forecasts():
+    extract_EA_stations_water_levels()
+    generate_EA_station_arima_forecast()
+    generate_EA_station_lstm_forecast()
+    generate_EA_station_regression_forecast()
+    calculate_EA_stations_water_prediction_accuracy()
+    return "done"
 
-    for item in data.get("items", []):
-        station_id = item["notation"]
-        name = item.get("label", station_id)
-        lat = float(item.get("lat", 0))
-        lon = float(item.get("long", 0))
-        region = get_region(lat, lon)
-
-        station, _ = EAwaterStation.objects.get_or_create(
-            station_id=station_id,
-            defaults={
-                "name": name,
-                "region": region,
-                "latitude": lat,
-                "longitude": lon,
-            },
-        )
-
-        measures_url = f"https://environment.data.gov.uk/hydrology/id/measures?station={station_id}"
-        measures_response = requests.get(
-            measures_url, headers={"Accept": "application/json"}, timeout=10
-        )
-        measures = measures_response.json().get("items", [])
-
-        for measure in measures:
-            measure_id = measure["@id"]
-            readings_url = "https://environment.data.gov.uk/hydrology/data/readings"
-            readings_params = {"measure": measure_id, "_limit": 10000}
-            readings_response = requests.get(
-                readings_url,
-                params=readings_params,
-                headers={"Accept": "application/json"},
-                timeout=10,
-            )
-            readings = readings_response.json().get("items", [])
-
-            for r in readings:
-                value = r.get("value")
-                if value is None or r.get("quality") == "Missing":
-                    continue
-                dt_str = r.get("dateTime") or r.get("date")
-                dt = datetime.strptime(
-                    dt_str, "%Y-%m-%dT%H:%M:%S" if "T" in dt_str else "%Y-%m-%d"
-                ).date()
-                EAwaterLevel.objects.update_or_create(
-                    station=station,
-                    date=dt,
-                    defaults={"value": value, "quality": r.get("quality", "Unknown")},
-                )
-
-
-@shared_task
-def fetch_current_EAwater_levels():
-    stations_url = "https://environment.data.gov.uk/hydrology/id/stations"
-    params = {"observedProperty": "groundwaterLevel"}
-    response = requests.get(
-        stations_url, params=params, headers={"Accept": "application/json"}
-    )
-    response.raise_for_status()
-    data = response.json()
-
-    for item in data.get("items", []):
-        station_id = item["notation"]
-        name = item.get("label", station_id)
-        lat = float(item.get("lat", 0))
-        lon = float(item.get("long", 0))
-        region = get_region(lat, lon)
-
-        station, _ = EAwaterStation.objects.get_or_create(
-            station_id=station_id,
-            defaults={
-                "name": name,
-                "region": region,
-                "latitude": lat,
-                "longitude": lon,
-            },
-        )
-
-        measure_id = f"http://environment.data.gov.uk/hydrology/id/measures/{station_id}-gw-dipped-i-mAOD-qualified"
-        readings_url = "https://environment.data.gov.uk/hydrology/data/readings"
-        params = {"measure": measure_id, "_limit": 10000}
-        readings_response = requests.get(
-            readings_url,
-            params=params,
-            headers={"Accept": "application/json"},
-            timeout=10,
-        )
-        readings = readings_response.json().get("items", [])
-
-        if readings:
-            latest = max(
-                readings,
-                key=lambda r: datetime.strptime(
-                    r.get("dateTime") or r.get("date"),
-                    (
-                        "%Y-%m-%dT%H:%M:%S"
-                        if "T" in (r.get("dateTime") or "")
-                        else "%Y-%m-%d"
-                    ),
-                ),
-            )
-            value = latest.get("value")
-            if value is not None and latest.get("quality") != "Missing":
-                dt_str = latest.get("dateTime") or latest.get("date")
-                dt = datetime.strptime(
-                    dt_str, "%Y-%m-%dT%H:%M:%S" if "T" in dt_str else "%Y-%m-%d"
-                ).date()
-                EAwaterLevel.objects.update_or_create(
-                    station=station,
-                    date=dt,
-                    defaults={
-                        "value": value,
-                        "quality": latest.get("quality", "Unknown"),
-                    },
-                )
-
-
-def get_region_timeseries(region):
-    station_ids = EAwaterStation.objects.filter(region=region).values_list(
-        "id", flat=True
-    )
-    levels = EAwaterLevel.objects.filter(station_id__in=station_ids).values(
-        "date", "value"
-    )
-    df = pd.DataFrame(list(levels))
-    if df.empty:
-        return pd.Series(dtype=float)
-    df["date"] = pd.to_datetime(df["date"])
-    df = df.groupby("date")["value"].mean().asfreq("W")
-    return df.sort_index()
-
-
-def predict_arima(df):
-    """Return 16-week ARIMA forecast, suppressing convergence warnings."""
-    with warnings.catch_warnings():
-        warnings.filterwarnings("ignore", category=UserWarning)
-        model = ARIMA(df, order=(2, 1, 2))
-        fitted = model.fit()
-    return fitted.forecast(steps=16)
-
-
-def predict_regression(df):
-    series = df.dropna().reset_index()
-    series["t"] = np.arange(len(series))
-    period = 52
-    X = np.column_stack(
-        [
-            np.ones(len(series)),
-            series["t"],
-            np.sin(2 * np.pi * series["t"] / period),
-            np.cos(2 * np.pi * series["t"] / period),
-        ]
-    )
-    model = LinearRegression().fit(X, series["value"])
-    preds = []
-    last_t = series["t"].iloc[-1]
-    for i in range(1, 17):
-        t = last_t + i
-        xt = np.array(
-            [[1, t, np.sin(2 * np.pi * t / period), np.cos(2 * np.pi * t / period)]]
-        )
-        preds.append(model.predict(xt)[0])
-    return preds
-
-
-def predict_lstm(df):
-    lstm_df = df.dropna().reset_index().rename(columns={"value": "percentage"})
-    return train_lstm(lstm_df, steps=16)
-
-
-@shared_task
-def train_EAwater_prediction_models():
-    from .models import EAwaterPrediction
-
-    for region in ["north", "south", "east", "west"]:
-        series = get_region_timeseries(region)
-        if len(series.dropna()) < 32:
-            continue
-
-        last_date = series.index[-1]
-
-        arima_preds = predict_arima(series)
-        lstm_preds = predict_lstm(series)
-        reg_preds = predict_regression(series)
-
-        for i in range(16):
-            pred_date = last_date + timedelta(weeks=i + 1)
-            EAwaterPrediction.objects.update_or_create(
-                region=region,
-                model_type="ARIMA",
-                date=pred_date,
-                defaults={"predicted_value": float(arima_preds.iloc[i])},
-            )
-            EAwaterPrediction.objects.update_or_create(
-                region=region,
-                model_type="LSTM",
-                date=pred_date,
-                defaults={"predicted_value": float(lstm_preds[i])},
-            )
-            EAwaterPrediction.objects.update_or_create(
-                region=region,
-                model_type="REGRESSION",
-                date=pred_date,
-                defaults={"predicted_value": float(reg_preds[i])},
-            )
-    return "predictions updated"
-
-@shared_task
-def calculate_EAwater_prediction_accuracy():
-    today = datetime.today().date()
-    model_types = ['ARIMA', 'LSTM', 'REGRESSION']
-
-    regions = EAwaterLevel.objects.values_list('station__region', flat=True).distinct()
-    for region in regions:
-        # 1. Find latest actual date and value
-        last_actual = (
-            EAwaterLevel.objects
-            .filter(station__region=region, date__lte=today)
-            .values('date')
-            .annotate(avg_actual=Avg('value'))
-            .order_by('-date')
-            .first()
-        )
-        if not last_actual:
-            continue
-
-        last_actual_date = last_actual['date']
-        last_actual_value = last_actual['avg_actual']
-
-        # 2. For each model, look for closest forecast within ±7 days
-        for model_type in model_types:
-            forecasts = (
-                EAwaterPrediction.objects
-                .filter(
-                    region=region,
-                    model_type=model_type,
-                    date__gte=last_actual_date - timedelta(days=7),
-                    date__lte=last_actual_date + timedelta(days=7),
-                )
-                .values('date', 'predicted_value')
-            )
-
-            if not forecasts:
-                continue
-
-            # 3. Find forecast with the smallest date difference to actual
-            closest = min(
-                forecasts,
-                key=lambda f: abs((f['date'] - last_actual_date).days)
-            )
-            forecast_date = closest['date']
-            predicted_value = closest['predicted_value']
-
-            # 4. Calculate and store accuracy
-            if last_actual_value is not None and predicted_value is not None:
-                error = abs((last_actual_value - predicted_value) / last_actual_value) * 100
-                EAwaterPredictionAccuracy.objects.update_or_create(
-                    region=region,
-                    date=forecast_date,
-                    model_type=model_type,
-                    defaults={
-                        "predicted_value": predicted_value,
-                        "actual_value": last_actual_value,
-                        "percentage_error": round(error, 2),
-                    },
-                )
-
-    return "accuracy updated"
+def weekly_EA_stations_water_predictions():
+    generate_EA_station_arima_forecast.delay()
+    generate_EA_station_lstm_forecast.delay()
+    generate_EA_station_regression_forecast.delay()
+    calculate_EA_stations_water_prediction_accuracy.delay()
+    return "done"    
 
 
 @shared_task

@@ -87,7 +87,7 @@ export function EACurrent({ region }: Props) {
         <CardHeader className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white">
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-2xl font-bold">Regional Groundwater Level</CardTitle>
+              <CardTitle className="text-2xl font-bold">EA Stations Water Level</CardTitle>
               <p className="text-blue-100 capitalize">{region}</p>
             </div>
             <Badge variant="secondary" className="bg-white/20 text-white border-white/30">
