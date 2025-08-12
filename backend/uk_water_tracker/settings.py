@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     "blog",
     "users",
     "newsletter",
-    "stories",
     "support",
 ]
 

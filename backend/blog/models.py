@@ -64,3 +64,17 @@ class Comment(models.Model):
     
     def __str__(self):
         return f"Comment by {self.author.username} on {self.post.title}"
+
+
+class CommunityStory(models.Model):
+    """A user submitted water conservation story."""
+    name = models.CharField(max_length=255)
+    email = models.EmailField()
+    text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.name}: {self.text[:30]}"

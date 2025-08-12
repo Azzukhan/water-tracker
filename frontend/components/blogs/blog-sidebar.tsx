@@ -59,7 +59,7 @@ export function BlogSidebar({
   const handleStorySubmit = async () => {
     try {
       // Backend router nests story endpoints under /api/stories/stories/
-      const res = await fetch(`${API_BASE}/api/stories/stories/`, {
+      const res = await fetch(`${API_BASE}/api/blog/stories/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(story),

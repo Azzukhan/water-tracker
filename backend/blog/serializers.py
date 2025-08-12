@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import BlogCategory, BlogPost, Comment
+from .models import BlogCategory, BlogPost, Comment, CommunityStory
 from users.serializers import UserSerializer
 
 class BlogCategorySerializer(serializers.ModelSerializer):
@@ -45,3 +45,9 @@ class BlogPostDetailSerializer(BlogPostSerializer):
         # Only get top-level comments (no parent)
         comments = obj.comments.filter(parent=None)
         return CommentSerializer(comments, many=True).data
+
+
+class CommunityStorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CommunityStory
+        fields = ['id', 'name', 'email', 'text', 'created_at']

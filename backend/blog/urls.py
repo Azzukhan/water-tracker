@@ -6,12 +6,14 @@ from .views import (
     CommentViewSet,
     ExternalBlogAPIView,
     LocalBlogAPIView,
+    CommunityStoryViewSet,
 )
 
 router = DefaultRouter()
 router.register(r'categories', BlogCategoryViewSet)
 router.register(r'posts', BlogPostViewSet)
 router.register(r'comments', CommentViewSet)
+router.register(r'stories', CommunityStoryViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),

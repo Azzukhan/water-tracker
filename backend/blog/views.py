@@ -6,8 +6,8 @@ import feedparser
 import json
 import os
 from django_filters.rest_framework import DjangoFilterBackend
-from .models import BlogCategory, BlogPost, Comment
-from .serializers import BlogCategorySerializer, BlogPostSerializer, BlogPostDetailSerializer, CommentSerializer
+from .models import BlogCategory, BlogPost, Comment, CommunityStory
+from .serializers import BlogCategorySerializer, BlogPostSerializer, BlogPostDetailSerializer, CommentSerializer, CommunityStorySerializer
 
 class BlogCategoryViewSet(viewsets.ModelViewSet):
     queryset = BlogCategory.objects.all()
@@ -132,3 +132,11 @@ class LocalBlogAPIView(APIView):
 
         posts.sort(key=lambda x: x.get("published", ""), reverse=True)
         return Response({"posts": posts})
+
+
+
+class CommunityStoryViewSet(viewsets.ModelViewSet):
+    queryset = CommunityStory.objects.all()
+    serializer_class = CommunityStorySerializer
+    permission_classes = [permissions.AllowAny]
+    http_method_names = ['get', 'post']
