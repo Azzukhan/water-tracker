@@ -1,5 +1,4 @@
 from celery import shared_task
-from .ml.general_lstm.lstm import train_lstm
 
 # Yorkshire Water
 from .scraper.yorkshire.yorkshire_pdf_scraper import scrape_site
@@ -66,81 +65,6 @@ def weekly_scottish_water_regional_predictions():
     generate_scottish_water_regional_regression_forecast.delay()
     calculate_scottish_water_regional_accuracy.delay()
     return "scheduled"
-
-@shared_task
-def generate_scottish_regional_forecasts(): #todo: improve this
-    """Generate forecasts for each Scottish Water region."""
-    from .models import (
-        ScottishWaterRegionalLevel,
-        ScottishWaterRegionalForecast,
-    )
-    import pandas as pd
-    import numpy as np
-    import statsmodels.api as sm
-    from statsmodels.tsa.arima.model import ARIMA
-    from datetime import timedelta
-
-    areas = ScottishWaterRegionalLevel.objects.values_list("area", flat=True).distinct()
-
-    for area in areas:
-        qs = ScottishWaterRegionalLevel.objects.filter(area=area).order_by("date")
-        if qs.count() < 12:
-            continue
-
-        df = pd.DataFrame(qs.values("date", "current"))
-        df["date"] = pd.to_datetime(df["date"])
-        # Align regional data to Mondays to avoid dropping every entry
-        df = df.set_index("date").asfreq("W-MON")
-        df["current"] = df["current"].interpolate()
-
-        arima_model = ARIMA(df["current"], order=(2, 1, 2)).fit()
-        arima_preds = arima_model.forecast(steps=4)
-
-        lstm_df = df.reset_index().rename(columns={"current": "percentage"})
-        lstm_preds = train_lstm(lstm_df, steps=4)
-
-        df["t"] = np.arange(len(df))
-        period = 52
-        df["sin_t"] = np.sin(2 * np.pi * df["t"] / period)
-        df["cos_t"] = np.cos(2 * np.pi * df["t"] / period)
-        X = sm.add_constant(df[["t", "sin_t", "cos_t"]])
-        reg_model = sm.OLS(df["current"], X).fit()
-
-        last_t = df["t"].iloc[-1]
-        reg_preds = []
-        for i in range(1, 5):
-            t = last_t + i
-            sin_t = np.sin(2 * np.pi * t / period)
-            cos_t = np.cos(2 * np.pi * t / period)
-            X_new = sm.add_constant(
-                pd.DataFrame({"t": [t], "sin_t": [sin_t], "cos_t": [cos_t]}),
-                has_constant="add",
-            )
-            reg_preds.append(reg_model.predict(X_new)[0])
-
-        last_date = qs.last().date
-        for i in range(4):
-            target = last_date + timedelta(weeks=i + 1)
-            ScottishWaterRegionalForecast.objects.update_or_create(
-                area=area,
-                date=target,
-                model_type="ARIMA",
-                defaults={"predicted_level": round(float(arima_preds.iloc[i]), 2)},
-            )
-            ScottishWaterRegionalForecast.objects.update_or_create(
-                area=area,
-                date=target,
-                model_type="LSTM",
-                defaults={"predicted_level": round(float(lstm_preds[i]), 2)},
-            )
-            ScottishWaterRegionalForecast.objects.update_or_create(
-                area=area,
-                date=target,
-                model_type="REGRESSION",
-                defaults={"predicted_level": round(float(reg_preds[i]), 2)},
-            )
-
-    return "regional forecasts complete"
 
 
 @shared_task
