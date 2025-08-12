@@ -34,22 +34,7 @@ from .ml.environment_agency.EA_stations_regression_trained import generate_EA_st
 from .model_effiency.environment_agency.EA_stations_model_accuracy import calculate_EA_stations_water_prediction_accuracy
 
 # Scottish Water
-from .models import EAwaterStation, EAwaterLevel, EAwaterPrediction, EAwaterPredictionAccuracy
-if __package__ in (None, ""):
-    # Allow running this module as a standalone script for quick testing
-    sys.path.append(os.path.dirname(os.path.dirname(__file__)))
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "uk_water_tracker.settings")
-    django.setup()
-    from water_levels.utils import fetch_scottish_water_resource_levels
-else:
-    from .models import (
-        EAwaterPrediction,
-        EAwaterPredictionAccuracy
-    )
-    from .utils import fetch_scottish_water_resource_levels
-
-from water_levels.models import EAwaterStation, EAwaterLevel
-from water_levels.utils import get_region
+from .utils import fetch_scottish_water_resource_levels
 
 @shared_task
 def update_scottish_resources():
