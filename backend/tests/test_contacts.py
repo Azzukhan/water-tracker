@@ -20,7 +20,7 @@ def test_support_questions(api_client):
 
 @pytest.mark.django_db
 def test_support_issues(api_client):
-    resp = api_client.post('/api/contacts/issue', {
+    resp = api_client.post('/api/contacts/issue/', {
         'issue_type': 'Leak',
         'severity': 'high',
         'location': 'Loc',
