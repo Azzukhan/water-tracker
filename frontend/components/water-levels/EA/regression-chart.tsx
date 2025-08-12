@@ -94,7 +94,7 @@ function filterByPeriod(
   return { history, forecast };
 }
 
-export function EnglandLSTMChart({ region }: { region: string }) {
+export function EARegressionChart({ region }: { region: string }) {
   const [allData, setAllData] = useState<ChartPoint[]>([]);
   const [period, setPeriod] = useState("9m");
   const [avgPrediction, setAvgPrediction] = useState(0);
@@ -114,7 +114,7 @@ export function EnglandLSTMChart({ region }: { region: string }) {
         start.setMonth(start.getMonth() - 18); // always fetch enough for all filters
         const hist = await fetchRegionLevels(region, start.toISOString().split("T")[0]);
         const res = await fetch(
-          `${API_BASE}/api/water-levels/groundwater-predictions/?region=${region}&model_type=LSTM`
+          `${API_BASE}/api/water-levels/groundwater-predictions/?region=${region}&model_type=REGRESSION`
         );
         const forecastData: ForecastEntry[] = await res.json();
 
@@ -170,7 +170,7 @@ export function EnglandLSTMChart({ region }: { region: string }) {
     <Card className="shadow-lg border-0">
       <CardHeader>
         <div className="flex items-center justify-between space-y-4 sm:space-y-0">
-          <CardTitle className="text-xl font-bold">England Forecast - LSTM</CardTitle>
+          <CardTitle className="text-xl font-bold">EA Forecast - Regression</CardTitle>
           <div className="flex items-center space-x-3 sm:ml-4">
             <Select value={period} onValueChange={setPeriod}>
               <SelectTrigger className="w-32">
@@ -202,7 +202,7 @@ export function EnglandLSTMChart({ region }: { region: string }) {
                 AI Model Information
               </h4>
               <p className="text-sm text-purple-800">
-                Forecast generated using an LSTM model.
+                Forecast generated using a regression model.
               </p>
             </div>
           </div>
@@ -213,47 +213,22 @@ export function EnglandLSTMChart({ region }: { region: string }) {
               data={[...actualSeries, ...forecastSeries]}
               margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
             >
-              <CartesianGrid
-                strokeDasharray="3 3"
-                className="opacity-30"
-              />
-              <XAxis
-                dataKey="displayDate"
-                tick={{ fontSize: 12 }}
-                interval="preserveStartEnd"
-              />
-              <YAxis
-                domain={["dataMin - 5", "dataMax + 5"]}
-                tick={{ fontSize: 12 }}
-                label={{
-                  value: "Water Level (%)",
-                  angle: -90,
-                  position: "insideLeft",
-                }}
-              />
+              <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+              <XAxis dataKey="displayDate" tick={{ fontSize: 12 }} interval="preserveStartEnd" />
+              <YAxis domain={["dataMin - 5", "dataMax + 5"]} tick={{ fontSize: 12 }} label={{ value: "Water Level (%)", angle: -90, position: "insideLeft" }} />
               <Tooltip
                 content={({ active, payload, label }) => {
                   if (active && payload && payload.length) {
                     const d = payload[0].payload;
                     return (
                       <div className="bg-white dark:bg-gray-800 p-4 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg">
-                        <p className="font-semibold text-gray-900 dark:text-gray-100">
-                          {label}
-                        </p>
-                        {d.actual && (
-                          <p className="text-blue-600">
-                            Actual: {d.actual.toFixed(1)}%
-                          </p>
-                        )}
+                        <p className="font-semibold text-gray-900 dark:text-gray-100">{label}</p>
+                        {d.actual && <p className="text-blue-600">Actual: {d.actual.toFixed(1)}%</p>}
                         {d.predicted && (
                           <>
-                            <p className="text-purple-600">
-                              Predicted: {d.predicted.toFixed(1)}%
-                            </p>
+                            <p className="text-purple-600">Predicted: {d.predicted.toFixed(1)}%</p>
                             {showUncertainty && (
-                              <p className="text-gray-600 dark:text-gray-300 text-sm">
-                                Range: {d.lowerBound?.toFixed(1)}% - {d.upperBound?.toFixed(1)}%
-                              </p>
+                              <p className="text-gray-600 dark:text-gray-300 text-sm">Range: {d.lowerBound?.toFixed(1)}% - {d.upperBound?.toFixed(1)}%</p>
                             )}
                           </>
                         )}
@@ -308,34 +283,21 @@ export function EnglandLSTMChart({ region }: { region: string }) {
         <div className="grid md:grid-cols-3 gap-4 mb-6">
           <div className="p-4 bg-purple-50 rounded-lg">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-600 dark:text-gray-300">
-                Avg. Predicted Level
-              </span>
+              <span className="text-sm text-gray-600 dark:text-gray-300">Avg. Predicted Level</span>
               <TrendingUp className="h-4 w-4 text-purple-600" />
             </div>
-            <div className="text-2xl font-bold text-purple-600">
-              {avgPrediction.toFixed(1)}%
-            </div>
+            <div className="text-2xl font-bold text-purple-600">{avgPrediction.toFixed(1)}%</div>
           </div>
           <div className="p-4 bg-blue-50 dark:bg-blue-900 rounded-lg">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-600 dark:text-gray-300">
-                Trend Direction
-              </span>
+              <span className="text-sm text-gray-600 dark:text-gray-300">Trend Direction</span>
               {trend > 0 ? (
                 <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400 cb:text-cbBluishGreen" />
               ) : (
                 <TrendingUp className="h-4 w-4 text-red-600 dark:text-red-400 cb:text-cbVermillion rotate-180" />
               )}
             </div>
-            <div
-              className={`text-2xl font-bold ${
-                trend > 0 ? "text-green-600 dark:text-green-400 cb:text-cbBluishGreen" : "text-red-600 dark:text-red-400 cb:text-cbVermillion"
-              }`}
-            >
-              {trend > 0 ? "+" : ""}
-              {trend.toFixed(1)}%
-            </div>
+            <div className={`text-2xl font-bold ${trend > 0 ? "text-green-600 dark:text-green-400 cb:text-cbBluishGreen" : "text-red-600 dark:text-red-400 cb:text-cbVermillion"}`}>{trend > 0 ? "+" : ""}{trend.toFixed(1)}%</div>
           </div>
           <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
             <div className="flex items-center justify-between mb-2">
@@ -350,12 +312,8 @@ export function EnglandLSTMChart({ region }: { region: string }) {
             <div className="flex items-start space-x-3">
               <AlertCircle className="h-5 w-5 text-orange-600 dark:text-orange-500 cb:text-cbOrange mt-0.5" />
               <div>
-                <h4 className="font-semibold text-orange-900 mb-1">
-                  Low Level Alert
-                </h4>
-                <p className="text-sm text-orange-800">
-                  Forecasts indicate water levels may drop below normal in the coming weeks.
-                </p>
+                <h4 className="font-semibold text-orange-900 mb-1">Low Level Alert</h4>
+                <p className="text-sm text-orange-800">Forecasts indicate water levels may drop below normal in the coming weeks.</p>
               </div>
             </div>
           </div>

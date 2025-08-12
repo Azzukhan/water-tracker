@@ -31,20 +31,20 @@ import { SouthernHistoryChart } from "@/components/water-levels/southern-water/h
 import { SouthernARIMAChart } from "@/components/water-levels/southern-water/arima-chart";
 import { SouthernLSTMChart } from "@/components/water-levels/southern-water/lstm-chart";
 import { SouthernRegressionChart } from "@/components/water-levels/southern-water/regression-chart";
-import { EnglandRegionSelector } from "@/components/water-levels/england/region-selector";
-import { EnglandCurrent } from "@/components/water-levels/england/current";
-import { EnglandHistoryChart } from "@/components/water-levels/england/history-chart";
-import { EnglandARIMAChart } from "@/components/water-levels/england/arima-chart";
-import { EnglandLSTMChart } from "@/components/water-levels/england/lstm-chart";
-import { EnglandRegressionChart } from "@/components/water-levels/england/regression-chart";
+import { EARegionSelector } from "@/components/water-levels/EA/region-selector";
+import { EACurrent } from "@/components/water-levels/EA/current";
+import { EAHistoryChart } from "@/components/water-levels/EA/history-chart";
+import { EAARIMAChart } from "@/components/water-levels/EA/arima-chart";
+import { EALSTMChart } from "@/components/water-levels/EA/lstm-chart";
+import { EARegressionChart } from "@/components/water-levels/EA/regression-chart";
 import { Button } from "@/components/ui/button";
 
 export default function WaterLevelsPage() {
   const [agency, setAgency] = useState<
-    "scotland" | "severn_trent" | "yorkshire" | "southern_water" | "england"
+    "scotland" | "severn_trent" | "yorkshire" | "southern_water" | "EA"
   >("severn_trent");
   const [selectedRegion, setSelectedRegion] = useState("scotland");
-  const [englandRegion, setEnglandRegion] = useState("north");
+  const [EARegion, setEARegion] = useState("north");
   const [southernReservoir, setSouthernReservoir] = useState("Bewl");
 
   useEffect(() => {
@@ -96,10 +96,10 @@ export default function WaterLevelsPage() {
           Southern&nbsp;Water
         </Button>
         <Button
-          variant={agency === "england" ? "default" : "outline"}
-          onClick={() => setAgency("england")}
+          variant={agency === "EA" ? "default" : "outline"}
+          onClick={() => setAgency("EA")}
         >
-          England
+          EA
         </Button>
       </div>
 
@@ -154,15 +154,15 @@ export default function WaterLevelsPage() {
             <SouthernRegressionChart reservoir={southernReservoir} />
           </div>
         </>
-      ) : agency === "england" ? (
+      ) : agency === "EA" ? (
         <>
-          <EnglandRegionSelector region={englandRegion} onSelect={setEnglandRegion} />
-          <EnglandCurrent region={englandRegion} />
-          <EnglandHistoryChart region={englandRegion} />
+          <EARegionSelector region={EARegion} onSelect={setEARegion} />
+          <EACurrent region={EARegion} />
+          <EAHistoryChart region={EARegion} />
           <div className="space-y-6">
-            <EnglandARIMAChart region={englandRegion} />
-            <EnglandLSTMChart region={englandRegion} />
-            <EnglandRegressionChart region={englandRegion} />
+            <EAARIMAChart region={EARegion} />
+            <EALSTMChart region={EARegion} />
+            <EARegressionChart region={EARegion} />
           </div>
         </>
       ) : (

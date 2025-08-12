@@ -97,7 +97,7 @@ const filterByPeriod = (
   return { history, forecast };
 };
 
-export function EnglandARIMAChart({ region }: { region: string }) {
+export function EAARIMAChart({ region }: { region: string }) {
   const [allData, setAllData] = useState<ChartPoint[]>([]);
   const [period, setPeriod] = useState("9m");
   const [avgPrediction, setAvgPrediction] = useState(0);
@@ -177,7 +177,7 @@ export function EnglandARIMAChart({ region }: { region: string }) {
       <CardHeader>
         <div className="flex items-center justify-between space-y-4 sm:space-y-0">
           <CardTitle className="text-xl font-bold">
-            England Forecast - ARIMA
+            EA Forecast - ARIMA
           </CardTitle>
           <div className="flex items-center space-x-3 sm:ml-4">
             <Select value={period} onValueChange={setPeriod}>

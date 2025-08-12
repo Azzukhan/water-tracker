@@ -56,7 +56,7 @@ const filterByPeriod = (data: ChartPoint[], period: string): ChartPoint[] => {
   return data.filter((d) => new Date(d.date) >= start);
 };
 
-export function EnglandHistoryChart({ region }: { region: string }) {
+export function EAHistoryChart({ region }: { region: string }) {
   const [period, setPeriod] = useState("3m");
   const [zoomLevel, setZoomLevel] = useState(1);
   const [allData, setAllData] = useState<ChartPoint[]>([]);

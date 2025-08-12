@@ -24,7 +24,7 @@ interface TrendPoint {
   value: number;
 }
 
-export function EnglandCurrent({ region }: Props) {
+export function EACurrent({ region }: Props) {
   const [currentData, setCurrentData] = useState<CurrentData | null>(null);
   const [sparklineData, setSparklineData] = useState<TrendPoint[]>([]);
   const [stats, setStats] = useState({ highest: 0, lowest: 0, average: 0 });

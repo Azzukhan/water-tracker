@@ -63,7 +63,7 @@ const getStatusIcon = (status: string) => {
   }
 };
 
-export function EnglandRegionSelector({ region, onSelect }: Props) {
+export function EARegionSelector({ region, onSelect }: Props) {
   const [regions, setRegions] = useState<RegionInfo[]>([]);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [filter, setFilter] = useState("");
