@@ -8,10 +8,10 @@ from .models import (
     YorkshireReservoirData,
     SouthernWaterReservoirForecast,
     SouthernWaterReservoirLevel,
-    EnglandwaterStation,
-    EnglandwaterLevel,
-    EnglandwaterPrediction,
-    EnglandwaterPredictionAccuracy,
+    EAwaterStation,
+    EAwaterLevel,
+    EAwaterPrediction,
+    EAwaterPredictionAccuracy,
     SevernTrentForecastAccuracy,
     YorkshireWaterPredictionAccuracy,
     SouthernWaterForecastAccuracy,
@@ -62,9 +62,9 @@ admin.site.register(YorkshireWaterPrediction)
 admin.site.register(YorkshireReservoirData)
 admin.site.register(SouthernWaterReservoirLevel)
 admin.site.register(SouthernWaterReservoirForecast)
-admin.site.register(EnglandwaterStation)
-@admin.register(EnglandwaterLevel)
-class EnglandwaterLevelAdmin(admin.ModelAdmin):
+admin.site.register(EAwaterStation)
+@admin.register(EAwaterLevel)
+class EAwaterLevelAdmin(admin.ModelAdmin):
     list_display = (
         "station",
         "date",
@@ -74,8 +74,8 @@ class EnglandwaterLevelAdmin(admin.ModelAdmin):
     ordering = ("-date",)  # Show most recent records first
     list_filter = ("station", "quality")
 
-admin.site.register(EnglandwaterPrediction)
-admin.site.register(EnglandwaterPredictionAccuracy)
+admin.site.register(EAwaterPrediction)
+admin.site.register(EAwaterPredictionAccuracy)
 admin.site.register(SevernTrentForecastAccuracy)
 admin.site.register(YorkshireWaterPredictionAccuracy)
 admin.site.register(SouthernWaterForecastAccuracy)

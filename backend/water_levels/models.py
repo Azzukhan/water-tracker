@@ -1,6 +1,6 @@
 from django.db import models
 
-
+#scottish water models
 class ScottishWaterAverageLevel(models.Model):
     """Scotland-wide average water resource levels."""
 
@@ -80,8 +80,45 @@ class ScottishWaterRegionalForecast(models.Model):
 
     def __str__(self) -> str:  # pragma: no cover - simple representation
         return f"{self.area} {self.date} {self.model_type}: {self.predicted_level}%"
+    
+    
+class ScottishWaterPredictionAccuracy(models.Model):
+    """Accuracy of Scottish Water regional forecasts."""
+    area = models.CharField(max_length=100)
+    date = models.DateField()
+    model_type = models.CharField(max_length=10)
+    predicted_value = models.FloatField()
+    actual_value = models.FloatField(null=True, blank=True)
+    percentage_error = models.FloatField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("area", "date", "model_type")
+        ordering = ["area", "-date"]
+
+    def __str__(self):
+        return f"{self.area} {self.date} {self.model_type}: {self.predicted_value}%"
 
 
+
+class ScottishWaterForecastAccuracy(models.Model):
+    """Accuracy of Scotland-wide water level forecasts."""
+
+    date = models.DateField()
+    model_type = models.CharField(max_length=10)
+    predicted_percentage = models.FloatField()
+    actual_percentage = models.FloatField(null=True, blank=True)
+    percentage_error = models.FloatField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("date", "model_type")
+        ordering = ["-date"]
+
+    def __str__(self) -> str:  # pragma: no cover - simple representation
+        return f"{self.date} {self.model_type}: {self.predicted_percentage}%"
+
+## Severn Trent models
 class SevernTrentReservoirLevel(models.Model):
     """Weekly reservoir levels reported by Severn Trent Water."""
 
@@ -117,9 +154,21 @@ class SevernTrentReservoirForecast(models.Model):
     def __str__(self) -> str:  # pragma: no cover - simple representation
         return f"{self.date} {self.model_type}: {self.predicted_percentage}%"
 
+class SevernTrentForecastAccuracy(models.Model):
+    """Accuracy of Severn Trent reservoir forecasts."""
 
+    date = models.DateField()
+    model_type = models.CharField(max_length=10)
+    predicted_percentage = models.FloatField()
+    actual_percentage = models.FloatField(null=True, blank=True)
+    percentage_error = models.FloatField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        unique_together = ("date", "model_type")
+        ordering = ["-date"]
 
+# Yorkshire Water models
 class YorkshireWaterPrediction(models.Model):
     date = models.DateField()
     predicted_reservoir_percent = models.FloatField()
@@ -155,7 +204,24 @@ class YorkshireReservoirData(models.Model):
     def __str__(self) -> str:  # pragma: no cover
         return f"{self.report_date}: {self.reservoir_level}%"
 
+class YorkshireWaterPredictionAccuracy(models.Model):
+    """Accuracy of Yorkshire Water predictions."""
 
+    date = models.DateField()
+    model_type = models.CharField(max_length=10)
+    predicted_reservoir_percent = models.FloatField()
+    actual_reservoir_percent = models.FloatField(null=True, blank=True)
+    reservoir_error = models.FloatField(null=True, blank=True)
+    predicted_demand_mld = models.FloatField()
+    actual_demand_mld = models.FloatField(null=True, blank=True)
+    demand_error = models.FloatField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("date", "model_type")
+        ordering = ["-date"]
+        
+ # Southern Water models       
 class SouthernWaterReservoirLevel(models.Model):
     """Weekly reservoir levels for Southern Water reservoirs."""
 
@@ -199,91 +265,6 @@ class SouthernWaterReservoirForecast(models.Model):
             f"{self.reservoir} {self.date} {self.model_type}: {self.predicted_level}%"
         )
 
-
-class EnglandwaterStation(models.Model):
-    station_id = models.CharField(max_length=50, unique=True)
-    name = models.CharField(max_length=200)
-    region = models.CharField(max_length=10)
-    latitude = models.FloatField(null=True, blank=True)
-    longitude = models.FloatField(null=True, blank=True)
-
-    def __str__(self):
-        return f"{self.name} ({self.region})"
-
-
-class EnglandwaterLevel(models.Model):
-    station = models.ForeignKey(
-        EnglandwaterStation, on_delete=models.CASCADE, related_name="levels"
-    )
-    date = models.DateField()
-    value = models.FloatField()
-    quality = models.CharField(max_length=50, default="Unknown")
-
-    class Meta:
-        unique_together = ("station", "date")
-
-
-class EnglandwaterPrediction(models.Model):
-    """Predicted groundwater levels for each UK region."""
-
-    region = models.CharField(max_length=10)
-    model_type = models.CharField(max_length=20)
-    date = models.DateField()
-    predicted_value = models.FloatField()
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ("region", "model_type", "date")
-
-
-class EnglandwaterPredictionAccuracy(models.Model):
-    """Store accuracy of groundwater predictions once actuals are available."""
-
-    region = models.CharField(max_length=10)
-    date = models.DateField()
-    model_type = models.CharField(max_length=20)
-    predicted_value = models.FloatField()
-    actual_value = models.FloatField(null=True, blank=True)
-    percentage_error = models.FloatField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ("region", "model_type", "date")
-
-
-class SevernTrentForecastAccuracy(models.Model):
-    """Accuracy of Severn Trent reservoir forecasts."""
-
-    date = models.DateField()
-    model_type = models.CharField(max_length=10)
-    predicted_percentage = models.FloatField()
-    actual_percentage = models.FloatField(null=True, blank=True)
-    percentage_error = models.FloatField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ("date", "model_type")
-        ordering = ["-date"]
-
-
-class YorkshireWaterPredictionAccuracy(models.Model):
-    """Accuracy of Yorkshire Water predictions."""
-
-    date = models.DateField()
-    model_type = models.CharField(max_length=10)
-    predicted_reservoir_percent = models.FloatField()
-    actual_reservoir_percent = models.FloatField(null=True, blank=True)
-    reservoir_error = models.FloatField(null=True, blank=True)
-    predicted_demand_mld = models.FloatField()
-    actual_demand_mld = models.FloatField(null=True, blank=True)
-    demand_error = models.FloatField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ("date", "model_type")
-        ordering = ["-date"]
-
-
 class SouthernWaterForecastAccuracy(models.Model):
     """Accuracy of Southern Water reservoir forecasts."""
 
@@ -300,39 +281,54 @@ class SouthernWaterForecastAccuracy(models.Model):
         unique_together = ("reservoir", "date", "model_type")
         ordering = ["reservoir", "-date"]
 
+# EAwater models
+class EAwaterStation(models.Model):
+    station_id = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=200)
+    region = models.CharField(max_length=10)
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
 
-class ScottishWaterPredictionAccuracy(models.Model):
-    """Accuracy of Scottish Water regional forecasts."""
-    area = models.CharField(max_length=100)
+    def __str__(self):
+        return f"{self.name} ({self.region})"
+
+
+class EAwaterLevel(models.Model):
+    station = models.ForeignKey(
+        EAwaterStation, on_delete=models.CASCADE, related_name="levels"
+    )
     date = models.DateField()
-    model_type = models.CharField(max_length=10)
+    value = models.FloatField()
+    quality = models.CharField(max_length=50, default="Unknown")
+
+    class Meta:
+        unique_together = ("station", "date")
+
+
+class EAwaterPrediction(models.Model):
+    """Predicted groundwater levels for each UK region."""
+
+    region = models.CharField(max_length=10)
+    model_type = models.CharField(max_length=20)
+    date = models.DateField()
+    predicted_value = models.FloatField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("region", "model_type", "date")
+
+
+class EAwaterPredictionAccuracy(models.Model):
+    """Store accuracy of groundwater predictions once actuals are available."""
+
+    region = models.CharField(max_length=10)
+    date = models.DateField()
+    model_type = models.CharField(max_length=20)
     predicted_value = models.FloatField()
     actual_value = models.FloatField(null=True, blank=True)
     percentage_error = models.FloatField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ("area", "date", "model_type")
-        ordering = ["area", "-date"]
+        unique_together = ("region", "model_type", "date")
 
-    def __str__(self):
-        return f"{self.area} {self.date} {self.model_type}: {self.predicted_value}%"
-
-
-
-class ScottishWaterForecastAccuracy(models.Model):
-    """Accuracy of Scotland-wide water level forecasts."""
-
-    date = models.DateField()
-    model_type = models.CharField(max_length=10)
-    predicted_percentage = models.FloatField()
-    actual_percentage = models.FloatField(null=True, blank=True)
-    percentage_error = models.FloatField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ("date", "model_type")
-        ordering = ["-date"]
-
-    def __str__(self) -> str:  # pragma: no cover - simple representation
-        return f"{self.date} {self.model_type}: {self.predicted_percentage}%"

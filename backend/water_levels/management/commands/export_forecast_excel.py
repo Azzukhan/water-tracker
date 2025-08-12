@@ -1,7 +1,7 @@
 import pandas as pd
 from django.core.management.base import BaseCommand
 from water_levels.models import (  # replace 'water_levels' with your app name
-    EnglandwaterPredictionAccuracy,
+    EAwaterPredictionAccuracy,
     SevernTrentForecastAccuracy,
     YorkshireWaterPredictionAccuracy,
     SouthernWaterForecastAccuracy,
@@ -16,12 +16,12 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         with pd.ExcelWriter('forecast_accuracy_data.xlsx', engine='openpyxl') as writer:
 
-            # EnglandwaterPredictionAccuracy
-            qs = EnglandwaterPredictionAccuracy.objects.all().values()
+            # EAwaterPredictionAccuracy
+            qs = EAwaterPredictionAccuracy.objects.all().values()
             df = pd.DataFrame.from_records(qs)
             if 'created_at' in df.columns:
                 df['created_at'] = pd.to_datetime(df['created_at']).dt.tz_localize(None)
-            df.to_excel(writer, sheet_name='Englandwater', index=False)
+            df.to_excel(writer, sheet_name='EAwater', index=False)
 
             # SevernTrentForecastAccuracy
             qs = SevernTrentForecastAccuracy.objects.all().values()

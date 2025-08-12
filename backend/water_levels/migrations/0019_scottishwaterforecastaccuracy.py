@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("water_levels", "0018_rename_groundwaterlevel_englandwaterlevel_and_more"),
+        ("water_levels", "0018_rename_groundwaterlevel_EAwaterlevel_and_more"),
     ]
 
     operations = [
