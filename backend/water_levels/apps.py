@@ -7,4 +7,5 @@ class WaterLevelsConfig(AppConfig):
 
     def ready(self):
         # Import signals to ensure they are registered
-        from . import signals  # noqa: F401
+        from water_levels.signals import trigger_prediction_on_new_level
+        trigger_prediction_on_new_level()  # noqa: F401
