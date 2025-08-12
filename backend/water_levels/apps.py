@@ -6,6 +6,7 @@ class WaterLevelsConfig(AppConfig):
     name = "water_levels"
 
     def ready(self):
-        # Import signals to ensure they are registered
-        from water_levels.signals import trigger_prediction_on_new_level
-        trigger_prediction_on_new_level()  # noqa: F401
+        # Import signal handlers to ensure they are registered when the app
+        # is ready.  The handlers connect themselves to Django's signals on
+        # import, so no further action is required here.
+        from . import signals  # noqa: F401

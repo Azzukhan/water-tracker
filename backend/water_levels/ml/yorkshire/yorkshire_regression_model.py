@@ -1,7 +1,29 @@
 import pandas as pd
 import numpy as np
-import statsmodels.api as sm
+import scipy
 from dateutil.relativedelta import relativedelta
+
+
+# ``statsmodels`` depends on ``scipy._lib._util._lazywhere`` which was removed in
+# SciPy 1.13.  The environment used by the project ships with SciPy 1.16 which
+# no longer provides this helper, causing an ImportError when importing
+# ``statsmodels``.  To maintain compatibility without pinning an older SciPy
+# version, we provide a minimal implementation of ``_lazywhere`` before
+# importing ``statsmodels``.  If SciPy reintroduces the function or a suitable
+# version is installed, this patch simply does nothing.
+
+if not hasattr(scipy._lib._util, "_lazywhere"):
+    def _lazywhere(cond, arrays, f, fillvalue=np.nan):
+        arrays = [np.asarray(a) for a in arrays]
+        cond = np.asarray(cond)
+        out = np.full(cond.shape, fillvalue, dtype=np.result_type(*arrays))
+        if np.any(cond):
+            out[cond] = f(*[a[cond] for a in arrays])
+        return out
+
+    scipy._lib._util._lazywhere = _lazywhere
+
+import statsmodels.api as sm
 
 from water_levels.models import YorkshireReservoirData, YorkshireWaterPrediction
 
