@@ -2,7 +2,7 @@ import pytest
 
 @pytest.mark.django_db
 def test_support_requests(api_client):
-    resp = api_client.post('/api/contacts/request', {
+    resp = api_client.post('/api/contacts/request/', {
         'name': 'A',
         'email': 'a@example.com',
         'subject': 'Help',
@@ -12,7 +12,7 @@ def test_support_requests(api_client):
 
 @pytest.mark.django_db
 def test_support_questions(api_client):
-    resp = api_client.post('/api/contacts/question', {
+    resp = api_client.post('/api/contacts/question/', {
         'email': 'a@example.com',
         'question': 'Why?'
     })
