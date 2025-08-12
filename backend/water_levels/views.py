@@ -3,8 +3,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from .filters import EAwaterPredictionFilter
 from rest_framework.response import Response
-
-from .utils import fetch_scottish_water_resource_levels
+from .scraper.scottish_water.scottish_water_scrapper import extract_scottish_water_levels
 from .models import (
     ScottishWaterAverageLevel,
     ScottishWaterRegionalLevel,
@@ -58,7 +57,7 @@ class ScottishWaterAverageLevelViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         if not queryset.exists():
-            fetch_scottish_water_resource_levels()
+            extract_scottish_water_levels()
             queryset = self.filter_queryset(self.get_queryset())
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
@@ -73,7 +72,7 @@ class ScottishWaterRegionalLevelViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         if not queryset.exists():
-            fetch_scottish_water_resource_levels()
+            extract_scottish_water_levels()
             queryset = self.filter_queryset(self.get_queryset())
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
@@ -204,12 +203,6 @@ class SouthernWaterForecastAccuracyViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["reservoir", "model_type", "date"]
     pagination_class = None
-
-
-from rest_framework import viewsets
-from django_filters.rest_framework import DjangoFilterBackend
-from .models import ScottishWaterForecastAccuracy, ScottishWaterPredictionAccuracy
-from .serializers import ScottishWaterForecastAccuracySerializer, ScottishWaterPredictionAccuracySerializer
 
 class ScottishWaterForecastAccuracyViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = ScottishWaterForecastAccuracy.objects.all().order_by("-date")
