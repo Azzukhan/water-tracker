@@ -13,7 +13,7 @@ urlpatterns = [
     path('api/news/', include('news.urls')),
     path('api/blog/', include('blog.urls')),
     path('api/users/', include('users.urls')),
-    path('api/support/', include('support.urls')),
+    path('api/contacts/', include('contacts.urls')),
 ]
 
 if settings.DEBUG:
