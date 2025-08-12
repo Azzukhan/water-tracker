@@ -1,7 +1,3 @@
-from datetime import datetime
-import os
-import sys
-import django
 from celery import shared_task
 from .ml.general_lstm.lstm import train_lstm
 
@@ -34,135 +30,48 @@ from .ml.environment_agency.EA_stations_regression_trained import generate_EA_st
 from .model_effiency.environment_agency.EA_stations_model_accuracy import calculate_EA_stations_water_prediction_accuracy
 
 # Scottish Water
-from .utils import fetch_scottish_water_resource_levels
+from .scraper.scottish_water.scottish_water_scrapper import extract_scottish_water_levels
+
+# Scottish Water Wide
+from .ml.scottish_water.wide.scottish_water_wide_arima_model_trained import generate_scottish_water_wide_arima_forecast
+from .ml.scottish_water.wide.scottish_water_wide_lstm_model_trained import generate_scottish_water_wide_lstm_forecast
+from .ml.scottish_water.wide.scottish_water_wide_regression_model_trained import generate_scottish_water_wide_regression_forecast
+from .model_effiency.scottish_water.wide.scottish_water_wide_model_accuracy import calculate_scottish_water_wide_accuracy
+
+# Scottish Water Regional
+from .ml.scottish_water.regional.scottish_water_regional_arima_model_trained import generate_scottish_water_regional_arima_forecast
+from .ml.scottish_water.regional.scottish_water_regional_lstm_model_trained import generate_scottish_water_regional_lstm_forecast
+from .ml.scottish_water.regional.scottish_water_regional_regression_model_trained import generate_scottish_water_regional_regression_forecast
+from .model_effiency.scottish_water.regional.scottish_water_regional_model_accuracy import calculate_scottish_water_regional_accuracy
 
 @shared_task
-def update_scottish_resources():
+def fetch_scottish_water_forecasts():
     """Fetch Scottish Water resource levels and store them."""
-    count, _ = fetch_scottish_water_resource_levels()
+    count, _ = extract_scottish_water_levels()
     return count
 
 
 @shared_task
-def generate_scottish_arima_forecast():
-    """Generate 4-week ARIMA forecast for Scottish Water average levels."""
-    from .models import ScottishWaterAverageLevel, ScottishWaterForecast
-    import pandas as pd
-    from statsmodels.tsa.arima.model import ARIMA
-    from datetime import timedelta
-
-    qs = ScottishWaterAverageLevel.objects.order_by("date")
-    if qs.count() < 12:
-        return "Insufficient data"
-
-    df = pd.DataFrame(qs.values("date", "current"))
-    df["date"] = pd.to_datetime(df["date"])
-    # Scottish Water data is reported weekly on Mondays, so align to that
-    df = df.set_index("date").asfreq("W-MON")
-    df["current"] = df["current"].interpolate()
-
-    model = ARIMA(df["current"], order=(2, 1, 2))
-    model_fit = model.fit()
-    forecast = model_fit.forecast(steps=4)
-
-    last_date = qs.last().date
-    for i, value in enumerate(forecast):
-        target_date = last_date + timedelta(weeks=i + 1)
-        ScottishWaterForecast.objects.update_or_create(
-            date=target_date,
-            model_type="ARIMA",
-            defaults={"predicted_percentage": round(float(value), 2)},
-        )
-    return "ARIMA forecast complete"
-
-
-@shared_task
-def generate_scottish_lstm_forecast():
-    """Generate 4-week LSTM forecast for Scottish Water average levels."""
-    from .models import ScottishWaterAverageLevel, ScottishWaterForecast
-    from .ml.general_lstm.lstm import train_lstm
-    import pandas as pd
-    from datetime import timedelta
-
-    qs = ScottishWaterAverageLevel.objects.order_by("date")
-    if qs.count() < 30:
-        return "Not enough data"
-
-    df = pd.DataFrame(qs.values("date", "current"))
-    df = df.rename(columns={"current": "percentage"})
-    preds = train_lstm(df, steps=4)
-    last_date = qs.last().date
-
-    for i, val in enumerate(preds):
-        target = last_date + timedelta(weeks=i + 1)
-        ScottishWaterForecast.objects.update_or_create(
-            date=target,
-            model_type="LSTM",
-            defaults={"predicted_percentage": round(float(val), 2)},
-        )
-    return "LSTM forecast complete"
-
-
-@shared_task
-def generate_scottish_regression_forecast():
-    """Generate regression-based forecast for Scottish Water average levels."""
-    from .models import ScottishWaterAverageLevel, ScottishWaterForecast
-    import pandas as pd
-    import numpy as np
-    import statsmodels.api as sm
-    from datetime import timedelta
-
-    qs = ScottishWaterAverageLevel.objects.order_by("date")
-    if qs.count() < 12:
-        return "Insufficient data"
-
-    df = pd.DataFrame(qs.values("date", "current"))
-    df["date"] = pd.to_datetime(df["date"])
-    # Align to weekly Mondays for consistent time series
-    df = df.set_index("date").asfreq("W-MON")
-    df["current"] = df["current"].interpolate()
-
-    df["t"] = np.arange(len(df))
-    period = 52
-    df["sin_t"] = np.sin(2 * np.pi * df["t"] / period)
-    df["cos_t"] = np.cos(2 * np.pi * df["t"] / period)
-    X = sm.add_constant(df[["t", "sin_t", "cos_t"]])
-    model = sm.OLS(df["current"], X).fit()
-
-    last_t = df["t"].iloc[-1]
-    last_date = qs.last().date
-    for i in range(1, 5):
-        t = last_t + i
-        sin_t = np.sin(2 * np.pi * t / period)
-        cos_t = np.cos(2 * np.pi * t / period)
-        X_new = sm.add_constant(
-            pd.DataFrame({"t": [t], "sin_t": [sin_t], "cos_t": [cos_t]}),
-            has_constant="add",
-        )
-        pred = model.predict(X_new)[0]
-        target = last_date + timedelta(weeks=i)
-        ScottishWaterForecast.objects.update_or_create(
-            date=target,
-            model_type="REGRESSION",
-            defaults={"predicted_percentage": round(float(pred), 2)},
-        )
-    return "REGRESSION forecast complete"
-
-
-@shared_task
-def weekly_scottish_predictions():
-    generate_scottish_arima_forecast.delay()
-    generate_scottish_lstm_forecast.delay()
-    generate_scottish_regression_forecast.delay()
+def weekly_scottish_water_wide_predictions():
+    generate_scottish_water_wide_arima_forecast.delay()
+    generate_scottish_water_wide_lstm_forecast.delay()
+    generate_scottish_water_wide_regression_forecast.delay()
+    calculate_scottish_water_wide_accuracy.delay()
     return "scheduled"
 
+@shared_task
+def weekly_scottish_water_regional_predictions():
+    generate_scottish_water_regional_arima_forecast.delay()
+    generate_scottish_water_regional_lstm_forecast.delay()
+    generate_scottish_water_regional_regression_forecast.delay()
+    calculate_scottish_water_regional_accuracy.delay()
+    return "scheduled"
 
 @shared_task
 def generate_scottish_regional_forecasts(): #todo: improve this
     """Generate forecasts for each Scottish Water region."""
     from .models import (
         ScottishWaterRegionalLevel,
-        ScottishWaterPredictionAccuracy,
         ScottishWaterRegionalForecast,
     )
     import pandas as pd
@@ -305,96 +214,3 @@ def weekly_EA_stations_water_predictions():
     generate_EA_station_regression_forecast.delay()
     calculate_EA_stations_water_prediction_accuracy.delay()
     return "done"    
-
-
-@shared_task
-def calculate_scottish_regional_accuracy():
-    """Calculate accuracy for Scottish Water regional forecasts."""
-    from .models import (
-        ScottishWaterPredictionAccuracy,
-        ScottishWaterRegionalLevel,
-        ScottishWaterRegionalForecast,
-    )
-
-    today = datetime.today().date()
-    areas = (
-        ScottishWaterRegionalLevel.objects.values_list("area", flat=True).distinct()
-    )
-    for area in areas:
-        latest_actual = (
-            ScottishWaterRegionalLevel.objects
-            .filter(area=area, date__lte=today)
-            .order_by("-date")
-            .first()
-        )
-        if not latest_actual:
-            continue
-
-        forecasts = ScottishWaterRegionalForecast.objects.filter(
-            area=area, date=latest_actual.date
-        )
-        for f in forecasts:
-            try:
-                error = (
-                    abs((latest_actual.current - f.predicted_level) / latest_actual.current)
-                    * 100
-                )
-            except ZeroDivisionError:
-                error = 0.0
-            ScottishWaterPredictionAccuracy.objects.update_or_create(
-                area=area,
-                date=f.date,
-                model_type=f.model_type,
-                defaults={
-                    "predicted_value": f.predicted_level,
-                    "actual_value": latest_actual.current,
-                    "percentage_error": round(error, 2),
-                },
-            )
-    return "scottish regional accuracy updated"
-
-
-@shared_task
-def calculate_scotlandwide_forecast_accuracy():
-    """
-    Calculate forecast accuracy for Scotland-wide predictions using the latest
-    available actual values.
-    """
-    from .models import (
-        ScottishWaterForecast,
-        ScottishWaterAverageLevel,
-        ScottishWaterForecastAccuracy,
-    )
-
-    latest_actual = ScottishWaterAverageLevel.objects.order_by("-date").first()
-    if latest_actual:
-        forecasts = ScottishWaterForecast.objects.filter(date=latest_actual.date)
-        if forecasts.exists():
-            for f in forecasts:
-                try:
-                    error = (
-                        abs((latest_actual.current - f.predicted_percentage) / latest_actual.current)
-                        * 100
-                    )
-                except ZeroDivisionError:
-                    error = 0.0
-                ScottishWaterForecastAccuracy.objects.update_or_create(
-                    date=f.date,
-                    model_type=f.model_type,
-                    defaults={
-                        "predicted_percentage": f.predicted_percentage,
-                        "actual_percentage": latest_actual.current,
-                        "percentage_error": round(error, 2),
-                    },
-                )
-                print(
-                    f"[Scotland-wide] Accuracy for {f.model_type} on {f.date}: "
-                    f"Prediction={f.predicted_percentage}, "
-                    f"Actual={latest_actual.current}, Error={round(error,2)}%"
-                )
-        else:
-            print(f"No forecasts for Scotland-wide {latest_actual.date}")
-    else:
-        print("No actual data for Scotland-wide.")
-
-    return "scotland-wide forecast accuracy updated"
