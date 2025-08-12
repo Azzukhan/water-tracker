@@ -45,7 +45,7 @@ export default function RainRadarMap() {
       center={center}
       zoom={zoom}
       zoomControl={false}
-      style={{ height: "100%", width: "100%" }}
+      style={{ height: "100%", width: "100%", zIndex: 0 }}
       className="w-full h-80 rounded-lg"
     >
       <TileLayer
