@@ -308,7 +308,7 @@ def weekly_EA_stations_water_predictions():
 
 
 @shared_task
-def calculate_scottishwater_accuracy():
+def calculate_scottish_regional_accuracy():
     """Calculate accuracy for Scottish Water regional forecasts."""
     from .models import (
         ScottishWaterPredictionAccuracy,
@@ -351,25 +351,21 @@ def calculate_scottishwater_accuracy():
                     "percentage_error": round(error, 2),
                 },
             )
-    return "scottish accuracy updated"
+    return "scottish regional accuracy updated"
 
 
 @shared_task
-def calculate_scottish_forecast_accuracy():
+def calculate_scotlandwide_forecast_accuracy():
     """
-    Calculate forecast accuracy for both Scotland-wide and regional predictions,
-    using the latest available actual values.
+    Calculate forecast accuracy for Scotland-wide predictions using the latest
+    available actual values.
     """
     from .models import (
         ScottishWaterForecast,
         ScottishWaterAverageLevel,
         ScottishWaterForecastAccuracy,
-        ScottishWaterRegionalForecast,
-        ScottishWaterRegionalLevel,
-        ScottishWaterPredictionAccuracy,
     )
 
-    ### Scotland-wide ###
     latest_actual = ScottishWaterAverageLevel.objects.order_by("-date").first()
     if latest_actual:
         forecasts = ScottishWaterForecast.objects.filter(date=latest_actual.date)
@@ -401,52 +397,4 @@ def calculate_scottish_forecast_accuracy():
     else:
         print("No actual data for Scotland-wide.")
 
-    ### Regional (per area) ###
-    # Get all areas with actual data
-    areas = (
-        ScottishWaterRegionalLevel.objects.values_list('area', flat=True).distinct()
-    )
-    for area in areas:
-        latest_area_actual = (
-            ScottishWaterRegionalLevel.objects
-            .filter(area=area)
-            .order_by('-date')
-            .first()
-        )
-        if not latest_area_actual:
-            print(f"No actual for area {area}")
-            continue
-
-        forecasts = (
-            ScottishWaterRegionalForecast.objects
-            .filter(area=area, date=latest_area_actual.date)
-        )
-        if not forecasts.exists():
-            print(f"No forecast for area {area} on {latest_area_actual.date}")
-            continue
-
-        for f in forecasts:
-            try:
-                error = (
-                    abs((latest_area_actual.current - f.predicted_level) / latest_area_actual.current)
-                    * 100
-                )
-            except ZeroDivisionError:
-                error = 0.0
-            ScottishWaterPredictionAccuracy.objects.update_or_create(
-                area=area,
-                date=f.date,
-                model_type=f.model_type,
-                defaults={
-                    "predicted_value": f.predicted_level,
-                    "actual_value": latest_area_actual.current,
-                    "percentage_error": round(error, 2),
-                },
-            )
-            print(
-                f"[{area}] Accuracy for {f.model_type} on {f.date}: "
-                f"Prediction={f.predicted_level}, "
-                f"Actual={latest_area_actual.current}, Error={round(error,2)}%"
-            )
-
-    return "scottish (and regional) forecast accuracy updated"
+    return "scotland-wide forecast accuracy updated"
