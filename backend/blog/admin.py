@@ -4,6 +4,7 @@ from .models import (
     BlogCategory,
     Comment,
     CommunityStory,
+    Subscriber,
 )
 
 
@@ -44,4 +45,12 @@ class BlogCategoryAdmin(admin.ModelAdmin):
     list_display = (
         "name",
         "slug",
+    )
+
+
+@admin.register(Subscriber)
+class SubscriberAdmin(admin.ModelAdmin):
+    list_display = (
+        "email",
+        "created_at",
     )

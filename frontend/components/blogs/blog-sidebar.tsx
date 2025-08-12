@@ -43,7 +43,7 @@ export function BlogSidebar({
   const handleSubscribe = async () => {
     if (!email) return
     try {
-      const res = await fetch(`${API_BASE}/api/newsletter`, {
+      const res = await fetch(`${API_BASE}/api/blog/subscribers/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),

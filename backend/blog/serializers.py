@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import BlogCategory, BlogPost, Comment, CommunityStory
+from .models import BlogCategory, BlogPost, Comment, CommunityStory, Subscriber
 from users.serializers import UserSerializer
 
 class BlogCategorySerializer(serializers.ModelSerializer):
@@ -51,3 +51,9 @@ class CommunityStorySerializer(serializers.ModelSerializer):
     class Meta:
         model = CommunityStory
         fields = ['id', 'name', 'email', 'text', 'created_at']
+
+
+class SubscriberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subscriber
+        fields = ['id', 'email', 'created_at']

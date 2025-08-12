@@ -13,7 +13,6 @@ urlpatterns = [
     path('api/news/', include('news.urls')),
     path('api/blog/', include('blog.urls')),
     path('api/users/', include('users.urls')),
-    path('api/newsletter/', include('newsletter.urls')),
     path('api/support/', include('support.urls')),
 ]
 

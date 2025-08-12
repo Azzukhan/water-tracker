@@ -7,6 +7,7 @@ from .views import (
     ExternalBlogAPIView,
     LocalBlogAPIView,
     CommunityStoryViewSet,
+    SubscriberViewSet,
 )
 
 router = DefaultRouter()
@@ -14,6 +15,7 @@ router.register(r'categories', BlogCategoryViewSet)
 router.register(r'posts', BlogPostViewSet)
 router.register(r'comments', CommentViewSet)
 router.register(r'stories', CommunityStoryViewSet)
+router.register(r'subscribers', SubscriberViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),

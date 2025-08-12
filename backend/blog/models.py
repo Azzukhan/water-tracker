@@ -78,3 +78,14 @@ class CommunityStory(models.Model):
 
     def __str__(self):
         return f"{self.name}: {self.text[:30]}"
+    
+class Subscriber(models.Model):
+    """A newsletter subscriber"""
+    email = models.EmailField(unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["email"]
+
+    def __str__(self):
+        return self.email
