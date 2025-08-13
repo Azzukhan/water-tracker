@@ -117,7 +117,6 @@ def fetch_and_generate_southern_water_forecasts():
 
 @shared_task
 def weekly_southernwater_predictions():
-    """Generate Southern Water forecasts and calculate accuracy."""
     generate_southern_arima_forecast.delay()
     generate_southern_lstm_forecast.delay()
     generate_southern_regression_forecast.delay()
