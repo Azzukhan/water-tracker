@@ -52,18 +52,18 @@ def fetch_scottish_water_forecasts():
 
 @shared_task
 def weekly_scottish_water_wide_predictions():
-    generate_scottish_water_wide_arima_forecast.delay()
-    generate_scottish_water_wide_lstm_forecast.delay()
-    generate_scottish_water_wide_regression_forecast.delay()
-    calculate_scottish_water_wide_accuracy.delay()
+    generate_scottish_water_wide_arima_forecast()
+    generate_scottish_water_wide_lstm_forecast()
+    generate_scottish_water_wide_regression_forecast()
+    calculate_scottish_water_wide_accuracy()
     return "scheduled"
 
 @shared_task
 def weekly_scottish_water_regional_predictions():
-    generate_scottish_water_regional_arima_forecast.delay()
-    generate_scottish_water_regional_lstm_forecast.delay()
-    generate_scottish_water_regional_regression_forecast.delay()
-    calculate_scottish_water_regional_accuracy.delay()
+    generate_scottish_water_regional_arima_forecast()
+    generate_scottish_water_regional_lstm_forecast()
+    generate_scottish_water_regional_regression_forecast()
+    calculate_scottish_water_regional_accuracy()
     return "scheduled"
 
 
