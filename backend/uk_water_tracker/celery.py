@@ -22,7 +22,7 @@ app.conf.beat_schedule = {
     },
     # Fetch Scottish Water resource levels once a week on Wednesday
     'weekly-scottish-resources': {
-        'task': 'water_levels.tasks.update_scottish_resources',
+        'task': 'water_levels.tasks.fetch_scottish_water_forecasts',
         'schedule': crontab(day_of_week='wed', hour=6, minute=0),
     },
     # Scrape Severn Trent reservoir data every Wednesday morning
@@ -54,20 +54,20 @@ app.conf.beat_schedule = {
     },
     
     'fetch-groundwater-levels-every-15-mins': {
-        'task': 'water_levels.tasks.fetch_current_groundwater_levels',
-        'schedule': crontab(minute='*/15'),
+        'task': 'water_levels.tasks.fetch_and_generate_EA_stations_water_forecasts',
+        'schedule': crontab(day_of_week='wed', hour=3, minute=0),
     },
     'weekly-groundwater-predictions': {
-        'task': 'water_levels.tasks.train_groundwater_prediction_models',
-        'schedule': crontab(day_of_week=0, hour=3, minute=0),
+        'task': 'water_levels.tasks.weekly_EA_stations_water_predictions()',
+        'schedule': crontab(day_of_week='wed', hour=5, minute=0),
     },
-    'weekly-groundwater-prediction-accuracy': {
-        'task': 'water_levels.tasks.calculate_prediction_accuracy',
-        'schedule': crontab(day_of_week=0, hour=6, minute=0),
+    'weekly-scottish-water-regional-predictions': {
+        'task': 'water_levels.tasks.weekly_scottish_water_regional_predictions',
+        'schedule': crontab(day_of_week='wed', hour=11, minute=0),
     },
-    'weekly-scottishwater-regional-accuracy': {
-        'task': 'water_levels.tasks.calculate_scottish_regional_accuracy',
-        'schedule': crontab(day_of_week='wed', hour=7, minute=0),
+    'weekly-scottish-water-wide-predictions': {
+        'task': 'water_levels.tasks.weekly_scottish_water_wide_predictions',
+        'schedule': crontab(day_of_week='wed', hour=12, minute=0),
     },
 }
 

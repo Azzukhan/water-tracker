@@ -49,7 +49,6 @@ def fetch_scottish_water_forecasts():
     count, _ = extract_scottish_water_levels()
     return count
 
-
 @shared_task
 def weekly_scottish_water_wide_predictions():
     generate_scottish_water_wide_arima_forecast()
@@ -66,16 +65,10 @@ def weekly_scottish_water_regional_predictions():
     calculate_scottish_water_regional_accuracy()
     return "scheduled"
 
-
 @shared_task
 def fetch_and_generate_severn_trent_forecasts():
     extract_severn_trent_water_levels()
-    generate_severn_trent_arima_forecast()
-    generate_severn_trent_lstm_forecast()
-    generate_severn_trent_regression_forecast()
     return "done"
-
-
 
 @shared_task
 def weekly_severn_trent_predictions():
@@ -85,16 +78,9 @@ def weekly_severn_trent_predictions():
     calculate_severn_trent_accuracy.delay()
     return "scheduled"
 
-
-
 @shared_task
-def fetch_and_generate_yorkshire_water_forecasts():
-    
-    inserted = scrape_site()
-    if inserted:
-        generate_yorkshire_lstm_forecast()
-        generate_yorkshire_arima_forecast()
-        generate_yorkshire_regression_forecast()
+def fetch_and_generate_yorkshire_water_forecasts():    
+    scrape_site()
     return "done"
 
 @shared_task
@@ -105,15 +91,10 @@ def monthly_yorkshire_predictions():
     calculate_yorkshire_accuracy.delay()
     return "scheduled"
 
-
 @shared_task
 def fetch_and_generate_southern_water_forecasts():
     extract_southern_water_levels()
-    generate_southern_arima_forecast()
-    generate_southern_lstm_forecast()
-    generate_southern_regression_forecast()
     return "done"
-
 
 @shared_task
 def weekly_southernwater_predictions():
@@ -123,14 +104,12 @@ def weekly_southernwater_predictions():
     calculate_southernwater_accuracy.delay()
     return "scheduled"
 
+@shared_task
 def fetch_and_generate_EA_stations_water_forecasts():
     extract_EA_stations_water_levels()
-    generate_EA_station_arima_forecast()
-    generate_EA_station_lstm_forecast()
-    generate_EA_station_regression_forecast()
-    calculate_EA_stations_water_prediction_accuracy()
     return "done"
 
+@shared_task
 def weekly_EA_stations_water_predictions():
     generate_EA_station_arima_forecast.delay()
     generate_EA_station_lstm_forecast.delay()
