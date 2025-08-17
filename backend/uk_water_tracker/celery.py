@@ -35,6 +35,7 @@ app.conf.beat_schedule = {
         'task': 'water_levels.tasks.weekly_severn_trent_predictions',
         'schedule': crontab(day_of_week='wed', hour=9, minute=0),
     },
+
     'monthly-yorkshire-scrape': {
         'task': 'water_levels.tasks.fetch_and_generate_yorkshire_water_forecasts',
         'schedule': crontab(day_of_month=1, hour=6, minute=0),
