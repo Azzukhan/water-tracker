@@ -132,10 +132,19 @@ REST_FRAMEWORK = {
 # CORS settings
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
-
+CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
+    "https://uk-water-tracker.vercel.app",
+    "https://*.vercel.app",
     "http://localhost:3000",
 ]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://uk-water-tracker.vercel.app",
+    "https://*.vercel.app",
+    "https://uk-water-tracker-production.up.railway.app",
+]
+
 # Channels settings
 CHANNEL_LAYERS = {
     "default": {
@@ -162,3 +171,8 @@ CELERY_BROKER_TRANSPORT_OPTIONS = {
     "fanout_prefix": True,
     "fanout_patterns": True,
 }
+
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+# Keep redirects for missing trailing slashes (Django default)
+APPEND_SLASH = True
