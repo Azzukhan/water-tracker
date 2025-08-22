@@ -72,10 +72,10 @@ def fetch_and_generate_severn_trent_forecasts():
 
 @shared_task
 def weekly_severn_trent_predictions():
-    generate_severn_trent_arima_forecast.delay()
-    generate_severn_trent_lstm_forecast.delay()
-    generate_severn_trent_regression_forecast.delay()
-    calculate_severn_trent_accuracy.delay()
+    generate_severn_trent_arima_forecast()
+    generate_severn_trent_lstm_forecast()
+    generate_severn_trent_regression_forecast()
+    calculate_severn_trent_accuracy()
     return "scheduled"
 
 @shared_task
@@ -85,10 +85,10 @@ def fetch_and_generate_yorkshire_water_forecasts():
 
 @shared_task
 def monthly_yorkshire_predictions():
-    generate_yorkshire_arima_forecast.delay()
-    generate_yorkshire_lstm_forecast.delay()
-    generate_yorkshire_regression_forecast.delay()
-    calculate_yorkshire_accuracy.delay()
+    generate_yorkshire_arima_forecast()
+    generate_yorkshire_lstm_forecast()
+    generate_yorkshire_regression_forecast()
+    calculate_yorkshire_accuracy()
     return "scheduled"
 
 @shared_task
@@ -98,10 +98,10 @@ def fetch_and_generate_southern_water_forecasts():
 
 @shared_task
 def weekly_southernwater_predictions():
-    generate_southern_arima_forecast.delay()
-    generate_southern_lstm_forecast.delay()
-    generate_southern_regression_forecast.delay()
-    calculate_southernwater_accuracy.delay()
+    generate_southern_arima_forecast()
+    generate_southern_lstm_forecast()
+    generate_southern_regression_forecast()
+    calculate_southernwater_accuracy()
     return "scheduled"
 
 @shared_task
@@ -111,8 +111,8 @@ def fetch_and_generate_EA_stations_water_forecasts():
 
 @shared_task
 def weekly_EA_stations_water_predictions():
-    generate_EA_station_arima_forecast.delay()
-    generate_EA_station_lstm_forecast.delay()
-    generate_EA_station_regression_forecast.delay()
-    calculate_EA_stations_water_prediction_accuracy.delay()
+    generate_EA_station_arima_forecast()
+    generate_EA_station_lstm_forecast()
+    generate_EA_station_regression_forecast()
+    calculate_EA_stations_water_prediction_accuracy()
     return "done"    
