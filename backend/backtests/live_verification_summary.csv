@@ -1,0 +1,26 @@
+source,model,MAPE_%,RMSE_%pts,R2
+Scotland,ARIMA,4.18,3.78,-2.245
+Scotland,LSTM,4.21,3.45,-1.702
+Scotland,REGRESSION,5.36,4.47,-3.525
+Scotland:East,ARIMA,11.28,7.49,-5.061
+Scotland:East,LSTM,14.58,9.87,-9.517
+Scotland:East,REGRESSION,24.6,15.28,-24.21
+Scotland:North,ARIMA,2.1,1.87,-2.179
+Scotland:North,LSTM,3.66,3.1,-7.724
+Scotland:North,REGRESSION,7.73,6.15,-33.357
+Scotland:South,ARIMA,2.14,2.31,-0.247
+Scotland:South,LSTM,4.32,3.97,-2.681
+Scotland:South,REGRESSION,6.92,5.5,-6.067
+Scotland:West,ARIMA,5.45,4.9,-3.257
+Scotland:West,LSTM,8.06,6.78,-7.166
+Scotland:West,REGRESSION,2.73,2.61,-0.208
+SevernTrent,ARIMA,1.91,1.37,0.954
+SevernTrent,LSTM,11.56,7.42,-0.366
+SevernTrent,REGRESSION,21.7,13.75,-3.685
+Southern:Bewl,LSTM,10.36,8.48,-8.781
+Southern:Darwell,LSTM,34.91,21.41,-24.391
+Southern:Powdermill,LSTM,9.19,8.12,-9.487
+Southern:Weir Wood,LSTM,3.77,3.67,-23.475
+Yorkshire,ARIMA,9.39,5.22,-0.546
+Yorkshire,LSTM,49.01,25.05,-34.565
+Yorkshire,REGRESSION,42.12,21.52,-25.254
