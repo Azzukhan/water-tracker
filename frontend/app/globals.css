@@ -63,3 +63,14 @@
     @apply sr-only focus:not-sr-only absolute top-4 left-4 z-50 rounded-md bg-blue-600 text-white px-4 py-2;
   }
 }
+
+@layer base {
+  html.high-contrast {
+    filter: invert(1) hue-rotate(180deg) contrast(1.1);
+  }
+  html.high-contrast img,
+  html.high-contrast video,
+  html.high-contrast [style*="background-image"] {
+    filter: invert(1) hue-rotate(180deg) contrast(1.1);
+  }
+}

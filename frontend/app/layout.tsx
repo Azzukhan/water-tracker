@@ -7,6 +7,7 @@ import Footer from "../components/footer"
 import { Toaster } from "@/components/ui/sonner"
 import { ColorBlindProvider } from "@/components/color-blind-provider"
 import { MainContent } from "@/components/main-content"
+import { AccessibilityToolbar } from "@/components/accessibility-toolbar"
 
 
 export const metadata: Metadata = {
@@ -32,6 +33,7 @@ export default function RootLayout({
             <MainContent>{children}</MainContent>
             <Footer />
             <Toaster />
+            <AccessibilityToolbar />
           </ThemeProvider>
         </ColorBlindProvider>
       </body>
