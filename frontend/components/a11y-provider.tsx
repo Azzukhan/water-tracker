@@ -15,17 +15,10 @@ export function A11yProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     localStorage.setItem("a11y-open", String(open))
-    // expose as data attribute for CSS
-    if (typeof document !== "undefined") {
-      document.documentElement.dataset.a11yOpen = open ? "true" : "false"
-    }
+    document.documentElement.dataset.a11yOpen = open ? "true" : "false"
   }, [open])
 
-  return (
-    <A11yContext.Provider value={{ open, setOpen }}>
-      {children}
-    </A11yContext.Provider>
-  )
+  return <A11yContext.Provider value={{ open, setOpen }}>{children}</A11yContext.Provider>
 }
 
 export function useA11y() {

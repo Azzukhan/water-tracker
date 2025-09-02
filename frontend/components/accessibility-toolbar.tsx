@@ -1,4 +1,3 @@
-// components/accessibility-toolbar.tsx
 "use client"
 
 import { useEffect, useRef, useState } from "react"
@@ -6,7 +5,7 @@ import { useA11y } from "@/components/a11y-provider"
 import {
   Volume2, Minus, Plus, Type, Globe,
   Contrast as ContrastIcon, Ruler, Square,
-  MousePointer2, RotateCcw, X
+  MousePointer2, RotateCcw, X, Palette
 } from "lucide-react"
 
 const TOOLBAR_HEIGHT = 56
@@ -25,7 +24,6 @@ const SPEAKABLE_SELECTOR = [
 // --- util: get accessible text for an element ---
 function getAccessibleText(el: Element | null): string {
   if (!el) return ""
-
   const element = el as HTMLElement
 
   // 1) aria-label
@@ -60,12 +58,10 @@ function getAccessibleText(el: Element | null): string {
   // inputs, selects, textareas
   if (tag === "input") {
     const inp = element as HTMLInputElement
-    // label text via <label for="...">
     if (inp.id) {
       const label = document.querySelector(`label[for="${CSS.escape(inp.id)}"]`) as HTMLElement | null
       if (label?.innerText) return label.innerText.replace(/\s+/g, " ").trim()
     }
-    // placeholder/value
     if (inp.placeholder) return inp.placeholder.trim()
     if (inp.type === "button" || inp.type === "submit" || inp.type === "reset") {
       if (inp.value) return inp.value.trim()
@@ -81,7 +77,6 @@ function getAccessibleText(el: Element | null): string {
     if (selected?.label) return selected.label.trim()
   }
 
-  // buttons or links with icons only often have aria-label handled above
   // else fall back to text content
   const raw = (element.innerText || element.textContent || "").replace(/\s+/g, " ").trim()
   if (raw) return raw
@@ -113,6 +108,10 @@ export function AccessibilityToolbar() {
   const [showTranslate, setShowTranslate] = useState(false)
   const [hoverReadOn, setHoverReadOn] = useState(false)
 
+  const colorBlindModes = ['off', 'deuteranopia', 'protanopia', 'tritanopia'] as const
+  type ColorBlindMode = typeof colorBlindModes[number]
+  const [colorBlindMode, setColorBlindMode] = useState<ColorBlindMode>('off')
+
   const debounceRef = useRef<number | null>(null)
   const lastSpokenRef = useRef<string>("")
 
@@ -121,15 +120,34 @@ export function AccessibilityToolbar() {
     document.documentElement.style.fontSize = `${fontSize}%`
     localStorage.setItem("a11y-font", String(fontSize))
   }, [fontSize])
+
   useEffect(() => {
     document.documentElement.classList.toggle("high-contrast", highContrast)
   }, [highContrast])
+
   useEffect(() => {
     document.body.classList.toggle("dyslexic-font", dyslexic)
   }, [dyslexic])
+
   useEffect(() => {
     document.body.classList.toggle("large-cursor", largeCursor)
   }, [largeCursor])
+
+  // ⬇️ APPLY color-blind filter to content wrapper (not <body>)
+  useEffect(() => {
+    // ensure no body filter remains
+    document.body.style.filter = ""
+
+    const node = document.getElementById("a11y-filter-root")
+    if (!node) return
+
+    if (colorBlindMode !== "off") {
+      node.style.filter = `url(#${colorBlindMode})`
+      node.style.transition = "filter 0.3s ease"
+    } else {
+      node.style.filter = ""
+    }
+  }, [colorBlindMode])
 
   // overlays
   useEffect(() => {
@@ -188,7 +206,6 @@ export function AccessibilityToolbar() {
 
   const handleHoverLeave = () => {
     if (!hoverReadOn) return
-    // pause when leaving, so moving between items feels natural
     if (window.speechSynthesis.speaking && !window.speechSynthesis.paused) {
       window.speechSynthesis.pause()
     }
@@ -222,11 +239,17 @@ export function AccessibilityToolbar() {
     setShowRuler(false)
     setShowTranslate(false)
     setHoverReadOn(false)
+    setColorBlindMode("off") // ensures effect clears filter
     lastSpokenRef.current = ""
     window.speechSynthesis.cancel()
     const el = document.getElementById("google_translate_element")
     if (el) el.innerHTML = ""
+
+    // extra safety: clear filter immediately in case effect hasn't run yet
+    const node = document.getElementById("a11y-filter-root")
+    if (node) node.style.filter = ""
   }
+
   const confirmCloseYes = () => {
     setConfirmClose(false)
     resetAll()
@@ -247,7 +270,7 @@ export function AccessibilityToolbar() {
   }) => (
     <button
       type="button"
-      className="a11y-btn h-9 w-9 shrink-0"
+      className="a11y-btn h-9 w-9 shrink-0 transition-colors duration-200 hover:bg-blue-100 active:bg-blue-200"
       aria-label={label}
       aria-pressed={pressed}
       onClick={onClick}
@@ -259,6 +282,21 @@ export function AccessibilityToolbar() {
 
   return (
     <>
+      {/* Color blind filters */}
+      <svg style={{ display: 'none' }}>
+        <defs>
+          <filter id="deuteranopia">
+            <feColorMatrix type="matrix" values="0.625 0.375 0 0 0  0.7 0.3 0 0 0  0 0.3 0.7 0 0  0 0 0 1 0" />
+          </filter>
+          <filter id="protanopia">
+            <feColorMatrix type="matrix" values="0.567 0.433 0 0 0  0.558 0.442 0 0 0  0 0.242 0.758 0 0  0 0 0 1 0" />
+          </filter>
+          <filter id="tritanopia">
+            <feColorMatrix type="matrix" values="0.95 0.05 0 0 0  0 0.433 0.567 0 0  0 0.475 0.525 0 0  0 0 0 1 0" />
+          </filter>
+        </defs>
+      </svg>
+
       {/* overlays */}
       {showMask && (
         <>
@@ -270,6 +308,7 @@ export function AccessibilityToolbar() {
               background: "rgba(0,0,0,0.55)",
               pointerEvents: "none",
               zIndex: 9996,
+              transition: "height 0.1s ease",
             }}
           />
           <div
@@ -279,6 +318,7 @@ export function AccessibilityToolbar() {
               background: "rgba(0,0,0,0.55)",
               pointerEvents: "none",
               zIndex: 9996,
+              transition: "top 0.1s ease",
             }}
           />
         </>
@@ -292,6 +332,7 @@ export function AccessibilityToolbar() {
             background: "rgba(255, 255, 0, 0.35)",
             pointerEvents: "none",
             zIndex: 9997,
+            transition: "top 0.1s ease",
           }}
         />
       )}
@@ -334,6 +375,21 @@ export function AccessibilityToolbar() {
               <ContrastIcon className="h-4 w-4" aria-hidden="true" />
             </TB>
 
+            {/* Color blind adjustment */}
+            <TB
+              label={`Color blind mode: ${colorBlindMode === 'off' ? 'Off' : colorBlindMode.charAt(0).toUpperCase() + colorBlindMode.slice(1)}`}
+              pressed={colorBlindMode !== 'off'}
+              onClick={() => {
+                const currentIndex = colorBlindModes.indexOf(colorBlindMode)
+                const nextMode = colorBlindModes[(currentIndex + 1) % colorBlindModes.length]
+                setColorBlindMode(nextMode)
+              }}
+            >
+              <Palette className="h-4 w-4" aria-hidden="true" />
+            </TB>
+
+            <span className="a11y-sep" aria-hidden="true" />
+
             {/* Ruler + Mask */}
             <TB label="Reading ruler" pressed={showRuler} onClick={() => setShowRuler(v => !v)}>
               <Ruler className="h-4 w-4" aria-hidden="true" />
@@ -357,7 +413,7 @@ export function AccessibilityToolbar() {
             {/* Close */}
             <button
               type="button"
-              className="ml-auto a11y-btn h-9 w-9 shrink-0"
+              className="ml-auto a11y-btn h-9 w-9 shrink-0 transition-colors duration-200 hover:bg-blue-100 active:bg-blue-200"
               aria-label="Close toolbar"
               onClick={() => setConfirmClose(true)}
               title="Close toolbar"

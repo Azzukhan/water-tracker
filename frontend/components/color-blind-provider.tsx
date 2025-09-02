@@ -1,41 +1,29 @@
-"use client";
-import React, { createContext, useContext, useEffect, useState } from "react";
+// components/color-blind-provider.tsx
+"use client"
 
-type CbCtx = { isCb: boolean; setCb: (v: boolean) => void; toggleCb: () => void };
-const ColorBlindContext = createContext<CbCtx | null>(null);
+import React, { createContext, useContext, useEffect, useMemo, useState } from "react"
 
-export const ColorBlindProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
-  const [isCb, setIsCb] = useState(false);
+type CbCtx = { isCb: boolean; toggleCb: () => void }
+const CbContext = createContext<CbCtx | null>(null)
 
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem("cb");
-      if (saved === "1") setIsCb(true);
-    } catch {}
-  }, []);
+export function ColorBlindProvider({ children }: { children: React.ReactNode }) {
+  const [isCb, setIsCb] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false
+    return localStorage.getItem("cb-mode") === "1"
+  })
 
   useEffect(() => {
-    if (typeof document !== "undefined") {
-      const root = document.documentElement;
-      if (isCb) root.classList.add("cb");
-      else root.classList.remove("cb");
-      try {
-        localStorage.setItem("cb", isCb ? "1" : "0");
-      } catch {}
-    }
-  }, [isCb]);
+    localStorage.setItem("cb-mode", isCb ? "1" : "0")
+    // Toggle a root class so your Tailwind “cb:” variants work
+    document.documentElement.classList.toggle("cb", isCb)
+  }, [isCb])
 
-  const toggleCb = () => setIsCb((p) => !p);
+  const value = useMemo(() => ({ isCb, toggleCb: () => setIsCb((v) => !v) }), [isCb])
+  return <CbContext.Provider value={value}>{children}</CbContext.Provider>
+}
 
-  return (
-    <ColorBlindContext.Provider value={{ isCb, setCb: setIsCb, toggleCb }}>
-      {children}
-    </ColorBlindContext.Provider>
-  );
-};
-
-export const useColorBlind = () => {
-  const ctx = useContext(ColorBlindContext);
-  if (!ctx) throw new Error("useColorBlind must be used within ColorBlindProvider");
-  return ctx;
-};
+export function useColorBlind() {
+  const ctx = useContext(CbContext)
+  if (!ctx) throw new Error("useColorBlind must be used inside <ColorBlindProvider>")
+  return ctx
+}

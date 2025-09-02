@@ -25,12 +25,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ColorBlindProvider>
           <ThemeProvider>
             <A11yProvider>
-              {/* Toolbar: always on very top */}
+              {/* Toolbar stays at VERY top */}
               <AccessibilityToolbar />
-              {/* Header gets auto-offset by CSS when toolbar is open */}
+              {/* Header sits under toolbar; it’s auto-offset by your CSS rule */}
               <Header />
-              <MainContent>{children}</MainContent>
-              <Footer />
+
+              {/* ⬇️ APPLY COLOR-BLIND FILTER HERE (not on <body>) */}
+              <div id="a11y-filter-root">
+                <MainContent>{children}</MainContent>
+                <Footer />
+              </div>
+
               <Toaster />
             </A11yProvider>
           </ThemeProvider>
