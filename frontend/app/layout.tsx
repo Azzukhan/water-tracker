@@ -10,6 +10,7 @@ import { ColorBlindProvider } from "@/components/color-blind-provider"
 import { MainContent } from "@/components/main-content"
 import { AccessibilityToolbar } from "@/components/accessibility-toolbar"
 import { A11yProvider } from "@/components/a11y-provider"
+import A11ySpacer from "@/components/a11y-spacer"
 
 export const metadata: Metadata = {
   title: "UK Water Tracker",
@@ -25,12 +26,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ColorBlindProvider>
           <ThemeProvider>
             <A11yProvider>
-              {/* Toolbar stays at VERY top */}
+              {/* Toolbar fixed at very top */}
               <AccessibilityToolbar />
-              {/* Header sits under toolbar; it’s auto-offset by your CSS rule */}
+              {/* Header under toolbar */}
               <Header />
+              {/* Offset content only when toolbar is open */}
+              <A11ySpacer />
 
-              {/* ⬇️ APPLY COLOR-BLIND FILTER HERE (not on <body>) */}
+              {/* Apply color-blind filter only to this content wrapper */}
               <div id="a11y-filter-root">
                 <MainContent>{children}</MainContent>
                 <Footer />

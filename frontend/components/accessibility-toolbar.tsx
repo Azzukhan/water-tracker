@@ -10,7 +10,6 @@ import {
 
 const TOOLBAR_HEIGHT = 56
 
-// broader but safe: includes semantic + ARIA + controls
 const SPEAKABLE_SELECTOR = [
   "a", "button", "[role='button']",
   "p", "li",
@@ -21,41 +20,29 @@ const SPEAKABLE_SELECTOR = [
   "[aria-label]", "[aria-labelledby]", "[title]"
 ].join(",")
 
-// --- util: get accessible text for an element ---
 function getAccessibleText(el: Element | null): string {
   if (!el) return ""
   const element = el as HTMLElement
 
-  // 1) aria-label
   const ariaLabel = element.getAttribute?.("aria-label")
-  if (ariaLabel && ariaLabel.trim()) return ariaLabel.trim()
+  if (ariaLabel?.trim()) return ariaLabel.trim()
 
-  // 2) aria-labelledby
   const labelledBy = element.getAttribute?.("aria-labelledby")
   if (labelledBy) {
     const ids = labelledBy.split(/\s+/)
-    const txt = ids
-      .map(id => document.getElementById(id)?.textContent || "")
-      .join(" ")
-      .replace(/\s+/g, " ")
-      .trim()
+    const txt = ids.map(id => document.getElementById(id)?.textContent || "")
+      .join(" ").replace(/\s+/g, " ").trim()
     if (txt) return txt
   }
 
-  // 3) title
   const titleAttr = element.getAttribute?.("title")
-  if (titleAttr && titleAttr.trim()) return titleAttr.trim()
+  if (titleAttr?.trim()) return titleAttr.trim()
 
-  // 4) role-based / tag-specific
   const tag = element.tagName.toLowerCase()
-
-  // images
   if (tag === "img") {
     const alt = (element as HTMLImageElement).alt
-    if (alt && alt.trim()) return alt.trim()
+    if (alt?.trim()) return alt.trim()
   }
-
-  // inputs, selects, textareas
   if (tag === "input") {
     const inp = element as HTMLInputElement
     if (inp.id) {
@@ -63,9 +50,7 @@ function getAccessibleText(el: Element | null): string {
       if (label?.innerText) return label.innerText.replace(/\s+/g, " ").trim()
     }
     if (inp.placeholder) return inp.placeholder.trim()
-    if (inp.type === "button" || inp.type === "submit" || inp.type === "reset") {
-      if (inp.value) return inp.value.trim()
-    }
+    if (["button", "submit", "reset"].includes(inp.type) && inp.value) return inp.value.trim()
   }
   if (tag === "textarea") {
     const ta = element as HTMLTextAreaElement
@@ -77,14 +62,10 @@ function getAccessibleText(el: Element | null): string {
     if (selected?.label) return selected.label.trim()
   }
 
-  // else fall back to text content
   const raw = (element.innerText || element.textContent || "").replace(/\s+/g, " ").trim()
-  if (raw) return raw
-
-  return ""
+  return raw || ""
 }
 
-// simple length guard to avoid huge containers
 function isReasonableLength(text: string) {
   const len = text.length
   return len >= 2 && len <= 300
@@ -133,14 +114,11 @@ export function AccessibilityToolbar() {
     document.body.classList.toggle("large-cursor", largeCursor)
   }, [largeCursor])
 
-  // ⬇️ APPLY color-blind filter to content wrapper (not <body>)
+  // apply color-blind filter to content wrapper (not <body>)
   useEffect(() => {
-    // ensure no body filter remains
-    document.body.style.filter = ""
-
+    document.body.style.filter = "" // safety: never leave body filtered
     const node = document.getElementById("a11y-filter-root")
     if (!node) return
-
     if (colorBlindMode !== "off") {
       node.style.filter = `url(#${colorBlindMode})`
       node.style.transition = "filter 0.3s ease"
@@ -167,10 +145,7 @@ export function AccessibilityToolbar() {
     if (document.getElementById(id)) return
     ;(window as any).googleTranslateElementInit = () => {
       try {
-        new (window as any).google.translate.TranslateElement(
-          { pageLanguage: "en" },
-          "google_translate_element"
-        )
+        new (window as any).google.translate.TranslateElement({ pageLanguage: "en" }, "google_translate_element")
       } catch {}
     }
     const s = document.createElement("script")
@@ -184,7 +159,6 @@ export function AccessibilityToolbar() {
     if (!isReasonableLength(text)) return
     if (text === lastSpokenRef.current) return
     lastSpokenRef.current = text
-
     window.speechSynthesis.cancel()
     const utter = new SpeechSynthesisUtterance(text)
     window.speechSynthesis.speak(utter)
@@ -239,24 +213,30 @@ export function AccessibilityToolbar() {
     setShowRuler(false)
     setShowTranslate(false)
     setHoverReadOn(false)
-    setColorBlindMode("off") // ensures effect clears filter
+    setColorBlindMode("off")
     lastSpokenRef.current = ""
     window.speechSynthesis.cancel()
     const el = document.getElementById("google_translate_element")
     if (el) el.innerHTML = ""
-
-    // extra safety: clear filter immediately in case effect hasn't run yet
     const node = document.getElementById("a11y-filter-root")
     if (node) node.style.filter = ""
   }
 
   const confirmCloseYes = () => {
+    // 1) close immediately (and persist)
+    try { localStorage.setItem("a11y-open", "false") } catch {}
+    setOpen(false)
+
+    // 2) tidy up state & visuals
     setConfirmClose(false)
     resetAll()
-    setOpen(false)
+
+    // 3) blur any focused control to avoid re-open via key events
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur()
+    }
   }
 
-  // toolbar button
   const TB = ({
     pressed,
     onClick,
@@ -282,7 +262,7 @@ export function AccessibilityToolbar() {
 
   return (
     <>
-      {/* Color blind filters */}
+      {/* Color blind filters (defs) */}
       <svg style={{ display: 'none' }}>
         <defs>
           <filter id="deuteranopia">
@@ -340,7 +320,7 @@ export function AccessibilityToolbar() {
       {open && (
         <div className="a11y-toolbar" role="region" aria-label="Accessibility toolbar">
           <div className="a11y-toolbar-inner" role="toolbar">
-            {/* Hover Read toggle */}
+            {/* Hover Read */}
             <TB label={hoverReadOn ? "Hover Read: On" : "Hover Read: Off"} pressed={hoverReadOn} onClick={() => {
               lastSpokenRef.current = ""
               setHoverReadOn(v => !v)
@@ -375,7 +355,7 @@ export function AccessibilityToolbar() {
               <ContrastIcon className="h-4 w-4" aria-hidden="true" />
             </TB>
 
-            {/* Color blind adjustment */}
+            {/* Color blind cycle */}
             <TB
               label={`Color blind mode: ${colorBlindMode === 'off' ? 'Off' : colorBlindMode.charAt(0).toUpperCase() + colorBlindMode.slice(1)}`}
               pressed={colorBlindMode !== 'off'}
