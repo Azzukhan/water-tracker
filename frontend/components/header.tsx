@@ -1,13 +1,15 @@
+// components/header.tsx
 "use client"
 
 import { useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Menu, Droplets, Mail } from "lucide-react"
+import { Menu, Droplets, Mail, Accessibility as AccessibilityIcon } from "lucide-react"
 import { EmergencyButton } from "@/components/emergency-button"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { useColorBlind } from "@/components/color-blind-provider"
+import { useA11y } from "@/components/a11y-provider"
 
 const navItems = [
   { name: "Home", href: "/" },
@@ -19,7 +21,7 @@ const navItems = [
 ]
 
 export function HeaderToggleRow({ className = "" }: { className?: string }) {
-  const { isCb, toggleCb } = useColorBlind();
+  const { isCb, toggleCb } = useColorBlind()
   return (
     <div className={`flex items-center gap-3 ${className}`}>
       <label className="inline-flex items-center gap-2 cursor-pointer">
@@ -41,21 +43,34 @@ export function HeaderToggleRow({ className = "" }: { className?: string }) {
         </span>
       </label>
     </div>
-  );
+  )
 }
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false)
+  const { setOpen: openA11y } = useA11y()
+
+  const openAccessibility = () => {
+    openA11y(true)
+    setIsOpen(false)
+    setTimeout(() => {
+      const tb = document.querySelector('[role="toolbar"]') as HTMLElement | null
+      tb?.focus?.()
+    }, 0)
+  }
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b border-blue-100 dark:border-gray-800 shadow-sm bg-gradient-to-r from-white/90 to-blue-50/90 dark:from-gray-900/90 dark:to-gray-800/90">
+    <header
+      className="site-header fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b border-blue-100 dark:border-gray-800 shadow-sm bg-gradient-to-r from-white/90 to-blue-50/90 dark:from-gray-900/90 dark:to-gray-800/90"
+      /* ^^^^^ added site-header so CSS can offset it */
+    >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3 group">
             <div className="relative">
               <Droplets className="h-8 w-8 text-blue-600 dark:text-blue-400 cb:text-cbSkyBlue group-hover:text-blue-700 dark:group-hover:text-blue-300 cb:group-hover:text-cbBlue transition-colors" />
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-cyan-400 dark:bg-cyan-500 rounded-full animate-pulse"></div>
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-cyan-400 dark:bg-cyan-500 rounded-full animate-pulse" />
             </div>
             <div className="hidden sm:block">
               <h1 className="text-xl font-bold text-gray-900 dark:text-white">UK Water Tracker</h1>
@@ -76,24 +91,36 @@ export function Header() {
             ))}
           </nav>
 
-          {/* Theme Toggle & Emergency Contact & Mobile Menu */}
-          <div className="flex items-center space-x-3">
-            <ThemeToggle className="hidden md:flex" />
-            <HeaderToggleRow className="hidden md:flex" />
+          {/* Right actions (desktop) */}
+          <div className="hidden md:flex items-center space-x-3">
+            <Button
+              onClick={openAccessibility}
+              className="inline-flex items-center gap-2 bg-blue-600 text-white hover:bg-blue-700"
+              aria-label="Open accessibility toolbar"
+            >
+              <AccessibilityIcon className="h-4 w-4" aria-hidden="true" />
+              Accessibility
+            </Button>
 
-            <div className="hidden md:flex">
-              <EmergencyButton />
-            </div>
+            <ThemeToggle />
+            <HeaderToggleRow />
+            <EmergencyButton />
+          </div>
 
-            {/* Mobile Menu */}
+          {/* Mobile actions */}
+          <div className="md:hidden flex items-center gap-2">
+            <Button
+              size="icon"
+              onClick={openAccessibility}
+              className="bg-blue-600 text-white hover:bg-blue-700"
+              aria-label="Open accessibility toolbar"
+            >
+              <AccessibilityIcon className="h-5 w-5" aria-hidden="true" />
+            </Button>
+
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="lg:hidden"
-                  aria-label="Open navigation menu"
-                >
+                <Button variant="outline" size="icon" aria-label="Open navigation menu">
                   <Menu className="h-5 w-5" aria-hidden="true" />
                 </Button>
               </SheetTrigger>
@@ -120,11 +147,20 @@ export function Header() {
                     ))}
                   </nav>
 
-                    <div className="pt-4 border-t dark:border-gray-700">
-                      <ThemeToggle className="mb-3" />
-                      <HeaderToggleRow className="mb-3" />
+                  <div className="pt-4 border-t dark:border-gray-700 space-y-3">
+                    <Button
+                      onClick={openAccessibility}
+                      className="w-full inline-flex items-center gap-2 bg-blue-600 text-white hover:bg-blue-700"
+                      aria-label="Open accessibility toolbar"
+                    >
+                      <AccessibilityIcon className="h-4 w-4" aria-hidden="true" />
+                      Accessibility
+                    </Button>
 
-                    <EmergencyButton fullWidth className="mb-3" />
+                    <ThemeToggle />
+                    <HeaderToggleRow />
+                    <EmergencyButton fullWidth />
+
                     <Button variant="outline" className="w-full" asChild>
                       <Link href="/contact">
                         <Mail className="h-4 w-4 mr-2" />

@@ -1,3 +1,4 @@
+/* app/globals.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -50,20 +51,13 @@
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-  :focus-visible {
-    @apply outline-2 outline-blue-600 dark:outline-blue-500 outline-offset-2;
-  }
-  .skip-link {
-    @apply sr-only focus:not-sr-only absolute top-4 left-4 z-50 rounded-md bg-blue-600 text-white px-4 py-2;
-  }
+  * { @apply border-border; }
+  body { @apply bg-background text-foreground; }
+  :focus-visible { @apply outline-2 outline-blue-600 dark:outline-blue-500 outline-offset-2; }
+  .skip-link { @apply sr-only focus:not-sr-only absolute top-4 left-4 z-[100000] rounded-md bg-blue-600 text-white px-4 py-2; }
 }
 
+/* High-contrast (you already had this – keeping + compatible with dark images) */
 @layer base {
   html.high-contrast {
     filter: invert(1) hue-rotate(180deg) contrast(1.1);
@@ -73,4 +67,58 @@
   html.high-contrast [style*="background-image"] {
     filter: invert(1) hue-rotate(180deg) contrast(1.1);
   }
+}
+
+/* Optional dyslexic font (include your font file or a CDN in <head> if you want) */
+@layer base {
+  /* Example:
+  @font-face {
+    font-family: "OpenDyslexic";
+    src: url("/fonts/OpenDyslexic-Regular.woff2") format("woff2");
+    font-weight: normal; font-style: normal; font-display: swap;
+  } */
+  .dyslexic-font { font-family: OpenDyslexic, Arial, Helvetica, sans-serif !important; }
+}
+
+/* Large cursor */
+@layer base {
+  .large-cursor, .large-cursor * { cursor: url("/cursor-large.png"), auto !important; }
+}
+
+/* Toolbar + mini player quick styles (tailwind handles most) */
+@layer components {
+  .a11y-toolbar {
+    @apply fixed top-0 left-0 right-0 z-[9998] bg-[#0b3d59] text-white;
+  }
+  .a11y-toolbar-inner {
+    @apply mx-auto max-w-screen-2xl px-3 py-2 flex items-center gap-2 overflow-x-auto;
+  }
+  .a11y-btn {
+    @apply inline-flex items-center justify-center rounded-md bg-[#145374] hover:bg-[#166089] active:bg-[#12495e] px-2 py-2 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80;
+  }
+  .a11y-btn[aria-pressed="true"] {
+    @apply bg-[#1b7fb3];
+  }
+  .a11y-sep {
+    @apply h-6 w-px bg-white/30 mx-1 shrink-0;
+  }
+  .a11y-mini {
+    @apply fixed z-[9999] top-[52px] left-1/2 -translate-x-1/2 bg-[#0b3d59] text-white rounded-md shadow-lg px-2 py-1 flex items-center gap-2;
+  }
+}
+
+/* Simple modal */
+@layer components {
+  .a11y-modal-backdrop {
+    @apply fixed inset-0 z-[10000] bg-black/60;
+  }
+  .a11y-modal {
+    @apply fixed z-[10001] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-md rounded-lg bg-[#0b3d59] text-white p-6 shadow-xl;
+  }
+  .a11y-modal h3 { @apply text-lg font-semibold mb-2; }
+  .a11y-modal p { @apply text-sm text-white/90 mb-4; }
+}
+
+@layer components {
+  html[data-a11y-open="true"] .site-header { top: 56px !important; }
 }
