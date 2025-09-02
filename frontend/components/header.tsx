@@ -1,4 +1,3 @@
-// components/header.tsx
 "use client"
 
 import { useState } from "react"
@@ -8,7 +7,6 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Menu, Droplets, Mail, Accessibility as AccessibilityIcon } from "lucide-react"
 import { EmergencyButton } from "@/components/emergency-button"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { useColorBlind } from "@/components/color-blind-provider"
 import { useA11y } from "@/components/a11y-provider"
 
 const navItems = [
@@ -19,32 +17,6 @@ const navItems = [
   { name: "Blogs", href: "/blog" },
   { name: "Contact", href: "/contact" },
 ]
-
-export function HeaderToggleRow({ className = "" }: { className?: string }) {
-  const { isCb, toggleCb } = useColorBlind()
-  return (
-    <div className={`flex items-center gap-3 ${className}`}>
-      <label className="inline-flex items-center gap-2 cursor-pointer">
-        <input
-          type="checkbox"
-          className="sr-only"
-          checked={isCb}
-          onChange={toggleCb}
-          aria-label="Toggle Color-Blind Mode"
-        />
-        <span
-          aria-hidden
-          className={`h-5 w-9 rounded-full transition ${
-            isCb ? "bg-cbBlue" : "bg-gray-300 dark:bg-gray-600"
-          }`}
-        />
-        <span className="text-sm text-gray-700 dark:text-gray-200 cb:text-cbBlue">
-          Color-Blind Mode
-        </span>
-      </label>
-    </div>
-  )
-}
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false)
@@ -62,7 +34,6 @@ export function Header() {
   return (
     <header
       className="site-header fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b border-blue-100 dark:border-gray-800 shadow-sm bg-gradient-to-r from-white/90 to-blue-50/90 dark:from-gray-900/90 dark:to-gray-800/90"
-      /* ^^^^^ added site-header so CSS can offset it */
     >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
@@ -103,7 +74,6 @@ export function Header() {
             </Button>
 
             <ThemeToggle />
-            <HeaderToggleRow />
             <EmergencyButton />
           </div>
 
@@ -158,7 +128,6 @@ export function Header() {
                     </Button>
 
                     <ThemeToggle />
-                    <HeaderToggleRow />
                     <EmergencyButton fullWidth />
 
                     <Button variant="outline" className="w-full" asChild>
