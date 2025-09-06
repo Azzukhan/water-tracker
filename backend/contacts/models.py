@@ -1,6 +1,7 @@
 from django.db import models
 
 class SupportRequest(models.Model):
+    """Model to store support requests from users."""
     name = models.CharField(max_length=255)
     email = models.EmailField()
     phone = models.CharField(max_length=50, blank=True)
@@ -15,6 +16,7 @@ class SupportRequest(models.Model):
         return f"{self.name} - {self.subject}"
 
 class Question(models.Model):
+    """Model to store user questions."""
     email = models.EmailField()
     question = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -24,6 +26,7 @@ class Question(models.Model):
 
 
 class IssueReport(models.Model):
+    """Model to store reported issues."""
     issue_type = models.CharField(max_length=50)
     severity = models.CharField(max_length=20)
     location = models.CharField(max_length=255)

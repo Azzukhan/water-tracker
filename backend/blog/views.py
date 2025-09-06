@@ -34,7 +34,6 @@ class BlogPostViewSet(viewsets.ModelViewSet):
     def add_comment(self, request, slug=None):
         post = self.get_object()
         
-        # Check if this is a reply to another comment
         parent_id = request.data.get('parent')
         parent = None
         if parent_id:

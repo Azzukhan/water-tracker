@@ -4,7 +4,7 @@ from statsmodels.tsa.arima.model import ARIMA
 from datetime import timedelta  
 
 def generate_severn_trent_arima_forecast():
-
+    """Generate ARIMA forecast for Severn Trent reservoir levels."""
 
     qs = SevernTrentReservoirLevel.objects.order_by("date") 
     if qs.count() < 12:

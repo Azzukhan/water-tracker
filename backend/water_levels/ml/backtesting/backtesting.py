@@ -9,7 +9,6 @@ from statsmodels.tsa.statespace.sarimax import SARIMAX
 
 warnings.filterwarnings("ignore", category=UserWarning)
 
-# ---------- Metrics & utils ----------
 
 def mape(y_true, y_pred):
     y_true, y_pred = np.array(y_true), np.array(y_pred)
@@ -56,7 +55,6 @@ def _resample_series(s: pd.Series, target: str) -> pd.Series:
         s = s.resample("W-SUN").last() if target == "W" else s.resample("MS").last()
     return s.dropna()
 
-# ---------- Models ----------
 
 def fit_forecast_arima(train: pd.Series, h: int, seasonal_period: Optional[int], maxiter: int, fast: bool) -> np.ndarray:
     non_seasonal = [(1,1,1)] if fast else [(1,1,0),(0,1,1),(1,1,1)]
@@ -107,7 +105,6 @@ def fit_forecast_regression(train: pd.Series, h: int, seasonal_period: int) -> n
     return (Xf @ beta).astype("float64")
 
 def fit_forecast_lstm(train: pd.Series, h: int, window: int = 12, fast: bool = False) -> np.ndarray:
-    # --- scaling (train-only) ---
     from sklearn.preprocessing import MinMaxScaler
     scaler = MinMaxScaler()
     y = train.values.reshape(-1,1)
@@ -116,7 +113,6 @@ def fit_forecast_lstm(train: pd.Series, h: int, window: int = 12, fast: bool = F
         last = float(train.iloc[-1])
         return np.array([last]*h, dtype="float64")
 
-    # create sequences ...
     Xs, ys = [], []
     for i in range(window, len(y_scaled)):
         Xs.append(y_scaled[i-window:i, 0])
@@ -124,9 +120,8 @@ def fit_forecast_lstm(train: pd.Series, h: int, window: int = 12, fast: bool = F
     Xs = np.array(Xs).reshape(-1, window, 1)
     ys = np.array(ys)
 
-    # --- NEW: tame TF logs + retracing noise, clear previous graph ---
     import os
-    os.environ.setdefault("TF_CPP_MIN_LOG_LEVEL", "2")  # hide INFO/WARN from TF runtime
+    os.environ.setdefault("TF_CPP_MIN_LOG_LEVEL", "2")
     import tensorflow as tf
     tf.get_logger().setLevel("ERROR")
     try:
@@ -152,7 +147,6 @@ def fit_forecast_lstm(train: pd.Series, h: int, window: int = 12, fast: bool = F
     es = EarlyStopping(patience=(5 if fast else 10), restore_best_weights=True, monitor="val_loss")
     model.fit(Xs, ys, epochs=(60 if fast else 200), batch_size=32, verbose=0, validation_split=0.2, callbacks=[es])
 
-    # recursive multi-step ...
     preds_scaled = []
     last_seq = y_scaled[-window:, 0].copy()
     for _ in range(h):
@@ -164,7 +158,6 @@ def fit_forecast_lstm(train: pd.Series, h: int, window: int = 12, fast: bool = F
     preds = scaler.inverse_transform(np.array(preds_scaled).reshape(-1,1))[:,0]
     return preds.astype("float64")
 
-# ---------- Config & backtest ----------
 
 @dataclass
 class BacktestConfig:
@@ -220,7 +213,6 @@ def expanding_backtest(series: pd.Series, cfg: BacktestConfig, model_name: str):
     })).reset_index())
     return out, agg
 
-# ---------- Dataset spec & loaders ----------
 
 @dataclass
 class DatasetSpec:
@@ -228,12 +220,12 @@ class DatasetSpec:
     model_path: str
     date_field: str
     value_field: str
-    target_freq: str          # "W" or "M"
-    seasonal_period: int      # 52 for weekly, 12 for monthly
+    target_freq: str        
+    seasonal_period: int     
     fixed_filters: Optional[dict] = None
 
 BASE_DATASETS: List[DatasetSpec] = [
-    # Scotland (weekly)
+
     DatasetSpec("Scotland_Average", "water_levels.ScottishWaterAverageLevel",
                 "date", "current", "W", 52),
     DatasetSpec("Scotland_East", "water_levels.ScottishWaterRegionalLevel",
@@ -245,11 +237,9 @@ BASE_DATASETS: List[DatasetSpec] = [
     DatasetSpec("Scotland_West", "water_levels.ScottishWaterRegionalLevel",
                 "date", "current", "W", 52, {"area": "West"}),
 
-    # Severn Trent (weekly)
     DatasetSpec("SevernTrent", "water_levels.SevernTrentReservoirLevel",
                 "date", "percentage", "W", 52),
 
-    # Yorkshire (monthly)
     DatasetSpec("Yorkshire", "water_levels.YorkshireReservoirData",
                 "report_date", "reservoir_level", "M", 12),
 ]
@@ -263,7 +253,6 @@ def _dynamic_southern_sites() -> List[DatasetSpec]:
     names = (Model.objects.values_list("reservoir", flat=True).distinct())
     specs: List[DatasetSpec] = []
     for name in names:
-        # Some DBs may repeat names; guard and normalize label
         if not name:
             continue
         label = f"SouthernWater_{str(name).replace(' ', '-').replace('/', '-')}"

@@ -12,7 +12,6 @@ def generate_scottish_water_wide_regression_forecast():
 
     df = pd.DataFrame(qs.values("date", "current"))
     df["date"] = pd.to_datetime(df["date"])
-    # Align to weekly Mondays for consistent time series
     df = df.set_index("date").asfreq("W-MON")
     df["current"] = df["current"].interpolate()
 

@@ -55,7 +55,7 @@ class ScottishWaterForecast(models.Model):
         unique_together = ("date", "model_type")
         ordering = ["date"]
 
-    def __str__(self) -> str:  # pragma: no cover - simple representation
+    def __str__(self) -> str: 
         return f"{self.date} {self.model_type}: {self.predicted_percentage}%"
 
 
@@ -78,7 +78,7 @@ class ScottishWaterRegionalForecast(models.Model):
         unique_together = ("area", "date", "model_type")
         ordering = ["area", "date"]
 
-    def __str__(self) -> str:  # pragma: no cover - simple representation
+    def __str__(self) -> str:  
         return f"{self.area} {self.date} {self.model_type}: {self.predicted_level}%"
     
     
@@ -115,7 +115,7 @@ class ScottishWaterForecastAccuracy(models.Model):
         unique_together = ("date", "model_type")
         ordering = ["-date"]
 
-    def __str__(self) -> str:  # pragma: no cover - simple representation
+    def __str__(self) -> str:  
         return f"{self.date} {self.model_type}: {self.predicted_percentage}%"
 
 ## Severn Trent models
@@ -129,7 +129,7 @@ class SevernTrentReservoirLevel(models.Model):
     class Meta:
         ordering = ["-date"]
 
-    def __str__(self) -> str:  # pragma: no cover - simple representation
+    def __str__(self) -> str:  
         return f"{self.date}: {self.percentage}%"
 
 
@@ -151,7 +151,7 @@ class SevernTrentReservoirForecast(models.Model):
         unique_together = ("date", "model_type")
         ordering = ["date"]
 
-    def __str__(self) -> str:  # pragma: no cover - simple representation
+    def __str__(self) -> str:  
         return f"{self.date} {self.model_type}: {self.predicted_percentage}%"
 
 class SevernTrentForecastAccuracy(models.Model):
@@ -186,7 +186,7 @@ class YorkshireWaterPrediction(models.Model):
         unique_together = ("date", "model_type")
         ordering = ["date"]
 
-    def __str__(self) -> str:  # pragma: no cover
+    def __str__(self) -> str:  
         return f"{self.date} {self.model_type}: {self.predicted_reservoir_percent}%"
 
 
@@ -201,7 +201,7 @@ class YorkshireReservoirData(models.Model):
     class Meta:
         ordering = ["-report_date"]
 
-    def __str__(self) -> str:  # pragma: no cover
+    def __str__(self) -> str:  
         return f"{self.report_date}: {self.reservoir_level}%"
 
 class YorkshireWaterPredictionAccuracy(models.Model):
@@ -237,7 +237,7 @@ class SouthernWaterReservoirLevel(models.Model):
         unique_together = ("reservoir", "date")
         ordering = ["reservoir", "-date"]
 
-    def __str__(self) -> str:  # pragma: no cover
+    def __str__(self) -> str:  
         return f"{self.reservoir} {self.date}: {self.current_level}%"
 
 
@@ -260,7 +260,7 @@ class SouthernWaterReservoirForecast(models.Model):
         unique_together = ("reservoir", "date", "model_type")
         ordering = ["reservoir", "date"]
 
-    def __str__(self) -> str:  # pragma: no cover
+    def __str__(self) -> str:  
         return (
             f"{self.reservoir} {self.date} {self.model_type}: {self.predicted_level}%"
         )

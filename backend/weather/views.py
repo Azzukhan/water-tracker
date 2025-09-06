@@ -31,7 +31,6 @@ WEATHER_CODE_MAP = {
     1102: {"description": "Mostly Cloudy", "icon": "☁️"},
     1001: {"description": "Cloudy", "icon": "☁️"},
     2000: {"description": "Fog", "icon": "🌫️"},
-    # ... add more codes as needed
 }
 
 def get_weather_info(code):
@@ -43,7 +42,7 @@ def haversine_distance(lat1, lon1, lat2, lon2):
     dlat = lat2 - lat1
     a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
     c = 2 * asin(sqrt(a))
-    r = 6371  # Radius of earth in kilometers
+    r = 6371  
     return c * r
 
 def fetch_astronomy(lat: float, lon: float) -> Optional[Dict[str, Any]]:
@@ -67,7 +66,6 @@ def fetch_astronomy(lat: float, lon: float) -> Optional[Dict[str, Any]]:
             }
     except Exception:
         pass
-    # Fallback to Open-Meteo if sunrise-sunset.org fails
     try:
         today = timezone.now().date().isoformat()
         url = (

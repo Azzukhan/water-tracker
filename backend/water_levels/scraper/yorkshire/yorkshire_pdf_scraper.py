@@ -64,7 +64,6 @@ def extract_yorkshire_reservoir_data():
             diff_match = DIFF_RE.search(text)
 
             if not date_match:
-                print(f"❌ Skipping (no date): {text[:100]}...")
                 continue
 
             report_date = datetime.strptime(date_match.group(), "%B %Y").date()
@@ -76,7 +75,6 @@ def extract_yorkshire_reservoir_data():
             elif to_level_match:
                 level = float(to_level_match.group(1))
             else:
-                print(f"❌ Skipping (no reservoir level match): {text[:100]}...")
                 continue
 
             direction = direction_match.group(1).lower() if direction_match else ""
@@ -106,7 +104,6 @@ def scrape_site():
     """Fetch and store Yorkshire reservoir data into the database."""
     records = extract_yorkshire_reservoir_data()
     if not records:
-        print("❌ No data found. Check scraping structure or website.")
         return False
 
     inserted = False
@@ -120,7 +117,6 @@ def scrape_site():
             },
         )
         inserted = inserted or created
-        print(f"✅ Saved: {item}")
 
     return inserted
 

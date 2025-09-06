@@ -4,7 +4,7 @@ from datetime import timedelta
 from water_levels.ml.general_lstm.lstm import train_lstm
 
 def generate_severn_trent_lstm_forecast():
-
+    """Generate LSTM forecast for Severn Trent reservoir levels."""
     qs = SevernTrentReservoirLevel.objects.order_by("date")
     if qs.count() < 30:
         return "Not enough data"

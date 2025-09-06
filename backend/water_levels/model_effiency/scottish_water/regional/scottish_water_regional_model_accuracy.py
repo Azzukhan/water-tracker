@@ -1,4 +1,3 @@
-"""Calculate accuracy for Scottish Water regional forecasts."""
 from datetime import datetime
 from water_levels.models import (
         ScottishWaterPredictionAccuracy,

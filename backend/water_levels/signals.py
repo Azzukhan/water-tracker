@@ -12,5 +12,4 @@ def trigger_prediction_on_new_level(sender, instance, created, **kwargs):
         try:
             weekly_severn_trent_predictions.delay()
         except Exception:
-            # Ignore errors when the Celery broker is unavailable (e.g. during tests)
             pass

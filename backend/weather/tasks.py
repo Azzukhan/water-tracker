@@ -11,12 +11,9 @@ from django.core.cache import cache
 
 TOMORROW_API_KEY = os.getenv("TOMORROW_API_KEY", "0pf6M1hLTRzQHdAY0dQuAcl5R1YP5G5X")
 RATE_LIMIT_KEY = "tomorrow_io_rate_limit"
-RATE_LIMIT_WINDOW = 60  # 1 minute window
-MAX_REQUESTS_PER_WINDOW = 100  # Tomorrow.io free tier limit
+RATE_LIMIT_WINDOW = 60  
+MAX_REQUESTS_PER_WINDOW = 100 
 
-# Basic mapping of Tomorrow.io weather codes to simple icon names and
-# descriptive text used by the frontend. This is not exhaustive but
-# covers the common codes we expect to see.
 WEATHER_CODE_MAP = {
     1000: ("Clear", "clear"),
     1100: ("Mostly Clear", "clear"),
@@ -50,16 +47,13 @@ def check_rate_limit():
     current_time = time.time()
     window_start = current_time - RATE_LIMIT_WINDOW
 
-    # Get existing requests in the window
     requests_in_window = cache.get(RATE_LIMIT_KEY, [])
 
-    # Remove old requests outside the window
     requests_in_window = [t for t in requests_in_window if t > window_start]
 
     if len(requests_in_window) >= MAX_REQUESTS_PER_WINDOW:
         return False
 
-    # Add current request
     requests_in_window.append(current_time)
     cache.set(RATE_LIMIT_KEY, requests_in_window, RATE_LIMIT_WINDOW)
     return True
@@ -201,7 +195,3 @@ def update_weather_for_location(self, station_id):
 def handle_task_failure(task_id, exception, args, kwargs, traceback, einfo, **kw):
     """Handle task failures and log them"""
     print(f"Task {task_id} failed: {exception}")
-    # You could add more sophisticated error handling here, like:
-    # - Sending notifications
-    # - Logging to a monitoring service
-    # - Updating a failure counter in the database

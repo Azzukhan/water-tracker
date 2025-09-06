@@ -5,7 +5,7 @@ import statsmodels.api as sm
 from datetime import timedelta
 
 def generate_severn_trent_regression_forecast():
-
+    """Generate regression forecast for Severn Trent reservoir levels."""
     qs = SevernTrentReservoirLevel.objects.order_by("date")
     if qs.count() < 12:
         return "Insufficient data"

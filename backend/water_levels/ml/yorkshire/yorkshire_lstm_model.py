@@ -9,6 +9,9 @@ from water_levels.ml.general_lstm.lstm import train_lstm
 
 
 def generate_yorkshire_lstm_forecast() -> None:
+    """
+    Generate LSTM-based forecasts for Yorkshire reservoirs and save predictions to the DB.
+    """
     qs = YorkshireReservoirData.objects.order_by("report_date")
     if qs.count() < 12:
         return

@@ -38,4 +38,3 @@ def generate_EA_station_arima_forecast():
 
 if __name__ == "__main__":
     generate_EA_station_arima_forecast()
-# If running as a script, generate the ARIMA forecast

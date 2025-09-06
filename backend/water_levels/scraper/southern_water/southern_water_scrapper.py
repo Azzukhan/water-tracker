@@ -4,16 +4,13 @@ from datetime import datetime, date
 from water_levels.models import SouthernWaterReservoirLevel
 
 def extract_southern_water_levels():
-    # Helper for robust date parsing
     def parse_southern_date(date_str):
         date_str = date_str.replace(",", "").strip()
-        # Fix compact (e.g. 3Jul => 3 Jul)
         match = re.match(r"^(\d{1,2})([A-Za-z]{3})$", date_str)
         if match:
             day, month = match.groups()
             date_str = f"{day} {month}"
         parts = date_str.split()
-        # If no year, infer by month per water year rule
         if len(parts) == 2:
             day, month = parts
             month = month[:3].title()
@@ -60,7 +57,6 @@ def extract_southern_water_levels():
             dt = parse_southern_date(orig_date_str)
             if not dt:
                 continue
-            # Only include dates in your custom water year
             if not (WATER_YEAR_START <= dt <= WATER_YEAR_END):
                 continue
 

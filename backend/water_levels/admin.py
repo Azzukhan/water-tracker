@@ -124,7 +124,7 @@ class EAwaterLevelAdmin(admin.ModelAdmin):
         "value",
         "quality",
     )
-    ordering = ("-date",)  # Show most recent records first
+    ordering = ("-date",)
     list_filter = ("station", "quality")
 
 

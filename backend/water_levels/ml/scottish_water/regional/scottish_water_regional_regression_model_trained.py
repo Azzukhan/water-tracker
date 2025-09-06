@@ -57,4 +57,3 @@ def generate_scottish_water_regional_regression_forecast():
 
 if __name__ == "__main__":
     generate_scottish_water_regional_regression_forecast()
-# This script generates regression forecasts for each Scottish Water region

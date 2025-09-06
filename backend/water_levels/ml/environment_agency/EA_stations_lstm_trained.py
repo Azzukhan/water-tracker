@@ -30,4 +30,3 @@ def generate_EA_station_lstm_forecast():
 
 if __name__ == "__main__":
     generate_EA_station_lstm_forecast()
-# If running as a script, generate the LSTM forecast

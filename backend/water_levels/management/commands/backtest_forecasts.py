@@ -6,9 +6,9 @@ import os, pandas as pd, time
 
 from water_levels.ml.backtesting.backtesting import (
     DatasetSpec,
-    build_datasets,                 # includes dynamic Southern reservoirs (optional)
+    build_datasets,               
     BacktestConfig,
-    load_series_with_info,          # returns (series, info)
+    load_series_with_info,          
     expanding_backtest,
     diebold_mariano,
 )
@@ -52,14 +52,14 @@ class Command(BaseCommand):
             initial_points=opts["initial"],
             horizons=horizons,
             step=max(1, int(opts["step"])),
-            seasonal_period=52,          # default (per-dataset override below)
+            seasonal_period=52,          
             lstm_window=12,
             fast=bool(opts["fast"]),
             resample_mode=opts["resample"],
             arima_maxiter=(30 if opts["fast"] else (opts["maxiter"] or 60)),
         )
 
-        nd = max(0, int(opts["round"]))  # decimals for CSV pretty output
+        nd = max(0, int(opts["round"]))  
 
         datasets = build_datasets(dynamic_southern=(not opts["no_dynamic_southern"]))
 
@@ -75,7 +75,7 @@ class Command(BaseCommand):
             t0 = time.perf_counter()
             series, info = load_series_with_info(ds, resample_mode=cfg.resample_mode)
 
-            # Dataset banner
+
             if info:
                 self.stdout.write(
                     f"→ {ds.label} | raw_len={info['raw_len']}, resampled_len={info['resampled_len']}, "
@@ -88,7 +88,7 @@ class Command(BaseCommand):
 
             need = cfg.initial_points + max(cfg.horizons)
             if len(series) < need:
-                # auto-adjust initial window so it still runs rather than skip
+
                 adjusted_initial = max(24, len(series) - max(cfg.horizons) - 1)
                 if adjusted_initial < 24:
                     self.stdout.write(self.style.WARNING(
@@ -110,7 +110,6 @@ class Command(BaseCommand):
                     self.stdout.write(self.style.WARNING(f"[warn] {ds.label}:{m} produced no rows"))
                     continue
 
-                # ---- Pretty rounding for detailed per-origin file (CSV only) ----
                 det_to_save = det.copy()
                 for col in ("y_true", "y_pred", "abs_err", "squared_err"):
                     if col in det_to_save.columns:
@@ -121,7 +120,6 @@ class Command(BaseCommand):
                 results[m] = agg.set_index("h")
                 details[m] = det
 
-            # ---- Summary table with rounded metrics (CSV only) ----
             if results:
                 summary = pd.concat(results, axis=1)
                 summary.columns = [f"{m}_{col}" for m, df in results.items() for col in df.columns]
@@ -131,7 +129,6 @@ class Command(BaseCommand):
                         summary[k] = summary[k].astype(float).round(nd)
                 summary.to_csv(os.path.join(outdir, f"{ds.label}_summary.csv"), index=False)
 
-            # ---- Optional DM tests (LSTM vs ARIMA) with rounding ----
             if not opts["no_dm"] and "ARIMA" in details and "LSTM" in details:
                 dm_rows = []
                 for h in run_cfg.horizons:

@@ -51,7 +51,7 @@ router.register(
 
 urlpatterns = [
     path("", include(router.urls)),
-    # Legacy endpoint without the `-reservoirs` suffix
+
     path(
         "southernwater/",
         SouthernWaterReservoirLevelViewSet.as_view({"get": "list"}),
@@ -62,7 +62,6 @@ urlpatterns = [
         SevernTrentReservoirLevelListView.as_view(),
         name="severn-trent-data",
     ),
-    # Legacy endpoint without the `-reservoirs` suffix
     path(
         "severn-trent/",
         SevernTrentReservoirLevelListView.as_view(),

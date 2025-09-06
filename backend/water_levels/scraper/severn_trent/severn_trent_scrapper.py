@@ -7,11 +7,10 @@ from water_levels.models import SevernTrentReservoirLevel
 
 
 def extract_severn_trent_water_levels():
-
+    
     def clean_date(date_str):
         return re.sub(r"(\d+)(st|nd|rd|th)", r"\1", date_str)
 
-    print("🔍 [TASK] Fetching Severn Trent reservoir data...")
     url = url = "https://www.stwater.co.uk/about-us/reservoir-levels/"
     headers = {"User-Agent": "Mozilla/5.0"}
 
@@ -38,7 +37,6 @@ def extract_severn_trent_water_levels():
                 except Exception as e:
                     print(f"Skipped {lines[i]}, {lines[i+1]} → {e}")
 
-        print(f"Task completed: {count} entries saved/updated.")
         return f"{count} records updated."
 
     except Exception as e:

@@ -49,4 +49,3 @@ def generate_EA_station_regression_forecast():
 
 if __name__ == "__main__":
     generate_EA_station_regression_forecast()
-# If running as a script, generate the regression forecast

@@ -130,4 +130,3 @@ def import_historical_EAwater_levels():
                 
 if __name__ == "__main__":
     extract_EA_stations_water_levels()
-# This script fetches water level data from the Environment Agency's API for groundwater stations.

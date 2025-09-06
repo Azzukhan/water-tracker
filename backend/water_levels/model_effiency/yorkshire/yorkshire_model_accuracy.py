@@ -12,7 +12,6 @@ def calculate_yorkshire_accuracy():
     today = datetime.today().date()
     preds = YorkshireWaterPrediction.objects.filter(date__lte=today)
     for p in preds:
-        # Fixed field name
         report = YorkshireReservoirData.objects.filter(report_date=p.date).first()
         if report:
             res_error = (

@@ -42,7 +42,6 @@ class BlogPostDetailSerializer(BlogPostSerializer):
         fields = BlogPostSerializer.Meta.fields + ['comments']
     
     def get_comments(self, obj):
-        # Only get top-level comments (no parent)
         comments = obj.comments.filter(parent=None)
         return CommentSerializer(comments, many=True).data
 

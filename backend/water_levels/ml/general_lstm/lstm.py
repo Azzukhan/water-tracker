@@ -5,15 +5,7 @@ from keras.models import Sequential
 from keras.layers import Input, LSTM, Dense
 
 def train_lstm(df, steps: int = 4):
-    """Train an LSTM model and predict future values.
-
-    Parameters
-    ----------
-    df : pandas.DataFrame
-        DataFrame containing a ``date`` column and a ``percentage`` column.
-    steps : int, optional
-        Number of weekly forecast steps to produce, by default ``4``.
-    """
+    """Train an LSTM model and predict future values."""
 
     df = df.set_index("date")
     scaler = MinMaxScaler()

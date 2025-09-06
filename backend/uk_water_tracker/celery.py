@@ -2,28 +2,18 @@ import os
 from celery import Celery
 from celery.schedules import crontab
 
-# Set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'uk_water_tracker.settings')
 
 app = Celery('uk_water_tracker')
 
-# Using a string here means the worker doesn't have to serialize
-# the configuration object to child processes.
 app.config_from_object('django.conf:settings', namespace='CELERY')
 
-# Load task modules from all registered Django app configs.
 app.autodiscover_tasks()
 
-# Configure the beat schedule
 app.conf.beat_schedule = {
     'update-weather-every-5-minutes': {
         'task': 'weather.tasks.update_all_weather',
-        'schedule': 300.0,  # 5 minutes in seconds
-    },
-    # Fetch Scottish Water resource levels once a week on Wednesday
-    'weekly-scottish-resources': {
-        'task': 'water_levels.tasks.fetch_scottish_water_forecasts',
-        'schedule': crontab(day_of_week='wed', hour=6, minute=0),
+        'schedule': 300.0,  
     },
     # Scrape Severn Trent reservoir data every Wednesday morning
     'weekly-severn-trent-scrape': {
@@ -35,37 +25,47 @@ app.conf.beat_schedule = {
         'task': 'water_levels.tasks.weekly_severn_trent_predictions',
         'schedule': crontab(day_of_week='wed', hour=9, minute=0),
     },
-
+    # Scrape Yorkshire Water reservoir data on the first day of each month
     'monthly-yorkshire-scrape': {
         'task': 'water_levels.tasks.fetch_and_generate_yorkshire_water_forecasts',
         'schedule': crontab(day_of_month=1, hour=6, minute=0),
     },
+    # Generate new forecasts after scraping the latest data
     'monthly-yorkshire-predict': {
         'task': 'water_levels.tasks.monthly_yorkshire_predictions',
         'schedule': crontab(day_of_month=1, hour=8, minute=0),
     },
-    
+    # Scrape Southern Water reservoir data every Wednesday morning
     'weekly-southernwater-scrape': {
         'task': 'water_levels.tasks.fetch_and_generate_southernwater_forecasts',
         'schedule': crontab(day_of_week='wed', hour=9, minute=0),
     },
+    # Generate new forecasts after scraping the latest data
     'weekly-southernwater-predict': {
         'task': 'water_levels.tasks.weekly_southernwater_predictions',
         'schedule': crontab(day_of_week='wed', hour=10, minute=0),
     },
-    
-    'fetch-groundwater-levels-every-15-mins': {
+    # Fetch Environment Agency river level data every Wednesday morning
+    'fetch-EA-stations-water-forecasts-weekly': {
         'task': 'water_levels.tasks.fetch_and_generate_EA_stations_water_forecasts',
         'schedule': crontab(day_of_week='wed', hour=3, minute=0),
     },
-    'weekly-groundwater-predictions': {
+    # Generate new forecasts after fetching the latest data
+    'weekly-EA-stations-water-forecasts-predictions': {
         'task': 'water_levels.tasks.weekly_EA_stations_water_predictions()',
         'schedule': crontab(day_of_week='wed', hour=5, minute=0),
     },
+        # Fetch Scottish Water resource levels once a week on Wednesday
+    'weekly-scottish-resources': {
+        'task': 'water_levels.tasks.fetch_scottish_water_forecasts',
+        'schedule': crontab(day_of_week='wed', hour=6, minute=0),
+    },
+    # Generate new forecasts for regional after fetching the latest data
     'weekly-scottish-water-regional-predictions': {
         'task': 'water_levels.tasks.weekly_scottish_water_regional_predictions',
         'schedule': crontab(day_of_week='wed', hour=11, minute=0),
     },
+    # Generate new forecasts for Scotland-wide after fetching the latest data
     'weekly-scottish-water-wide-predictions': {
         'task': 'water_levels.tasks.weekly_scottish_water_wide_predictions',
         'schedule': crontab(day_of_week='wed', hour=12, minute=0),

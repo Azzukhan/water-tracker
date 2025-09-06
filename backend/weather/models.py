@@ -57,7 +57,6 @@ class HourlyForecast(models.Model):
     visibility = models.FloatField(null=True, blank=True)
     uv_index = models.FloatField(null=True, blank=True)
     weather_code = models.IntegerField(null=True, blank=True)
-    # Existing fields for backward compatibility
     condition = models.CharField(max_length=100, blank=True, default="")
     icon = models.CharField(max_length=50, blank=True, default="")
     precipitation = models.IntegerField(null=True, blank=True, help_text="Precipitation probability percentage")
@@ -92,7 +91,6 @@ class DailyForecast(models.Model):
     sunset_time = models.DateTimeField(null=True, blank=True)
     weather_code_max = models.IntegerField(null=True, blank=True)
     weather_code_min = models.IntegerField(null=True, blank=True)
-    # Existing fields for backward compatibility
     high_temp = models.FloatField(null=True, blank=True, help_text="High temperature in Celsius")
     low_temp = models.FloatField(null=True, blank=True, help_text="Low temperature in Celsius")
     condition = models.CharField(max_length=100, blank=True, default="")

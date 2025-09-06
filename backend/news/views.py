@@ -11,7 +11,7 @@ import json
 import os
 from bs4 import BeautifulSoup
 
-CACHE_TIMEOUT = 5 * 60  # cache news data for five minutes
+CACHE_TIMEOUT = 5 * 60
 
 
 def clean_html(text: str) -> str:
@@ -173,7 +173,6 @@ class AlertScraperAPIView(APIView):
                     }
                 )
 
-        # Remove duplicates by URL
         seen = set()
         unique = []
         for art in articles:

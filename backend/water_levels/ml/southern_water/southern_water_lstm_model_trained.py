@@ -14,13 +14,11 @@ def generate_southern_lstm_forecast():
     for reservoir in qs.values_list("reservoir", flat=True).distinct():
         res_qs = qs.filter(reservoir=reservoir)
         if res_qs.count() < 30:
-            continue  # not enough data for robust prediction
+            continue 
 
-        # Build dataframe and match column names to what the LSTM expects
         df = pd.DataFrame(res_qs.values("date", "current_level"))
         df = df.rename(columns={"current_level": "percentage"})
 
-        # Predict 6 months (~24 weeks) of reservoir levels
         preds = train_lstm(df, steps=24)
 
         last_date = res_qs.last().date

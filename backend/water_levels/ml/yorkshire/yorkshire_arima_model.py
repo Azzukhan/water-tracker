@@ -6,6 +6,9 @@ from water_levels.models import YorkshireReservoirData, YorkshireWaterPrediction
 
 
 def generate_yorkshire_arima_forecast() -> None:
+    """
+    Generate ARIMA-based forecasts for Yorkshire reservoirs and save predictions to the DB.
+    """
     qs = YorkshireReservoirData.objects.order_by("report_date")
     if qs.count() < 12:
         return

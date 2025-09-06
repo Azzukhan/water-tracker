@@ -12,7 +12,6 @@ def generate_scottish_water_wide_arima_forecast():
 
     df = pd.DataFrame(qs.values("date", "current"))
     df["date"] = pd.to_datetime(df["date"])
-    # Scottish Water data is reported weekly on Mondays, so align to that
     df = df.set_index("date").asfreq("W-MON")
     df["current"] = df["current"].interpolate()
 

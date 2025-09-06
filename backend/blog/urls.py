@@ -20,7 +20,6 @@ router.register(r'subscribers', SubscriberViewSet)
 urlpatterns = [
     path('', include(router.urls)),
     path('external/', ExternalBlogAPIView.as_view(), name='external-blog'),
-    # Allow access with and without a trailing slash
     path('sample/', LocalBlogAPIView.as_view(), name='sample-blog'),
     path('sample', LocalBlogAPIView.as_view()),
 ]

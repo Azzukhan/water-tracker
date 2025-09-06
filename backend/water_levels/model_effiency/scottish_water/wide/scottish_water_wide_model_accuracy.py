@@ -5,7 +5,7 @@ from water_levels.models import (
     )
 
 def calculate_scottish_water_wide_accuracy():
-
+    """Calculate accuracy of Scotland-wide Scottish Water forecasts."""
     latest_actual = ScottishWaterAverageLevel.objects.order_by("-date").first()
     if latest_actual:
         forecasts = ScottishWaterForecast.objects.filter(date=latest_actual.date)
