@@ -45,7 +45,7 @@ interface ChartPoint {
 
 const filterByPeriod = (data: ChartPoint[], period: string): ChartPoint[] => {
   if (!data.length) return [];
-  let realMonths = 3; // default = 9m view (3 months real + 6 forecast)
+  let realMonths = 3;
   if (period === "12m") realMonths = 6;
   else if (period === "15m") realMonths = 9;
   else if (period === "18m") realMonths = 12;
@@ -89,7 +89,6 @@ export function SouthernRegressionChart({ reservoir }: { reservoir: string }) {
           accRes.json(),
         ]);
         if (Array.isArray(histData) && Array.isArray(rawForecastData)) {
-          // Find the most recent actual value's date
           const lastActualDate =
             histData.length > 0
               ? histData.reduce((a, b) =>
@@ -97,7 +96,6 @@ export function SouthernRegressionChart({ reservoir }: { reservoir: string }) {
                 ).date
               : null;
 
-          // Get only the first 4 forecasts at least 7 days after last actual value
           const forecastData = lastActualDate
             ? (() => {
                 const after = rawForecastData
@@ -111,7 +109,6 @@ export function SouthernRegressionChart({ reservoir }: { reservoir: string }) {
               })()
             : [];
 
-          // Merge actuals and forecasts by date
           const map = new Map<string, ChartPoint>();
           histData.forEach((e: HistoricalEntry) => {
             map.set(e.date, {

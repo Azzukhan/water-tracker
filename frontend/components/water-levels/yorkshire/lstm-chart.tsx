@@ -91,14 +91,12 @@ export function YorkshireLSTMChart() {
           forecastRes.json(),
           accRes.json(),
         ]);
-        // Only LSTM forecasts
         const forecastData = Array.isArray(rawForecastData)
           ? rawForecastData.filter((f: any) => f.model_type === "LSTM")
               .sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime())
               .slice(-4)
           : [];
 
-        // Merge
         const map = new Map<string, ChartPoint>();
         if (Array.isArray(histData)) {
           histData.forEach((e: HistoricalEntry) => {

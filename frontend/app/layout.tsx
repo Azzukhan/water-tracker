@@ -25,14 +25,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ColorBlindProvider>
           <ThemeProvider>
             <A11yProvider>
-              {/* Toolbar fixed at very top */}
               <AccessibilityToolbar />
-              {/* Header under toolbar */}
               <Header />
-              {/* Offset content only when toolbar is open */}
               <A11ySpacer />
-
-              {/* Apply color-blind filter only to this content wrapper */}
               <div id="a11y-filter-root">
                 <MainContent>{children}</MainContent>
                 <Footer />

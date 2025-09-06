@@ -53,7 +53,6 @@ function filterByPeriod(
   const { history: historyMonths, forecast: forecastMonths } =
     PERIOD_MONTHS[period] || PERIOD_MONTHS["9m"];
 
-  // Find the last historical (actual) date
   let lastActualIdx = -1;
   for (let i = data.length - 1; i >= 0; i--) {
     if (typeof data[i].actual === "number" && data[i].actual !== null && data[i].actual !== 0) {
@@ -64,11 +63,9 @@ function filterByPeriod(
   if (lastActualIdx === -1) return { history: [], forecast: [] };
   const lastActualDate = parseISO(data[lastActualIdx].date);
 
-  // Compute history window start date
   const startHistory = new Date(lastActualDate);
   startHistory.setMonth(startHistory.getMonth() - historyMonths + 1);
 
-  // History: only last X months of actual data up to last actual date
   const history = data
     .filter(
       (d) =>
@@ -80,7 +77,6 @@ function filterByPeriod(
     )
     .sort((a, b) => parseISO(a.date).getTime() - parseISO(b.date).getTime());
 
-  // Forecast: first up to 3 months after last actual date
   const forecastStartIdx = data.findIndex(
     (d) => parseISO(d.date) > lastActualDate && d.predicted !== null
   );
@@ -89,7 +85,7 @@ function filterByPeriod(
     forecast = data
       .slice(forecastStartIdx)
       .filter((d) => d.predicted !== null)
-      .slice(0, forecastMonths * 4); // ~4 points per month (weekly)
+      .slice(0, forecastMonths * 4);
   }
   return { history, forecast };
 }
@@ -101,7 +97,7 @@ export function EARegressionChart({ region }: { region: string }) {
   const [trend, setTrend] = useState(0);
   const [showUncertainty, setShowUncertainty] = useState(true);
 
-  // --- Clean Break Logic
+
   const { history: actualSeries, forecast: forecastSeries } = useMemo(
     () => filterByPeriod(allData, period),
     [allData, period]
@@ -111,14 +107,14 @@ export function EARegressionChart({ region }: { region: string }) {
     const fetchData = async () => {
       try {
         const start = new Date();
-        start.setMonth(start.getMonth() - 18); // always fetch enough for all filters
+        start.setMonth(start.getMonth() - 18); 
         const hist = await fetchRegionLevels(region, start.toISOString().split("T")[0]);
         const res = await fetch(
           `${API_BASE}/api/water-levels/groundwater-predictions/?region=${region}&model_type=REGRESSION`
         );
         const forecastData: ForecastEntry[] = await res.json();
 
-        // Combine by date
+
         const map = new Map<string, ChartPoint>();
         hist.forEach((e) => {
           map.set(e.date, {

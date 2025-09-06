@@ -45,8 +45,7 @@ export function LocationInput({ weather, onLocationSelect }: LocationInputProps)
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          // In a real app, you would reverse geocode these coordinates
-          setCurrentLocation("My Location") // Placeholder, should be replaced with real reverse geocode
+          setCurrentLocation("My Location")
           setIsLocating(false)
         },
         (error) => {

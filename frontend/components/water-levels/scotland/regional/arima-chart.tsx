@@ -93,12 +93,10 @@ export function ScottishRegionalARIMAChart({ area }: { area: string }) {
           Array.isArray(histData) &&
           Array.isArray(rawForecastData)
         ) {
-          // Only last 4 forecasts (like Severn Trent logic)
           const forecastData = [...rawForecastData]
             .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
             .slice(-4);
 
-          // Merge by date, keep actual/predicted keys clear
           const map = new Map<string, ChartPoint>();
           histData.forEach((e: HistoricalEntry) => {
             map.set(e.date, {
@@ -142,7 +140,6 @@ export function ScottishRegionalARIMAChart({ area }: { area: string }) {
           );
           setAllData(combined);
 
-          // Set average prediction & trend
           if (forecastData.length) {
             const avg =
               forecastData.reduce((s, d) => s + d.predicted_level, 0) /
@@ -154,7 +151,6 @@ export function ScottishRegionalARIMAChart({ area }: { area: string }) {
             setTrend(tr);
           }
 
-          // Set accuracy stats
           if (Array.isArray(accData) && accData.length > 0) {
             setAccuracy({
               predicted: accData[0].predicted_value,

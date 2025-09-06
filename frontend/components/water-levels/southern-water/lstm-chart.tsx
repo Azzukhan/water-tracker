@@ -46,8 +46,7 @@ interface ChartPoint {
 const filterByPeriod = (data: ChartPoint[], period: string): ChartPoint[] => {
   if (!data.length) return [];
 
-  // real months of historical data to display before forecast begins
-  let realMonths = 3; // default corresponds to 9 month view (3 real + 6 forecast)
+  let realMonths = 3;
   if (period === "12m") realMonths = 6;
   else if (period === "15m") realMonths = 9;
   else if (period === "18m") realMonths = 12;
@@ -66,7 +65,6 @@ const filterByPeriod = (data: ChartPoint[], period: string): ChartPoint[] => {
 
 export function SouthernLSTMChart({ reservoir }: { reservoir: string }) {
   const [allData, setAllData] = useState<ChartPoint[]>([]);
-  // default to 9 month view (3 months real + 6 months forecast)
   const [period, setPeriod] = useState("9m");
   const [avgPrediction, setAvgPrediction] = useState(0);
   const [trend, setTrend] = useState(0);
@@ -95,7 +93,6 @@ export function SouthernLSTMChart({ reservoir }: { reservoir: string }) {
           accRes.json(),
         ]);
         if (Array.isArray(histData) && Array.isArray(rawForecastData)) {
-          // Find the latest actual date
           const lastActualDate =
             histData.length > 0
               ? histData.reduce((a, b) =>
@@ -103,7 +100,6 @@ export function SouthernLSTMChart({ reservoir }: { reservoir: string }) {
                 ).date
               : null;
 
-          // Only first 4 forecasts after the last actual value
           const forecastData = lastActualDate
             ? rawForecastData
                 .filter(f => new Date(f.date) > new Date(lastActualDate))
@@ -111,7 +107,6 @@ export function SouthernLSTMChart({ reservoir }: { reservoir: string }) {
                 .slice(0, 4)
             : [];
 
-          // Merge both actual and forecast by date in a map
           const map = new Map<string, ChartPoint>();
           histData.forEach((e: HistoricalEntry) => {
             map.set(e.date, {

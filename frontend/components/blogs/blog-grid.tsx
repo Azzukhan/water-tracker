@@ -6,7 +6,6 @@ import { BookmarkPlus } from "lucide-react"
 import { BlogCard } from "./blog-card"
 import type { BlogItem } from "@/hooks/use-blogs"
 
-// Fallback posts used when no data is provided
 const fallbackPosts = [
   {
     id: 2,

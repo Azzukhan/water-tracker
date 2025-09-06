@@ -94,12 +94,10 @@ export function ScottishARIMAChart() {
           Array.isArray(histData) &&
           Array.isArray(rawForecastData)
         ) {
-          // Limit to last 4 forecasts just like Severn Trent
           const forecastData = [...rawForecastData]
             .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
             .slice(-4);
 
-          // Merge actuals and forecasts into a map by date
           const map = new Map<string, ChartPoint>();
           histData.forEach((e: HistoricalEntry) => {
             map.set(e.date, {
@@ -143,7 +141,6 @@ export function ScottishARIMAChart() {
           );
           setAllData(combined);
 
-          // Latest actual
           if (histData.length) {
             const latestHist = histData.reduce((a, b) =>
               new Date(b.date) > new Date(a.date) ? b : a,
@@ -153,7 +150,6 @@ export function ScottishARIMAChart() {
             setLatestActual(null);
           }
 
-          // Latest forecast
           if (forecastData.length) {
             const latestFor = forecastData.reduce((a, b) =>
               new Date(b.date) > new Date(a.date) ? b : a,
@@ -163,7 +159,6 @@ export function ScottishARIMAChart() {
             setLatestForecast(null);
           }
 
-          // Avg and trend
           if (forecastData.length) {
             const avg =
               forecastData.reduce((s, d) => s + d.predicted_percentage, 0) /
@@ -175,7 +170,6 @@ export function ScottishARIMAChart() {
             setTrend(tr);
           }
 
-          // Accuracy block (most recent entry)
           if (Array.isArray(accData) && accData.length > 0) {
             setAccuracy({
               predicted: accData[0].predicted_percentage,

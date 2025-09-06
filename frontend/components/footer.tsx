@@ -54,7 +54,7 @@ export default function Footer() {
         </div>
         <div className="mt-2 md:mt-0 text-center md:text-right">
           Built by <a href="https://github.com/Azzukhan" className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 hover:underline">Azzukhan</a>.{' '}
-          <a href="https://github.com/Azzukhan/uk-water-tracker" className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 hover:underline">View source on GitHub</a>
+          <a href="https://github.com/Azzukhan/water-tracker" className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 hover:underline">View source on GitHub</a>
         </div>
       </div>
     </footer>

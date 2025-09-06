@@ -58,7 +58,6 @@ export function BlogSidebar({
 
   const handleStorySubmit = async () => {
     try {
-      // Backend router nests story endpoints under /api/stories/stories/
       const res = await fetch(`${API_BASE}/api/blog/stories/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -289,21 +288,6 @@ export function BlogSidebar({
         </DialogContent>
       </Dialog>
 
-      <div className="mb-6 flex justify-end">
-        <Button className="bg-blue-600 cb:bg-cbBlue text-white dark:hover:bg-blue-500 dark:cb:hover:bg-cbBlue/80" onClick={async () => {
-          const sidebar = document.querySelector('.space-y-6');
-          if (sidebar) {
-            const canvas = await html2canvas(sidebar as HTMLElement);
-            const image = canvas.toDataURL("image/png");
-            const link = document.createElement('a');
-            link.href = image;
-            link.download = `blog-sidebar-screenshot.png`;
-            link.click();
-          }
-        }}>
-          <Share2 className="h-4 w-4 mr-2" />Share Screenshot
-        </Button>
-      </div>
     </div>
   )
 }

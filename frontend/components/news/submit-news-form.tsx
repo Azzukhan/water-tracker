@@ -30,11 +30,9 @@ export function SubmitNewsForm() {
     e.preventDefault()
     setIsSubmitting(true)
 
-    // Simulate form submission
     setTimeout(() => {
       setIsSubmitting(false)
       setSubmitStatus("success")
-      // Reset form after success
       setTimeout(() => {
         setFormData({
           headline: "",

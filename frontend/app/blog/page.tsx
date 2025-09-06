@@ -46,24 +46,6 @@ export default function BlogPage() {
           <p className="text-green-100 dark:text-green-200 cb:text-cbBluishGreen">Explore topics that interest you most</p>
         </CardHeader>
         <CardContent className="p-6">
-          <div className="flex justify-end mb-4">
-            <button
-              className="bg-blue-600 cb:bg-cbBlue text-white px-4 py-2 rounded hover:bg-blue-700 cb:hover:bg-cbBlue/90 dark:hover:bg-blue-500 dark:cb:hover:bg-cbBlue/80 transition"
-              onClick={async () => {
-                const card = document.querySelector('.shadow-lg.border-0');
-                if (card) {
-                  const canvas = await html2canvas(card as HTMLElement);
-                  const image = canvas.toDataURL("image/png");
-                  const link = document.createElement('a');
-                  link.href = image;
-                  link.download = `blog-categories-screenshot.png`;
-                  link.click();
-                }
-              }}
-            >
-              Share Screenshot
-            </button>
-          </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
             {categories.map((categoryItem) => {
               const CategoryIcon = categoryItem.icon;

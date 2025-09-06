@@ -55,7 +55,6 @@ const filterByPeriod = (
   const { history: historyMonths, forecast: forecastMonths } =
     PERIOD_MONTHS[period] || PERIOD_MONTHS["9m"];
 
-  // 1. Find the last historical (actual) date
   let lastActualIdx = -1;
   for (let i = data.length - 1; i >= 0; i--) {
     if (data[i].actual !== null && typeof data[i].actual === "number") {
@@ -66,11 +65,9 @@ const filterByPeriod = (
   if (lastActualIdx === -1) return { history: [], forecast: [] };
 
   const lastActualDate = parseISO(data[lastActualIdx].date);
-  // 2. Compute history window start date
   const startHistory = new Date(lastActualDate);
   startHistory.setMonth(startHistory.getMonth() - historyMonths + 1);
 
-  // 3. Split history/forecast
   const history = data
     .filter(
       (d) =>
@@ -82,7 +79,6 @@ const filterByPeriod = (
     )
     .sort((a, b) => parseISO(a.date).getTime() - parseISO(b.date).getTime());
 
-  // 4. Forecast: next up-to-3 months after last actual date
   const forecastStartIdx = data.findIndex(
     (d) => parseISO(d.date) > lastActualDate && d.predicted !== null
   );
@@ -91,7 +87,7 @@ const filterByPeriod = (
     forecast = data
       .slice(forecastStartIdx)
       .filter((d) => d.predicted !== null)
-      .slice(0, forecastMonths * 4); // Up to about 4 points per month (weekly)
+      .slice(0, forecastMonths * 4);
   }
 
   return { history, forecast };
@@ -112,7 +108,6 @@ export function EAARIMAChart({ region }: { region: string }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Always fetch last 18 months to support all filters
         const start = new Date();
         start.setMonth(start.getMonth() - 18);
         const hist = await fetchRegionLevels(
@@ -124,7 +119,6 @@ export function EAARIMAChart({ region }: { region: string }) {
         );
         const forecastData: ForecastEntry[] = await res.json();
 
-        // Combine all dates, one per date
         const map = new Map<string, ChartPoint>();
         hist.forEach((e) => {
           map.set(e.date, {

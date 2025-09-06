@@ -179,14 +179,11 @@ export default function WeatherWidget() {
                     border border-gray-100 dark:border-gray-700
                   "
                 >
-                  {/* Icon and day (fixed width column) */}
                   <div className="flex items-center gap-2 w-28">
                     <Icon className="h-6 w-6 text-blue-500 dark:text-blue-400" />
                     <span className="font-medium text-gray-900 dark:text-white">{d.day}</span>
                   </div>
-                  {/* Condition (middle column) */}
                   <div className="pl-4 text-gray-600 dark:text-gray-300 text-sm">{d.condition}</div>
-                  {/* Temps (fixed width column, right-aligned) */}
                   <div className="flex items-baseline justify-end gap-1 font-semibold text-gray-900 dark:text-white text-lg">
                     {Math.round(d.high)}°
                     <span className="text-gray-400 dark:text-gray-500 text-base font-normal ml-1">{Math.round(d.low)}°</span>

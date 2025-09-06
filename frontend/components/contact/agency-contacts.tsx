@@ -176,14 +176,12 @@ export function AgencyContacts() {
             </SelectContent>
           </Select>
         </div>
-        {/* KEY: Add items-stretch for perfect row alignment */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
           {paginatedAgencies.map((agency, index) => (
             <div
               key={index}
               className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:shadow-md transition-shadow duration-200 flex flex-col h-full min-h-[350px] bg-white dark:bg-gray-800"
             >
-              {/* Main card content: fills space above buttons */}
               <div className="flex-1 flex flex-col space-y-4">
                 {/* Header */}
                 <div className="flex items-center justify-between">
@@ -262,7 +260,7 @@ export function AgencyContacts() {
                   </div>
                 </div>
               </div>
-              {/* Buttons: outside flex-1, guaranteed bottom-aligned */}
+              {/* Actions */}
               <div className="flex gap-2 mt-6">
                 <Button
                   size="sm"

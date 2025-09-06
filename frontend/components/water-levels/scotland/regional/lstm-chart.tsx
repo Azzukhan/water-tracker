@@ -93,12 +93,10 @@ export function ScottishRegionalLSTMChart({ area }: { area: string }) {
           Array.isArray(histData) &&
           Array.isArray(rawForecastData)
         ) {
-          // Only last 4 forecasts (like Severn Trent/Scotland overall)
           const forecastData = [...rawForecastData]
             .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
             .slice(-4);
 
-          // Merge by date, combine actual/predicted values
           const map = new Map<string, ChartPoint>();
           histData.forEach((e: HistoricalEntry) => {
             map.set(e.date, {
@@ -142,7 +140,6 @@ export function ScottishRegionalLSTMChart({ area }: { area: string }) {
           );
           setAllData(combined);
 
-          // Avg prediction & trend
           if (forecastData.length) {
             const avg =
               forecastData.reduce((s, d) => s + d.predicted_level, 0) /
@@ -154,7 +151,6 @@ export function ScottishRegionalLSTMChart({ area }: { area: string }) {
             setTrend(tr);
           }
 
-          // Accuracy block (most recent entry)
           if (Array.isArray(accData) && accData.length > 0) {
             setAccuracy({
               predicted: accData[0].predicted_value,

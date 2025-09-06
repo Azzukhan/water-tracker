@@ -89,7 +89,6 @@ export function SouthernARIMAChart({ reservoir }: { reservoir: string }) {
           accRes.json(),
         ]);
         if (Array.isArray(histData) && Array.isArray(rawForecastData)) {
-          // Find the latest actual date
           const lastActualDate =
             histData.length > 0
               ? histData.reduce((a, b) =>
@@ -97,7 +96,6 @@ export function SouthernARIMAChart({ reservoir }: { reservoir: string }) {
                 ).date
               : null;
 
-          // Show only forecasts > 7 days after last actual, and only 4 points
           const forecastData = lastActualDate
             ? rawForecastData
                 .filter((f) => {
@@ -108,7 +106,6 @@ export function SouthernARIMAChart({ reservoir }: { reservoir: string }) {
                 .slice(0, 4)
             : [];
 
-          // Merge actuals and forecasts by date in a map
           const map = new Map<string, ChartPoint>();
           histData.forEach((e: HistoricalEntry) => {
             map.set(e.date, {
@@ -141,7 +138,6 @@ export function SouthernARIMAChart({ reservoir }: { reservoir: string }) {
           );
           setAllData(combined);
 
-          // Avg/trend for displayed forecasts only
           if (forecastData.length) {
             const avg =
               forecastData.reduce((s, d) => s + d.predicted_level, 0) /
@@ -153,7 +149,6 @@ export function SouthernARIMAChart({ reservoir }: { reservoir: string }) {
             setTrend(tr);
           }
 
-          // Accuracy (most recent)
           if (Array.isArray(accData) && accData.length > 0) {
             setAccuracy({
               predicted: accData[0].predicted_level,

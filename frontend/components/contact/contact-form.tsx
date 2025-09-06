@@ -201,7 +201,7 @@ export function ContactForm() {
               </div>
             </div>
           </div>
-          {/* BUTTON AND NOTICE - Always at the bottom */}
+          {/* SUBMIT BUTTON */}
           <Button type="submit" className="w-full bg-blue-600 cb:bg-cbBlue hover:bg-blue-700 cb:hover:bg-cbBlue/90 dark:hover:bg-blue-500 dark:cb:hover:bg-cbBlue/80 py-3 mt-6" disabled={isSubmitting}>
             {isSubmitting ? (
               <>

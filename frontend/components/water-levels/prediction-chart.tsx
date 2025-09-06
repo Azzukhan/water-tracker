@@ -9,7 +9,6 @@ import { Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, 
 import { Brain, TrendingUp, AlertCircle, Info } from "lucide-react"
 import { useColorBlind } from "@/components/color-blind-provider"
 
-// Generate AI prediction data
 const generatePredictionData = (period: string) => {
   const data = []
   const now = new Date()
@@ -27,7 +26,7 @@ const generatePredictionData = (period: string) => {
       break
   }
 
-  // Historical data (last 7 days)
+
   for (let i = 7; i >= 0; i--) {
     const date = new Date(now)
     date.setDate(date.getDate() - i)
@@ -43,15 +42,13 @@ const generatePredictionData = (period: string) => {
     })
   }
 
-  // Prediction data
   for (let i = 1; i <= days; i++) {
     const date = new Date(now)
     date.setDate(date.getDate() + i)
 
-    // Simulate seasonal decline with some recovery
     const trend = -0.1 * i + Math.sin(i / 10) * 2
     const baseLevel = 78 + trend
-    const uncertainty = Math.min(5 + i / 7, 15) // Uncertainty increases over time
+    const uncertainty = Math.min(5 + i / 7, 15)
 
     data.push({
       date: date.toISOString().split("T")[0],

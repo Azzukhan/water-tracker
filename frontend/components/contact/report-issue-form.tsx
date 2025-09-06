@@ -188,7 +188,7 @@ export function ReportIssueForm() {
               </div>
             </div>
           </div>
-          {/* BUTTON AND NOTICE - Always at the bottom */}
+          {/* SUBMIT BUTTON & INFO */}
           <Button type="submit" className="w-full bg-red-600 cb:bg-cbVermillion hover:bg-red-700 cb:hover:bg-cbVermillion/90 dark:hover:bg-red-500 dark:cb:hover:bg-cbVermillion/80 mt-6" disabled={isSubmitting}>
             {isSubmitting ? (
               <>

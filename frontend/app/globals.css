@@ -1,4 +1,4 @@
-/* app/globals.css */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -57,7 +57,6 @@
   .skip-link { @apply sr-only focus:not-sr-only absolute top-4 left-4 z-[100000] rounded-md bg-blue-600 text-white px-4 py-2; }
 }
 
-/* High-contrast (you already had this – keeping + compatible with dark images) */
 @layer base {
   html.high-contrast {
     filter: invert(1) hue-rotate(180deg) contrast(1.1);
@@ -69,14 +68,7 @@
   }
 }
 
-/* Optional dyslexic font (include your font file or a CDN in <head> if you want) */
 @layer base {
-  /* Example:
-  @font-face {
-    font-family: "OpenDyslexic";
-    src: url("/fonts/OpenDyslexic-Regular.woff2") format("woff2");
-    font-weight: normal; font-style: normal; font-display: swap;
-  } */
   .dyslexic-font { font-family: OpenDyslexic, Arial, Helvetica, sans-serif !important; }
 }
 

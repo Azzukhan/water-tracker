@@ -1,4 +1,3 @@
-// components/a11y-spacer.tsx
 "use client"
 
 import { useA11y } from "@/components/a11y-provider"

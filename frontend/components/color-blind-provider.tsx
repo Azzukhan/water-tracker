@@ -1,4 +1,3 @@
-// components/color-blind-provider.tsx
 "use client"
 
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react"
@@ -14,7 +13,6 @@ export function ColorBlindProvider({ children }: { children: React.ReactNode }) 
 
   useEffect(() => {
     localStorage.setItem("cb-mode", isCb ? "1" : "0")
-    // Toggle a root class so your Tailwind “cb:” variants work
     document.documentElement.classList.toggle("cb", isCb)
   }, [isCb])
 

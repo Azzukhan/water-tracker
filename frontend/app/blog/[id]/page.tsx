@@ -6,7 +6,6 @@ import { Separator } from "@/components/ui/separator";
 import { Calendar, Clock, ArrowLeft, Share2, Bookmark } from "lucide-react";
 import Link from "next/link";
 
-// This would typically fetch data based on the ID
 const blogPost = {
   id: 1,
   title: "Understanding Flood Risk Assessment in the UK",

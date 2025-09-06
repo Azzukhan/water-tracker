@@ -96,7 +96,6 @@ export function AccessibilityToolbar() {
   const debounceRef = useRef<number | null>(null)
   const lastSpokenRef = useRef<string>("")
 
-  // persist + apply
   useEffect(() => {
     document.documentElement.style.fontSize = `${fontSize}%`
     localStorage.setItem("a11y-font", String(fontSize))
@@ -114,9 +113,8 @@ export function AccessibilityToolbar() {
     document.body.classList.toggle("large-cursor", largeCursor)
   }, [largeCursor])
 
-  // apply color-blind filter to content wrapper (not <body>)
   useEffect(() => {
-    document.body.style.filter = "" // safety: never leave body filtered
+    document.body.style.filter = ""
     const node = document.getElementById("a11y-filter-root")
     if (!node) return
     if (colorBlindMode !== "off") {
@@ -127,7 +125,6 @@ export function AccessibilityToolbar() {
     }
   }, [colorBlindMode])
 
-  // overlays
   useEffect(() => {
     if (!showMask && !showRuler) return
     const move = (e: MouseEvent) => {
@@ -138,7 +135,6 @@ export function AccessibilityToolbar() {
     return () => window.removeEventListener("mousemove", move)
   }, [showMask, showRuler])
 
-  // google translate
   useEffect(() => {
     if (!showTranslate) return
     const id = "google_translate_script"
@@ -154,7 +150,6 @@ export function AccessibilityToolbar() {
     document.body.appendChild(s)
   }, [showTranslate])
 
-  // speaking
   const speakText = (text: string) => {
     if (!isReasonableLength(text)) return
     if (text === lastSpokenRef.current) return
@@ -200,10 +195,8 @@ export function AccessibilityToolbar() {
       document.removeEventListener("focusin", handleHover, true)
       document.removeEventListener("focusout", handleHoverLeave, true)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hoverReadOn])
 
-  // reset & close
   const resetAll = () => {
     setFontSize(100)
     setHighContrast(false)
@@ -223,15 +216,12 @@ export function AccessibilityToolbar() {
   }
 
   const confirmCloseYes = () => {
-    // 1) close immediately (and persist)
     try { localStorage.setItem("a11y-open", "false") } catch {}
     setOpen(false)
 
-    // 2) tidy up state & visuals
     setConfirmClose(false)
     resetAll()
 
-    // 3) blur any focused control to avoid re-open via key events
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur()
     }
@@ -262,7 +252,7 @@ export function AccessibilityToolbar() {
 
   return (
     <>
-      {/* Color blind filters (defs) */}
+      {/* Color blind filters */}
       <svg style={{ display: 'none' }}>
         <defs>
           <filter id="deuteranopia">
