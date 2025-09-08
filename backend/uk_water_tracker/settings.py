@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     "blog",
     "users",
     "contacts",
+    "django_celery_beat",
 ]
 
 MIDDLEWARE = [

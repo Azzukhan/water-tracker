@@ -20,3 +20,6 @@ celery==5.5.3
 tensorflow==2.19.0
 pdfplumber==0.11.7
 cffi>=1.16.0
+redis==5.0.1
+django-celery-beat==2.6.0
+flower==2.0.1
