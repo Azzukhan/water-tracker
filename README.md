@@ -199,19 +199,9 @@ pytest                    # Run all tests
 
 ```
 
-### Frontend Testing
-```bash
-cd frontend
-npm test                  # Run Jest test suite
-npm run test:e2e         # Run end-to-end tests
-npm run lint             # Check code style
-```
 
-### Integration Testing
-```bash
-# Run full system integration tests
-docker-compose -f docker-compose.test.yml up --build
-```
+
+
 
 ## Deployment
 
@@ -295,23 +285,9 @@ with real-time water level monitoring, weather intelligence, and emergency suppo
 MSc Dissertation, Department of Computer and Information Sciences, University of Strathclyde.
 ```
 
-### Research Applications
-- Water resource management studies
-- AI/ML in hydrology research
-- Dashboard design and usability studies
-- UK water infrastructure analysis
-- Climate change impact assessment
 
-## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Support & Contact
-
-### Technical Support
-- **GitHub Issues**: Report bugs and request features
-- **Documentation**: Comprehensive guides in `/docs` directory
-- **API Documentation**: Available at `/api/docs/` when running locally
+## Contact
 
 ### Academic Inquiries
 - **Primary Contact**: Mohammed Afjal Khan - mohammed.a.khan.2024@uni.strath.ac.uk
