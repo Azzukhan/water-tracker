@@ -4,7 +4,6 @@ django-cors-headers==4.3.0
 channels==4.0.0
 daphne==4.0.0
 Pillow==10.1.0
-django-filter==23.3
 psycopg2-binary==2.9.9
 requests==2.31.0
 python-dotenv==1.0.0
@@ -23,3 +22,4 @@ cffi>=1.16.0
 redis==5.0.1
 django-celery-beat==2.6.0
 flower==2.0.1
+django-filter>=24.0.0
