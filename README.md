@@ -109,7 +109,7 @@ cd uk-water-tracker
 cd backend
 
 # Create and activate virtual environment
-python -m venv venv
+python3.12 -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 # Install dependencies
@@ -194,9 +194,9 @@ NEXT_PUBLIC_ENVIRONMENT=development
 ### Backend Testing
 ```bash
 cd backend
+pip install -U pytest pytest-django
 pytest                    # Run all tests
-pytest --cov             # Run with coverage report
-pytest -v tests/models/  # Run specific test module
+
 ```
 
 ### Frontend Testing
